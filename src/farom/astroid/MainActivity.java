@@ -1,24 +1,27 @@
 package farom.astroid;
 
+import android.app.TabActivity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.app.Activity;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.support.v4.app.NavUtils;
+import android.widget.TabHost;
 
-public class MainActivity extends Activity {
+
+public class MainActivity extends TabActivity {
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_main, menu);
-        return true;
-    }
+        final TabHost tabHost = getTabHost();
 
-    
+        tabHost.addTab(tabHost.newTabSpec("tab1")
+                .setIndicator("list")
+                .setContent(new Intent(this, ConnectionActivity.class)));
+
+        tabHost.addTab(tabHost.newTabSpec("tab2")
+                .setIndicator("photo list")
+                .setContent(new Intent(this, MoveScopeActivity.class)));
+        
+
+    }
 }
