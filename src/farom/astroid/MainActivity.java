@@ -15,12 +15,14 @@ public class MainActivity extends TabActivity {
         final TabHost tabHost = getTabHost();
 
         tabHost.addTab(tabHost.newTabSpec("tab1")
-                .setIndicator("list")
+                .setIndicator("",getResources().getDrawable(R.drawable.icon_connect))
                 .setContent(new Intent(this, ConnectionActivity.class)));
 
         tabHost.addTab(tabHost.newTabSpec("tab2")
-                .setIndicator("photo list")
+                .setIndicator("",getResources().getDrawable(R.drawable.icon_move))
                 .setContent(new Intent(this, MoveScopeActivity.class)));
+        
+        tabHost.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_red));
         
 
     }

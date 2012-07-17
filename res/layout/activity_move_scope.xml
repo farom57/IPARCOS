@@ -1,15 +1,129 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 
-    <TextView
-        android:layout_width="wrap_content"
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/padding_medium"
+        android:layout_weight="1"
+        android:stretchColumns="0,1,2" >
+
+        <TableRow android:layout_weight="1" >
+
+            <Button
+                android:layout_height="fill_parent"
+                android:layout_gravity="center_vertical"
+                android:visibility="invisible" />
+
+            <ImageButton
+                android:layout_height="fill_parent"
+                android:layout_column="1"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="@dimen/padding_medium"
+                android:background="@drawable/btn_red"
+                android:hapticFeedbackEnabled="true"
+                android:src="@drawable/up" />
+
+            <Button
+                android:layout_height="fill_parent"
+                android:layout_gravity="center_vertical"
+                android:visibility="invisible" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_weight="1">
+
+            <ImageButton
+                android:layout_height="fill_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="@dimen/padding_medium"
+                android:background="@drawable/btn_red"
+                android:hapticFeedbackEnabled="true"
+                android:src="@drawable/left" />
+
+            <ImageButton
+                android:layout_height="fill_parent"
+                android:layout_column="1"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="@dimen/padding_medium"
+                android:background="@drawable/btn_red"
+                android:hapticFeedbackEnabled="true"
+                android:src="@drawable/stop" />
+
+            <ImageButton
+                android:layout_height="fill_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="@dimen/padding_medium"
+                android:background="@drawable/btn_red"
+                android:hapticFeedbackEnabled="true"
+                android:src="@drawable/right" />
+
+        </TableRow>
+
+        <TableRow android:layout_weight="1" >
+
+            <Button
+                android:layout_height="fill_parent"
+                android:layout_gravity="center_vertical"
+                android:visibility="invisible" />
+
+            <ImageButton
+                android:layout_height="fill_parent"
+                android:layout_column="1"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="@dimen/padding_medium"
+                android:background="@drawable/btn_red"
+                android:hapticFeedbackEnabled="true"
+                android:src="@drawable/down" />
+
+            <Button
+                android:layout_height="fill_parent"
+                android:layout_gravity="center_vertical"
+                android:visibility="invisible" />
+
+        </TableRow>
+    </TableLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:padding="@dimen/padding_medium"
-        android:text="MoveScopeActivity"
-        tools:context=".MoveScopeActivity" />
+        android:layout_margin="@dimen/padding_large" >
 
-</RelativeLayout>
+        <Button
+            android:id="@+id/button_speed_minus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/btn_red"
+            android:text="-"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/custom_text_color" />
+        
+        <Button
+            android:id="@+id/button_speed_plus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/btn_red"
+            android:text="+"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/custom_text_color" />
+
+        <TextView
+            android:id="@+id/text_speed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@string/Initial_text_speed"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    </RelativeLayout>
+
+</LinearLayout>
