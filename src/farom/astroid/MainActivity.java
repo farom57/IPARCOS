@@ -12,34 +12,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 
+@SuppressWarnings("deprecation")
 public class MainActivity extends TabActivity {
 
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//
-//        final TabHost tabHost = getTabHost();
-//
-//        tabHost.addTab(tabHost.newTabSpec("tab1")
-//                .setIndicator("",getResources().getDrawable(R.drawable.icon_connect))
-//                .setContent(new Intent(this, ConnectionActivity.class)));
-//
-//        tabHost.addTab(tabHost.newTabSpec("tab2")
-//                .setIndicator("",getResources().getDrawable(R.drawable.icon_move))
-//                .setContent(new Intent(this, MoveScopeActivity.class)));
-//        
-//        tabHost.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_red));
-//        
-//
-//    }
-	
+
 	private TabHost tabHost;
 	 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
- 
+        
+        initComponents();
+        
+    }
+    
+    private void initComponents(){
+    	setContentView(R.layout.activity_main);
+    	 
         this.tabHost = getTabHost();
  
         setupTab(getResources().getDrawable(R.drawable.icon_connect), "tab1", new Intent().setClass(this, ConnectionActivity.class));

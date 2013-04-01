@@ -1,7 +1,7 @@
 <resources>
     <color name="custom_text_color">#FF0000</color>
 
-    <style name="AppTheme" parent="android:Theme.Black.NoTitleBar.Fullscreen">
+    <style name="AppTheme" parent="android:Theme.Black.NoTitleBar">
         <item name="android:textColor">@color/custom_text_color</item>
     </style>
     

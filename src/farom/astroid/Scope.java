@@ -4,11 +4,21 @@ package farom.astroid;
 
 public class Scope {
 
-	protected int speed;
+	protected int speed=1;
 	protected LogTextBox mLogBox;
+	protected static Scope lastInstance=null;
 	
-	public Scope(LogTextBox logBox)
-	{
+	public Scope()	{
+		lastInstance=this;
+	}
+	
+	public static Scope getLastInstance(){
+		if(lastInstance==null)
+			new Scope();
+		return lastInstance;
+	}
+	
+	public void setLogBox(LogTextBox logBox){
 		mLogBox=logBox;
 	}
 	
@@ -47,7 +57,6 @@ public class Scope {
 		mLogBox.append("Send : " + command);
 		return "";
 	}
-
 
 	
 	

@@ -19,6 +19,7 @@
                 android:visibility="invisible" />
 
             <ImageButton
+                android:id="@+id/btn_up"
                 android:layout_height="fill_parent"
                 android:layout_column="1"
                 android:layout_gravity="center_vertical"
@@ -37,7 +38,8 @@
         <TableRow
             android:layout_weight="1">
 
-            <ImageButton
+            <ImageButton                
+                android:id="@+id/btn_left"
                 android:layout_height="fill_parent"
                 android:layout_gravity="center_vertical"
                 android:layout_margin="@dimen/padding_medium"
@@ -45,7 +47,8 @@
                 android:hapticFeedbackEnabled="true"
                 android:src="@drawable/left" />
 
-            <ImageButton
+            <ImageButton                
+                android:id="@+id/btn_center"
                 android:layout_height="fill_parent"
                 android:layout_column="1"
                 android:layout_gravity="center_vertical"
@@ -55,6 +58,7 @@
                 android:src="@drawable/stop" />
 
             <ImageButton
+                android:id="@+id/btn_right"
                 android:layout_height="fill_parent"
                 android:layout_gravity="center_vertical"
                 android:layout_margin="@dimen/padding_medium"
@@ -72,6 +76,7 @@
                 android:visibility="invisible" />
 
             <ImageButton
+                android:id="@+id/btn_down"
                 android:layout_height="fill_parent"
                 android:layout_column="1"
                 android:layout_gravity="center_vertical"
@@ -95,8 +100,8 @@
 
         <Button
             android:id="@+id/button_speed_minus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:background="@drawable/btn_red"
@@ -106,8 +111,8 @@
         
         <Button
             android:id="@+id/button_speed_plus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@drawable/btn_red"
