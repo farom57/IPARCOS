@@ -34,19 +34,19 @@ public class AccessoryScope extends Scope {
 		log("Info sur l'accessoire:");
 		try{
 			log(" - fabricant : "+accessory.getManufacturer());
-			log(" - modèle : "+accessory.getModel());
+			log(" - modÃ¨le : "+accessory.getModel());
 			log(" - version : "+accessory.getVersion());
 			log(" - description : "+accessory.getDescription());
-			log(" - n° de série : "+accessory.getSerial());
+			log(" - nÂ° de sÃ©rie : "+accessory.getSerial());
 			log(" - URL : "+accessory.getUri());
 			log("");
 			
 			if (!manager.hasPermission(accessory)) {
-				log("Erreur : Acces refusé");
+				log("Erreur : Acces refusÃ©");
 				return;
 			}
 			
-			log("Acces autorisé");
+			log("Acces autorisÃ©");
 			
 		    fileDescriptor = manager.openAccessory(accessory);
 		    if (fileDescriptor != null) {
@@ -55,7 +55,7 @@ public class AccessoryScope extends Scope {
 		        outputStream = new FileOutputStream(fd);
 		    }
 		    else{
-		    	log("Erreur : Impossible d'ouvrir le périphérique");
+		    	log("Erreur : Impossible d'ouvrir le pÃ©riphÃ©rique");
 		    }
 		} catch(Exception e){
 			log(e.getMessage());
@@ -89,3 +89,4 @@ public class AccessoryScope extends Scope {
 	}
 
 }
+
