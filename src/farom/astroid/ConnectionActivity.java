@@ -7,14 +7,14 @@ import android.view.View;
 
 public class ConnectionActivity extends Activity {
 	
-
+	Scope scope;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connection);
-        
-        Scope.getLastInstance().setLogBox((LogTextBox) findViewById(R.id.text));
+        scope = new Scope();
+        scope.setLogBox((LogTextBox) findViewById(R.id.text));
     }
 
     @Override
@@ -24,7 +24,7 @@ public class ConnectionActivity extends Activity {
     }
     
 	public void btnOnClick(View view) {
-	    Scope.getLastInstance().connect();
+	    scope.connect();
 	}
 
     
