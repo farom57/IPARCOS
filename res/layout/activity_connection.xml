@@ -1,74 +1,7 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/Container"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/AppTheme"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp" >
-
-    <TextView
-        android:id="@+id/TextView01"
-        style="@style/sectionHeader"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/indi_host"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <Spinner
-            android:id="@+id/spinner1"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_weight="0.333" />
-
-        <EditText
-            android:id="@+id/editText1"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:ems="6"
-            android:height="48dp"
-            android:hint="7624"
-            android:inputType="number" >
-
-            <requestFocus />
-        </EditText>
-
-    </LinearLayout>
-
-    <ToggleButton
-        android:id="@+id/toggleButton1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textOff="@string/connect"
-        android:textOn="@string/disconnect"
-        android:onClick="btnOnClick" />
-    
-
-    <TextView
-        android:id="@+id/textView1"
-        style="@style/sectionHeader"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/log"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <ScrollView
-        android:id="@+id/scrollView1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-
-        <TextView
-            android:id="@+id/text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="log" />
-
-    </ScrollView>
-
-</LinearLayout>
+    tools:context="farom.astroid.ConnectionActivity"
+    tools:ignore="MergeRootFrame" />

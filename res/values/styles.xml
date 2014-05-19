@@ -2,14 +2,14 @@
     <color name="custom_text_color">#FF0000</color>
 
     <style name="AppTheme" parent="@android:style/Theme.Holo">
-<!-- 		<item name="android:actionBarItemBackground">@drawable/selectable_background_apptheme</item> -->
+		<item name="android:actionBarItemBackground">@drawable/selectable_background_apptheme</item>
         <item name="android:popupMenuStyle">@style/PopupMenu.AppTheme</item>
         <item name="android:dropDownListViewStyle">@style/DropDownListView.AppTheme</item>
-<!--         <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.AppTheme</item> -->
+        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.AppTheme</item>
         <item name="android:actionDropDownStyle">@style/DropDownNav.AppTheme</item>
         <item name="android:actionBarStyle">@style/ActionBar.Transparent.AppTheme</item>
         <item name="android:actionModeBackground">@drawable/cab_background_top_apptheme</item>
-<!--         <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_apptheme</item> -->
+        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_apptheme</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.AppTheme</item>
         <item name="android:editTextBackground">@drawable/apptheme_edit_text_holo_dark</item>
         <item name="android:textColorHighlight">#99cc0000</item>
@@ -33,12 +33,12 @@
         <item name="android:fastScrollThumbDrawable">@drawable/apptheme_fastscroll_thumb_holo</item>
     </style>
 
-<!--     <style name="ActionBar.Solid.AppTheme" parent="@android:style/Widget.Holo.ActionBar.Solid"> -->
-<!--         <item name="android:background">@drawable/ab_solid_apptheme</item> -->
-<!--         <item name="android:backgroundStacked">@drawable/ab_stacked_solid_apptheme</item> -->
-<!--         <item name="android:backgroundSplit">@drawable/ab_bottom_solid_apptheme</item> -->
-<!--         <item name="android:progressBarStyle">@style/ProgressBar.AppTheme</item> -->
-<!--     </style> -->
+    <style name="ActionBar.Solid.AppTheme" parent="@android:style/Widget.Holo.ActionBar.Solid">
+        <item name="android:background">@drawable/ab_solid_apptheme</item>
+        <item name="android:backgroundStacked">@drawable/ab_stacked_solid_apptheme</item>
+        <item name="android:backgroundSplit">@drawable/ab_bottom_solid_apptheme</item>
+        <item name="android:progressBarStyle">@style/ProgressBar.AppTheme</item>
+    </style>
 
     <style name="ActionBar.Transparent.AppTheme" parent="@android:style/Widget.Holo.ActionBar">
         <item name="android:background">@drawable/ab_transparent_apptheme</item>
@@ -53,9 +53,9 @@
         <item name="android:listSelector">@drawable/selectable_background_apptheme</item>
     </style>
 
-<!--     <style name="ActionBarTabStyle.AppTheme" parent="@android:style/Widget.Holo.ActionBar.TabView"> -->
-<!--         <item name="android:background">@drawable/tab_indicator_ab_apptheme</item> -->
-<!--     </style> -->
+    <style name="ActionBarTabStyle.AppTheme" parent="@android:style/Widget.Holo.ActionBar.TabView">
+        <item name="android:background">@drawable/tab_indicator_ab_apptheme</item>
+    </style>
 
     <style name="DropDownNav.AppTheme" parent="@android:style/Widget.Holo.Spinner">
         <item name="android:background">@drawable/spinner_background_ab_apptheme</item>
@@ -150,7 +150,7 @@
         <item name="android:drawablePadding">4dp</item>
         <item name="android:layout_marginTop">8dp</item>
         <item name="android:padding">4dp</item>
-<!--         <item name="android:textAllCaps">true</item> -->
+        <item name="android:textAllCaps">true</item>
         <item name="android:textColor">@color/emphasis</item>
         <item name="android:textSize">14sp</item>
     </style>
