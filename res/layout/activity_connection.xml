@@ -1,29 +1,74 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/Container"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/AppTheme"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp" >
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical" >
+    <TextView
+        android:id="@+id/TextView01"
+        style="@style/sectionHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/indi_host"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <Button
-            android:id="@+id/button1"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Spinner
+            android:id="@+id/spinner1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/padding_large"
-            android:background="@drawable/btn_red"
-            android:text="@string/connect_scope"
-            android:textColor="#FFFF0000"
-            android:textSize="30sp"
-            android:onClick="btnOnClick" />
+            android:layout_height="48dp"
+            android:layout_weight="0.333" />
 
-		<farom.astroid.LogTextBox
-		    android:id="@+id/text"
-		    android:layout_width="match_parent"
-		    android:layout_height="0dip"
-		    android:layout_margin="@dimen/padding_large"
-		    android:layout_weight="1"
-		    android:background="@drawable/btn_red"
-		    android:scrollbars="vertical"
-		    android:textColor="#FFFFFFFF"
-		    android:textColorHint="#FF999999" />
+        <EditText
+            android:id="@+id/editText1"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:ems="6"
+            android:height="48dp"
+            android:hint="7624"
+            android:inputType="number" >
+
+            <requestFocus />
+        </EditText>
 
     </LinearLayout>
+
+    <ToggleButton
+        android:id="@+id/toggleButton1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textOff="@string/connect"
+        android:textOn="@string/disconnect"
+        android:onClick="btnOnClick" />
+    
+
+    <TextView
+        android:id="@+id/textView1"
+        style="@style/sectionHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/log"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="log" />
+
+    </ScrollView>
+
+</LinearLayout>

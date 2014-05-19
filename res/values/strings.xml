@@ -1,12 +1,25 @@
 <resources>
 
     <string name="app_name">Astroid</string>
-    <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">Astroid</string>
-    <string name="title_activity_connection">Connection</string>
-    <string name="title_activity_move_scope">Déplacements</string>
-    <string name="connect_scope">Connection</string>
-    <string name="Initial_text_speed">Vitesse inconnue</string>
+    <string name="title_activity_connection">Connexion</string>
+    <string name="title_activity_move_scope">Move</string>
+    <string name="indi_host">INDI Host</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="log">Log</string>
+    <string name="port">Port</string>
+    
+<!--     <string-array name="planets_array"> -->
+<!--         <item>Mercury</item> -->
+<!--         <item>Venus</item> -->
+<!--         <item>Earth</item> -->
+<!--         <item>Mars</item> -->
+<!--         <item>Jupiter</item> -->
+<!--         <item>Saturn</item> -->
+<!--         <item>Uranus</item> -->
+<!--         <item>Neptune</item> -->
+<!--     </string-array> -->
 
 </resources>
