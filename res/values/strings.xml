@@ -14,5 +14,6 @@
     <string name="hostadd">Add Server</string>
     <string name="hostauto">Auto</string>
         <string name="host_prompt_text">Host ip address:</string>
+        <string name="connecting">Connection ...</string>
 
 </resources>

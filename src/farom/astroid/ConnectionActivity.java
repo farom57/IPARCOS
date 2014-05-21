@@ -1,6 +1,8 @@
 package farom.astroid;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import android.app.Activity;
@@ -8,6 +10,7 @@ import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.LayoutInflater;
@@ -22,13 +25,15 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
-import android.widget.ToggleButton;
+import android.widget.Button;
 import android.os.Build;
+import android.preference.PreferenceManager;
 
 public class ConnectionActivity extends Activity {
 
 	private INDIAdapter indiAdapter;
-	private List<String> serverList;
+	private Button connectionButton;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,18 +41,14 @@ public class ConnectionActivity extends Activity {
 
 		setContentView(R.layout.activity_connection);
 
-		serverList = new Vector<String>();
-		serverList.add(getResources().getString(R.string.hostauto));
-		serverList.add(getResources().getString(R.string.hostadd));
-		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
-				serverList);
-		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		((Spinner) findViewById(R.id.spinnerHost)).setAdapter(dataAdapter);
+		loadServerList();
 
 		indiAdapter = INDIAdapter.getInstance();
 		indiAdapter.setLogView((TextView) findViewById(R.id.logTextBox));
 
-		((ToggleButton) findViewById(R.id.connectionButton)).setOnClickListener(new View.OnClickListener() {
+		connectionButton = ((Button) findViewById(R.id.connectionButton));
+		indiAdapter.setConnectionButton(connectionButton);
+		connectionButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				String host = String.valueOf(((Spinner) findViewById(R.id.spinnerHost)).getSelectedItem());
@@ -58,8 +59,17 @@ public class ConnectionActivity extends Activity {
 				} catch (NumberFormatException e) {
 					port = 7624;
 				}
+				
+				if(connectionButton.getText().equals(getResources().getString(R.string.connect))){
+					if(host.equals(getResources().getString(R.string.hostadd))){
+						addServer();
+					}else{
+						indiAdapter.connect(host, port);
+					}
+				}else if(connectionButton.getText().equals(getResources().getString(R.string.disconnect))){
+					indiAdapter.disconnect();
+				}
 
-				indiAdapter.connect(host, port);
 			}
 		});
 
@@ -80,14 +90,57 @@ public class ConnectionActivity extends Activity {
 
 	}
 
-	protected void addServer(String ip) {
-		serverList.add(0,ip);
-		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
-				serverList);
+	/**
+	 * load and update the server list
+	 */
+	protected void loadServerList() {
+		// get preferences
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		Set<String> set = preferences.getStringSet("SERVER_SET", null);
+		List<String> serverList;
+		if(set!=null){
+			serverList = new Vector<String>(set);
+		}else{
+			serverList = new Vector<String>();
+		}				
+		
+		// update the display
+		serverList.add(getResources().getString(R.string.hostadd));
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,serverList);
 		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		((Spinner) findViewById(R.id.spinnerHost)).setAdapter(dataAdapter);
 	}
+	
+	/**
+	 * Add the server address, save the server list and update the spinner
+	 * @param ip
+	 */
+	protected void addServer(String ip) {
+		// Retrieve the list
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		Set<String> set = preferences.getStringSet("SERVER_SET", null);
+		List<String> serverList;
+		if(set!=null){
+			serverList = new Vector<String>(set);
+		}else{
+			serverList = new Vector<String>();
+		}		
+		serverList.add(0,ip);		
+		
+		// Save the list
+		Set<String> newSet = new HashSet<String>();
+		newSet.addAll(serverList);		
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.putStringSet("SERVER_SET", newSet);
+		editor.commit();
+		
+		// Update
+		loadServerList();
+	}
 
+	/**
+	 * Ask to the user to add a new server
+	 */
 	protected void addServer() {
 		// get prompts.xml view
 		LayoutInflater li = LayoutInflater.from(this);
@@ -118,12 +171,12 @@ public class ConnectionActivity extends Activity {
 
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.connection, menu);
-		return true;
-	}
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//		// Inflate the menu; this adds items to the action bar if it is present.
+//		getMenuInflater().inflate(R.menu.connection, menu);
+//		return true;
+//	}
 
 	// @Override
 	// public boolean onOptionsItemSelected(MenuItem item) {

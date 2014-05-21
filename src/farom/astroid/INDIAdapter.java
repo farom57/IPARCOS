@@ -3,6 +3,7 @@ package farom.astroid;
 import java.io.IOException;
 import java.util.Date;
 
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 import laazotea.indi.Constants.*;
@@ -15,7 +16,10 @@ public class INDIAdapter implements INDIDeviceListener, INDIPropertyListener, IN
 	private INDIServerConnection connection;
 	private INDISwitchProperty telescopeMotionNSP;
 	private INDISwitchProperty telescopeMotionWEP;
-	private ToggleButton connectionButton;
+	private Button connectionButton;
+
+
+
 
 	private INDIAdapter() {}
 	
@@ -25,6 +29,7 @@ public class INDIAdapter implements INDIDeviceListener, INDIPropertyListener, IN
 	}
 
 	public void connect(java.lang.String host, int port) {
+		connectionButton.setText(R.string.connecting);
 		log("Try to connect to "+host+":"+port);
 		connection = new INDIServerConnection(host, 7624);
 		connection.addINDIServerConnectionListener(this); // We listen to all
@@ -34,14 +39,19 @@ public class INDIAdapter implements INDIDeviceListener, INDIPropertyListener, IN
 					connection.connect();
 					connection.askForDevices(); // Ask for all the devices.
 					log("connection ok");
-//					connectionButton.post(new Runnable() {
-//						 public void run() {
-//							 connectionButton.setActivated(true);
-//						 }
-//						 });
+					connectionButton.post(new Runnable() {
+						 public void run() {
+							 connectionButton.setText(R.string.disconnect);
+						 }
+					 });
 				} catch (IOException e) {
 					log("Problem with the connection");
 					log(e.getMessage());
+					connectionButton.post(new Runnable() {
+						 public void run() {
+							 connectionButton.setText(R.string.connect);
+						 }
+						 });
 				}
 
 			}
@@ -162,7 +172,11 @@ public class INDIAdapter implements INDIDeviceListener, INDIPropertyListener, IN
 	@Override
 	public void connectionLost(INDIServerConnection connection) {
 		log("Connection lost. Bye");
-		connectionButton.setActivated(false);
+		connectionButton.post(new Runnable() {
+			 public void run() {
+				 connectionButton.setText(R.string.connect);
+			 }
+		 });
 	}
 
 	@Override
@@ -205,6 +219,28 @@ public class INDIAdapter implements INDIDeviceListener, INDIPropertyListener, IN
 	@Override
 	public void propertyChanged(INDIProperty property) {
 		 log("Property Changed: " + property.getNameStateAndValuesAsString());
+	}
+	
+	/**
+	 * @return the connectionButton
+	 */
+	public Button getConnectionButton() {
+		return connectionButton;
+	}
+
+
+	/**
+	 * @param connectionButton the connectionButton to set
+	 */
+	public void setConnectionButton(Button connectionButton) {
+		this.connectionButton = connectionButton;
+	}
+
+	/**
+	 * Breaks the connection
+	 */
+	public void disconnect() {
+		connection.disconnect();
 	}
 
 }

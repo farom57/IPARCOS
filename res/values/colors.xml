@@ -2,5 +2,6 @@
 <resources>
     <color name="emphasis">#CC0000</color>
     <color name="bg_gray">#cecbce</color>
+    <color name="bg_black">#000000</color>
     <color name="apptheme_color">#cc0000</color>
 </resources>
