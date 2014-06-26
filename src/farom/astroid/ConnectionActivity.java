@@ -6,27 +6,22 @@ import java.util.Set;
 import java.util.Vector;
 
 import android.app.Activity;
-import android.app.ActionBar;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Button;
-import android.os.Build;
 import android.preference.PreferenceManager;
 
 public class ConnectionActivity extends Activity {
@@ -48,30 +43,6 @@ public class ConnectionActivity extends Activity {
 
 		connectionButton = ((Button) findViewById(R.id.connectionButton));
 		indiAdapter.setConnectionButton(connectionButton);
-		connectionButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				String host = String.valueOf(((Spinner) findViewById(R.id.spinnerHost)).getSelectedItem());
-				String portStr = ((EditText) findViewById(R.id.editTextPort)).getText().toString();
-				int port;
-				try {
-					port = Integer.parseInt(portStr);
-				} catch (NumberFormatException e) {
-					port = 7624;
-				}
-				
-				if(connectionButton.getText().equals(getResources().getString(R.string.connect))){
-					if(host.equals(getResources().getString(R.string.hostadd))){
-						addServer();
-					}else{
-						indiAdapter.connect(host, port);
-					}
-				}else if(connectionButton.getText().equals(getResources().getString(R.string.disconnect))){
-					indiAdapter.disconnect();
-				}
-
-			}
-		});
 
 		((Spinner) findViewById(R.id.spinnerHost)).setOnItemSelectedListener(new OnItemSelectedListener() {
 
@@ -109,6 +80,32 @@ public class ConnectionActivity extends Activity {
 		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,serverList);
 		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		((Spinner) findViewById(R.id.spinnerHost)).setAdapter(dataAdapter);
+	}
+	
+	/**
+	 * Called when the connect/disconnect button is clicked
+	 * @param v
+	 */
+	public void connectionButtonClicked(View v) {
+		String host = String.valueOf(((Spinner) findViewById(R.id.spinnerHost)).getSelectedItem());
+		String portStr = ((EditText) findViewById(R.id.editTextPort)).getText().toString();
+		int port;
+		try {
+			port = Integer.parseInt(portStr);
+		} catch (NumberFormatException e) {
+			port = 7624;
+		}
+		
+		if(connectionButton.getText().equals(getResources().getString(R.string.connect))){
+			if(host.equals(getResources().getString(R.string.hostadd))){
+				addServer();
+			}else{
+				indiAdapter.connect(host, port);
+			}
+		}else if(connectionButton.getText().equals(getResources().getString(R.string.disconnect))){
+			indiAdapter.disconnect();
+		}
+
 	}
 	
 	/**
@@ -171,23 +168,56 @@ public class ConnectionActivity extends Activity {
 
 	}
 
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		// Inflate the menu; this adds items to the action bar if it is present.
-//		getMenuInflater().inflate(R.menu.connection, menu);
-//		return true;
-//	}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.global, menu);
+		
+		// hide the item for the current activity
+		MenuItem connectionItem = menu.findItem(R.id.menu_connection);
+		connectionItem.setVisible(false);
+		return true;
+	}
 
-	// @Override
-	// public boolean onOptionsItemSelected(MenuItem item) {
-	// // Handle action bar item clicks here. The action bar will
-	// // automatically handle clicks on the Home/Up button, so long
-	// // as you specify a parent activity in AndroidManifest.xml.
-	// int id = item.getItemId();
-	// if (id == R.id.action_settings) {
-	// return true;
-	// }
-	// return super.onOptionsItemSelected(item);
-	// }
+	/**
+	 * open the motion activity, 
+	 * @param v 
+	 */
+	public boolean openMotionActivity(MenuItem v){
+		Intent intent = new Intent(this, MotionActivity.class);
+		startActivity(intent);
+		return true;
+	}
+	
+	/**
+	 * open the settings activity
+	 * @param v
+	 * @return 
+	 */
+	public boolean openSettingsActivity(MenuItem v){
+		// TODO
+		return false;
+	}
+	
+	/**
+	 * open the generic activity
+	 * @param v
+	 * @return 
+	 */
+	public boolean openGenericActivity(MenuItem v){
+		Intent intent = new Intent(this, GenericActivity.class);
+		startActivity(intent);
+		return true;
+	}
+	
+	/**
+	 * open the connection activity
+	 * @param v
+	 * @return 
+	 */
+	public boolean openConnectionActivity(MenuItem v){
+		// nothing to do, already the current activity
+		return false;
+	}
 
 }

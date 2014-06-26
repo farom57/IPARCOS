@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="farom.astroid"
     android:versionCode="1"
@@ -6,20 +7,44 @@
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="19" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" android:allowBackup="true">
+        android:theme="@style/AppTheme" >
         <activity
-            android:name="ConnectionActivity"
-            android:label="@string/title_activity_connection" >
+            android:name="farom.astroid.ConnectionActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleInstance"
+            android:logo="@drawable/icon_connect"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="farom.astroid.MotionActivity"
+            android:label="@string/title_activity_motion"
+            android:launchMode="singleInstance"
+            android:parentActivityName="farom.astroid.ConnectionActivity"
+            android:screenOrientation="portrait" android:logo="@drawable/icon_move">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="farom.astroid.ConnectionActivity" />
+        </activity>
+        <activity
+            android:name="farom.astroid.GenericActivity"
+            android:label="@string/title_activity_generic"
+            android:parentActivityName="farom.astroid.ConnectionActivity" android:launchMode="singleInstance" android:logo="@drawable/stop" android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="farom.astroid.ConnectionActivity" />
         </activity>
     </application>
 
