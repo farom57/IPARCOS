@@ -10,9 +10,12 @@ import laazotea.indi.client.INDIDeviceListener;
 import laazotea.indi.client.INDIProperty;
 import laazotea.indi.client.INDIServerConnection;
 import laazotea.indi.client.INDIServerConnectionListener;
+import android.app.ActionBar.Tab;
+import android.app.ActionBar.TabListener;
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,17 +29,35 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
 
-public class GenericActivity extends Activity implements INDIServerConnectionListener {
+public class GenericActivity extends Activity implements TabListener, INDIServerConnectionListener {
+
+	/**
+	 * The active fragment
+	 */
+	private PrefsFragment fragment = null;
+
+	/**
+	 * Retains the association between the tab and the device
+	 */
+	private HashMap<Tab, INDIDevice> tabDeviceMap;
 
 	private INDIAdapter indiAdapter;
-	private PrefsFragment fragment;
+	private ActionBar actionBar;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		indiAdapter = INDIAdapter.getInstance();
 		indiAdapter.registerPermanentConnectionListener(this);
+
 		setContentView(R.layout.activity_generic);
+		actionBar = getActionBar();
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		actionBar.setDisplayShowTitleEnabled(false);
+
+		tabDeviceMap = new HashMap<ActionBar.Tab, INDIDevice>();
+
 	}
 
 	@Override
@@ -47,27 +68,42 @@ public class GenericActivity extends Activity implements INDIServerConnectionLis
 		// hide the item for the current activity
 		MenuItem genericItem = menu.findItem(R.id.menu_generic);
 		genericItem.setVisible(false);
+
 		return true;
 	}
-	
+
 	@Override
-	protected void onResume(){
+	protected void onResume() {
 		super.onResume();
-		if ((fragment == null) && (indiAdapter.getDevices().size() > 0)) {
-			fragment = new PrefsFragment();
-			fragment.setDevice(indiAdapter.getDevices().get(0));
-			getFragmentManager().beginTransaction().add(R.id.container, fragment).commit();
+
+		if (indiAdapter.getDevices().size() > 0) {
+
+			// Recreate tabs
+			for (Iterator<INDIDevice> it = indiAdapter.getDevices().iterator(); it.hasNext();) {
+				INDIDevice device = it.next();
+
+				Tab tab = actionBar.newTab();
+
+				tabDeviceMap.put(tab, device);
+
+				tab.setText(device.getName());
+				tab.setTabListener(this);
+				actionBar.addTab(tab);
+
+			}
+
 		}
+
 	}
-	
+
 	@Override
-	protected void onPause(){
+	protected void onPause() {
 		super.onPause();
-		if ((fragment != null)) {
-			getFragmentManager().beginTransaction().remove(fragment).commit();
-			fragment.finalize();
-			fragment=null;
-		}
+
+		// Remove the tabs
+		actionBar.removeAllTabs();
+		tabDeviceMap.clear();
+
 	}
 
 	@Override
@@ -131,8 +167,6 @@ public class GenericActivity extends Activity implements INDIServerConnectionLis
 	public void connectionLost(INDIServerConnection arg0) {
 		openConnectionActivity(null);
 	}
-	
-
 
 	@Override
 	public void newDevice(INDIServerConnection arg0, INDIDevice arg1) {
@@ -147,6 +181,41 @@ public class GenericActivity extends Activity implements INDIServerConnectionLis
 	@Override
 	public void removeDevice(INDIServerConnection arg0, INDIDevice arg1) {
 		openConnectionActivity(null);
+	}
+
+	@Override
+	public void onTabReselected(Tab arg0, FragmentTransaction arg1) {
+		// User selected the already selected tab. Usually do nothing.
+	}
+
+	@Override
+	public void onTabSelected(Tab tab, FragmentTransaction ft) {
+		// Check if the fragment is already initialized
+		if (fragment == null) {
+			fragment = new PrefsFragment();
+			fragment.setDevice(tabDeviceMap.get(tab));
+			ft.add(android.R.id.content, fragment);
+		}else{
+			indiAdapter.log("error : fragment!=null");
+		}
+	}
+
+	@Override
+	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+		if (fragment != null) {
+			// Detach the fragment, and delete it because an other will be
+			// created
+			ft.detach(fragment);
+			try {
+				fragment.finalize();
+			} catch (Throwable e) {
+				indiAdapter.log("error fragment.finalize() : "+e.getMessage());
+			}
+			fragment=null;
+			
+		}else{
+			indiAdapter.log("error : fragment==null");
+		}
 	}
 
 	/**
@@ -166,8 +235,9 @@ public class GenericActivity extends Activity implements INDIServerConnectionLis
 			map = new HashMap<INDIProperty, PropPref>();
 			groups = new HashMap<String, PreferenceCategory>();
 		}
-		
-		public void finalize(){
+
+		public void finalize() throws Throwable {
+			super.finalize();
 			device.removeINDIDeviceListener(this);
 		}
 
