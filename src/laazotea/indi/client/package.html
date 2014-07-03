@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <p>Provides the classes necessary to create INDI Clients, connections to INDI Servers and to inspect and modify INDI properties of Devices.</p>
+    
+    <p>Usually a INDI Client will instantiate at least one <code>INDIServerConnection</code> to connect to a INDI Server. Additionally it can add some listeners to the INDI Devices, INDI Properties or INDI Elements to be notified about changes in them. Additionally the values can be changed and those changes sent to the INDI Server. Note that most of the other classes are not usually instantiated in a direct way.</p>
+    
+    <p>Please check <code>laazotea.indi.client.examples.SimpleINDIClient</code>, <code>laazotea.indi.client.examples.AutoBLOBSaver</code> for some examples of the creation of simple Clients. If you want a sample Client with a Graphical UI, please download and check de INDI for Java Client UI library.</p>
+    
+    <p>To launch the examples use the following command:</p>
+    
+    <ul>
+      <li><code>&gt; java -cp JavaINDIClient.jar laazotea.indi.client.examples.SimpleINDIClient host [port]</code></li>
+      <li><code>&gt; java -cp JavaINDIClient.jar laazotea.indi.client.examples.AutoBLOBSaver deviceName blobPropertyName blobElementName host [port]</code></li>
+    </ul>
+    
+    @see laazotea.indi.client.INDIServerConnection
+    @see laazotea.indi.client.examples.SimpleINDIClient
+    @see laazotea.indi.client.examples.AutoBLOBSaver
+  </body>
+</html>

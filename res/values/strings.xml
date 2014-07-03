@@ -27,4 +27,5 @@
     <string name="send_text_request">Send</string>
     <string name="cancel_text_request">Cancel</string>
     <string name="back_text_request">Back</string>
+    <string name="illegal_number_mesage">Incorrect number</string>
 </resources>
