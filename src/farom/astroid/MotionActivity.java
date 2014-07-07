@@ -1,5 +1,10 @@
 package farom.astroid;
 
+import java.util.Date;
+
+import laazotea.indi.client.INDIDevice;
+import laazotea.indi.client.INDIServerConnection;
+import laazotea.indi.client.INDIServerConnectionListener;
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
@@ -14,7 +19,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.os.Build;
 
-public class MotionActivity extends Activity {
+public class MotionActivity extends Activity implements INDIServerConnectionListener {
 	
 	private INDIAdapter indiAdapter;
 	
@@ -24,6 +29,7 @@ public class MotionActivity extends Activity {
 		setContentView(R.layout.activity_motion);
 
 		indiAdapter = INDIAdapter.getInstance();
+		indiAdapter.registerPermanentConnectionListener(this);
 		indiAdapter.setBtnMoveE((Button)findViewById(R.id.buttonE));
 		indiAdapter.setBtnMoveW((Button)findViewById(R.id.buttonW));
 		indiAdapter.setBtnMoveN((Button)findViewById(R.id.buttonN));
@@ -92,5 +98,23 @@ public class MotionActivity extends Activity {
 		return true;
 	}
 	
+	@Override
+	public void connectionLost(INDIServerConnection arg0) {
+		openConnectionActivity(null);
+	}
 
+	@Override
+	public void newDevice(INDIServerConnection arg0, INDIDevice arg1) {
+
+	}
+
+	@Override
+	public void newMessage(INDIServerConnection arg0, Date arg1, String arg2) {
+
+	}
+
+	@Override
+	public void removeDevice(INDIServerConnection arg0, INDIDevice arg1) {
+		openConnectionActivity(null);
+	}
 }

@@ -258,7 +258,7 @@ public class INDISexagesimalFormatter {
 	}
 
 	/**
-	 * Fomats a number according to the number format os this formatter.
+	 * Formats a number according to the number format os this formatter.
 	 * 
 	 * @param number
 	 *            the number to be formatted.

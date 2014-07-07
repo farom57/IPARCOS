@@ -112,7 +112,7 @@ public class NumberPropPref extends PropPref {
 			builder.setTitle(prop.getLabel());
 
 			if (prop.getPermission() != Constants.PropertyPermissions.RO) {
-				builder.setPositiveButton(R.string.send_text_request, new DialogInterface.OnClickListener() {
+				builder.setPositiveButton(R.string.send_request, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						try {
 							for (int i = 0; i < elements.size(); i++) {
@@ -133,13 +133,13 @@ public class NumberPropPref extends PropPref {
 						}
 					}
 				});
-				builder.setNegativeButton(R.string.cancel_text_request, new DialogInterface.OnClickListener() {
+				builder.setNegativeButton(R.string.cancel_request, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 
 					}
 				});
 			} else {
-				builder.setNegativeButton(R.string.back_text_request, new DialogInterface.OnClickListener() {
+				builder.setNegativeButton(R.string.back_request, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 
 					}

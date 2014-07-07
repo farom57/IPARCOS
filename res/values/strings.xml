@@ -24,8 +24,8 @@
     <string name="default_speed">Unavailable</string>
     <string name="title_activity_property">PropertyActivity</string>
     <string name="title_activity_generic">GenericActivity</string>
-    <string name="send_text_request">Send</string>
-    <string name="cancel_text_request">Cancel</string>
-    <string name="back_text_request">Back</string>
+    <string name="send_request">Send</string>
+    <string name="cancel_request">Cancel</string>
+    <string name="back_request">Back</string>
     <string name="illegal_number_mesage">Incorrect number</string>
 </resources>
