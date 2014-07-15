@@ -24,9 +24,16 @@ import android.widget.TextView;
 import android.widget.Button;
 import android.preference.PreferenceManager;
 
-public class ConnectionActivity extends Activity {
+/**
+ * The activity to manage the connection (main activity)
+ * 
+ * @author farom
+ *
+ */
+public class ConnectionActivity extends Activity{
 
 	private INDIAdapter indiAdapter;
+	
 	private Button connectionButton;
 
 
@@ -38,14 +45,13 @@ public class ConnectionActivity extends Activity {
 
 		loadServerList();
 
-		indiAdapter = INDIAdapter.getInstance();
-		indiAdapter.setLogView((TextView) findViewById(R.id.logTextBox));
+		indiAdapter = INDIAdapter.getInstance(); // TODO : change INDIAdaptater template
+		indiAdapter.setLogView((TextView) findViewById(R.id.logTextBox)); // TODO : correct scroll bug
 
-		connectionButton = ((Button) findViewById(R.id.connectionButton));
+		connectionButton = ((Button) findViewById(R.id.connectionButton)); 
 		indiAdapter.setConnectionButton(connectionButton);
 
 		((Spinner) findViewById(R.id.spinnerHost)).setOnItemSelectedListener(new OnItemSelectedListener() {
-
 			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 				if (parent.getItemAtPosition(pos).toString().equals(getResources().getString(R.string.hostadd))) {
 					addServer();
@@ -54,10 +60,10 @@ public class ConnectionActivity extends Activity {
 
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {
-				// TODO Auto-generated method stub
+				// nothing to do
 			}
-
 		});
+		
 
 	}
 
@@ -87,6 +93,7 @@ public class ConnectionActivity extends Activity {
 	 * @param v
 	 */
 	public void connectionButtonClicked(View v) {
+		// Retrieve Hostname and port number
 		String host = String.valueOf(((Spinner) findViewById(R.id.spinnerHost)).getSelectedItem());
 		String portStr = ((EditText) findViewById(R.id.editTextPort)).getText().toString();
 		int port;
@@ -96,6 +103,7 @@ public class ConnectionActivity extends Activity {
 			port = 7624;
 		}
 		
+		// Connect (or disconnect)
 		if(connectionButton.getText().equals(getResources().getString(R.string.connect))){
 			if(host.equals(getResources().getString(R.string.hostadd))){
 				addServer();
@@ -195,7 +203,7 @@ public class ConnectionActivity extends Activity {
 	 * @return 
 	 */
 	public boolean openSettingsActivity(MenuItem v){
-		// TODO
+		// TODO Add settings
 		return false;
 	}
 	
