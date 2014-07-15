@@ -17,14 +17,12 @@ import android.view.View;
  * A placeholder fragment containing a simple view.
  */
 public class PrefsFragment extends PreferenceFragment implements INDIDeviceListener {
-	private INDIAdapter indiAdapter = null;
 	private INDIDevice device = null;
 	private PreferenceScreen prefScreen;
 	private HashMap<INDIProperty, PropPref> map;
 	private HashMap<String, PreferenceCategory> groups;
 
 	public void setDevice(INDIDevice dev) {
-		indiAdapter = INDIAdapter.getInstance();
 		device = dev;
 		device.addINDIDeviceListener(this);
 		map = new HashMap<INDIProperty, PropPref>();

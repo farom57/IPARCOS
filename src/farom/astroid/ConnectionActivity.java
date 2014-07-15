@@ -1,16 +1,24 @@
 package farom.astroid;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import laazotea.indi.client.INDIDevice;
+import laazotea.indi.client.INDIServerConnection;
+import laazotea.indi.client.INDIServerConnectionListener;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,31 +33,39 @@ import android.widget.Button;
 import android.preference.PreferenceManager;
 
 /**
- * The activity to manage the connection (main activity)
+ * The main activity of the application. It manages the connection.
  * 
- * @author farom
+ * @author Romain Fafet
  *
  */
-public class ConnectionActivity extends Activity{
+public class ConnectionActivity extends Activity implements INDIServerConnectionListener{
 
-	private INDIAdapter indiAdapter;
 	
+	private static INDIServerConnection connection;
+	private static ConnectionActivity instance = null;
+	
+	// a list to re-add the listener when the connection is destroyed and recreated
+	private ArrayList<INDIServerConnectionListener> permanentConnectionListeners;
+	
+	// views
+	private TextView logView;
 	private Button connectionButton;
 
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		instance = this;
+		permanentConnectionListeners = new ArrayList<INDIServerConnectionListener>();
 
 		setContentView(R.layout.activity_connection);
 
 		loadServerList();
 
-		indiAdapter = INDIAdapter.getInstance(); // TODO : change INDIAdaptater template
-		indiAdapter.setLogView((TextView) findViewById(R.id.logTextBox)); // TODO : correct scroll bug
+		logView = (TextView) findViewById(R.id.logTextBox); // TODO : correct scroll bug
 
 		connectionButton = ((Button) findViewById(R.id.connectionButton)); 
-		indiAdapter.setConnectionButton(connectionButton);
 
 		((Spinner) findViewById(R.id.spinnerHost)).setOnItemSelectedListener(new OnItemSelectedListener() {
 			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
@@ -108,10 +124,10 @@ public class ConnectionActivity extends Activity{
 			if(host.equals(getResources().getString(R.string.hostadd))){
 				addServer();
 			}else{
-				indiAdapter.connect(host, port);
+				connect(host, port);
 			}
 		}else if(connectionButton.getText().equals(getResources().getString(R.string.disconnect))){
-			indiAdapter.disconnect();
+			disconnect();
 		}
 
 	}
@@ -227,5 +243,117 @@ public class ConnectionActivity extends Activity{
 		// nothing to do, already the current activity
 		return false;
 	}
+	
+	/**
+	 * Connect to the driver
+	 * @param host
+	 * @param port
+	 */
+	private void connect(java.lang.String host, int port) {
+		connectionButton.setText(R.string.connecting);
+		Log.i("ConnectionActivity","Try to connect to " + host + ":" + port);
+		connection = new INDIServerConnection(host, port);
+		
+		connection.addINDIServerConnectionListener(this); // We listen to all
+		for(Iterator<INDIServerConnectionListener> it = permanentConnectionListeners.iterator(); it.hasNext();){
+			connection.addINDIServerConnectionListener(it.next());
+		}
+		
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					connection.connect();
+					connection.askForDevices(); // Ask for all the devices.
+					Log.i("ConnectionActivity","connection ok");
+					connectionButton.post(new Runnable() {
+						public void run() {
+							connectionButton.setText(R.string.disconnect);
+						}
+					});
+				} catch (IOException e) {
+					Log.i("ConnectionActivity","Problem with the connection");
+					Log.i("ConnectionActivity",e.getMessage());
+					connectionButton.post(new Runnable() {
+						public void run() {
+							connectionButton.setText(R.string.connect);
+						}
+					});
+				}
+
+			}
+		}).start();
+	}
+	
+	/**
+	 * Breaks the connection
+	 */
+	public void disconnect() {
+		connection.disconnect();
+	}
+
+	@Override
+	public void newDevice(INDIServerConnection connection, INDIDevice device) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeDevice(INDIServerConnection connection, INDIDevice device) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void connectionLost(INDIServerConnection connection) {
+		Log.i("ConnectionActivity","Connection lost. Bye");
+		connectionButton.post(new Runnable() {
+			public void run() {
+				connectionButton.setText(R.string.connect);
+			}
+		});
+	}
+
+	@Override
+	public void newMessage(INDIServerConnection connection, Date timestamp, String message) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	/**
+	 * Add a INDIServerConnectionListener to the connection. If the connection is re-created, the listener will be re-installed
+	 * @param arg the listener
+	 */
+	public void registerPermanentConnectionListener(INDIServerConnectionListener arg){
+		permanentConnectionListeners.add(arg);
+		if(connection!=null){
+			connection.addINDIServerConnectionListener(arg);
+		}
+	}
+	
+	/**
+	 * remove the listener
+	 * @param arg the listener
+	 */
+	public void unRegisterPermanentConnectionListener(INDIServerConnectionListener arg){
+		permanentConnectionListeners.remove(arg);
+		if(connection!=null){
+			connection.removeINDIServerConnectionListener(arg);
+		}
+	}
+
+	/**
+	 * @return the connection, it may be null if the connection doesnot exist
+	 */
+	public static INDIServerConnection getConnection() {
+		return connection;
+	}
+
+	/**
+	 * @return the instance of the activity
+	 */
+	public static ConnectionActivity getInstance(){
+		return instance;
+	}
+	
 
 }

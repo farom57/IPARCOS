@@ -114,9 +114,9 @@ public class SwitchPropPref extends PropPref {
 							}
 							prop.sendChangesToDriver();
 						} catch (INDIValueException e) {
-							INDIAdapter.getInstance().log(e.getMessage());
+							e.printStackTrace();
 						} catch (IOException e) {
-							INDIAdapter.getInstance().log(e.getMessage());
+							e.printStackTrace();
 						}
 					}
 				});

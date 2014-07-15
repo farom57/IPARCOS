@@ -45,7 +45,6 @@ import android.os.Build;
  */
 public class MotionActivity extends Activity implements INDIServerConnectionListener, INDIPropertyListener,INDIDeviceListener, OnTouchListener, OnClickListener {
 	
-	private INDIAdapter indiAdapter;// TODO remove
 	
 	// Properties and elements associated to the buttons
 	private INDISwitchProperty telescopeMotionNSP = null;
@@ -104,16 +103,20 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 		btnSpeedDown.setOnClickListener(this);
 		
 		// Set up INDI connection
-		indiAdapter = INDIAdapter.getInstance();
-		indiAdapter.registerPermanentConnectionListener(this);
+		ConnectionActivity.getInstance().registerPermanentConnectionListener(this);
 		
 		// Enumerate existing properties
-		List<INDIDevice> devices = indiAdapter.getDevices();
-		for(Iterator<INDIDevice> it = devices.iterator();it.hasNext();){
-			INDIDevice device = it.next();
-			List<INDIProperty> properties = device.getPropertiesAsList();
-			for(Iterator<INDIProperty> it2 = properties.iterator();it2.hasNext();){
-				this.newProperty(device, it2.next());
+		INDIServerConnection connection = ConnectionActivity.getConnection();
+		if(connection!=null){		
+			List<INDIDevice> list = connection.getDevicesAsList();
+			if(list!=null){
+				for(Iterator<INDIDevice> it = list.iterator();it.hasNext();){
+					INDIDevice device = it.next();
+					List<INDIProperty> properties = device.getPropertiesAsList();
+					for(Iterator<INDIProperty> it2 = properties.iterator();it2.hasNext();){
+						this.newProperty(device, it2.next());
+					}
+				}
 			}
 		}
 

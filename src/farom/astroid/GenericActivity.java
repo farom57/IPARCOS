@@ -3,6 +3,7 @@ package farom.astroid;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import laazotea.indi.client.INDIDevice;
 import laazotea.indi.client.INDIServerConnection;
@@ -15,6 +16,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,15 +36,14 @@ public class GenericActivity extends Activity implements TabListener, INDIServer
 	 */
 	private HashMap<Tab, INDIDevice> tabDeviceMap;
 
-	private INDIAdapter indiAdapter;
+
 	private ActionBar actionBar;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		indiAdapter = INDIAdapter.getInstance();
-		indiAdapter.registerPermanentConnectionListener(this);
+		ConnectionActivity.getInstance().registerPermanentConnectionListener(this);
 
 		setContentView(R.layout.activity_generic);
 		actionBar = getActionBar();
@@ -68,11 +69,20 @@ public class GenericActivity extends Activity implements TabListener, INDIServer
 	@Override
 	protected void onResume() {
 		super.onResume();
-
-		if (indiAdapter.getDevices().size() > 0) {
+		INDIServerConnection connection = ConnectionActivity.getConnection();
+		if(connection==null){
+			return;
+		}
+		
+		List<INDIDevice> list = connection.getDevicesAsList();
+		if(list==null){
+			return;
+		}
+		
+		if (list.size() > 0) {
 
 			// Recreate tabs
-			for (Iterator<INDIDevice> it = indiAdapter.getDevices().iterator(); it.hasNext();) {
+			for (Iterator<INDIDevice> it = list.iterator(); it.hasNext();) {
 				INDIDevice device = it.next();
 
 				Tab tab = actionBar.newTab();
@@ -189,7 +199,7 @@ public class GenericActivity extends Activity implements TabListener, INDIServer
 			fragment.setDevice(tabDeviceMap.get(tab));
 			ft.add(android.R.id.content, fragment);
 		}else{
-			indiAdapter.log("error : fragment!=null");
+			Log.e("GenericActivity","error : fragment!=null");
 		}
 	}
 
@@ -202,12 +212,12 @@ public class GenericActivity extends Activity implements TabListener, INDIServer
 			try {
 				fragment.finalize();
 			} catch (Throwable e) {
-				indiAdapter.log("error fragment.finalize() : "+e.getMessage());
+				Log.e("GenericActivity","error fragment.finalize() : "+e.getMessage());
 			}
 			fragment=null;
 			
 		}else{
-			indiAdapter.log("error : fragment==null");
+			Log.e("GenericActivity","error : fragment==null");
 		}
 	}
 

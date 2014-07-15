@@ -7,6 +7,7 @@ import android.preference.Preference;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -86,12 +87,12 @@ public abstract class PropPref extends Preference implements INDIPropertyListene
 	@Override
 	public void propertyChanged(INDIProperty arg0) {
 		if (arg0 != prop) {
-			INDIAdapter.getInstance().log("wrong property");
+			Log.w("PropPref","wrong property");
 			return;
 		}
 
 		if (title == null) {
-			INDIAdapter.getInstance().log("null title, prop = " + prop.getLabel());
+			Log.w("PropPref","null title, prop = " + prop.getLabel());
 			return;
 		}
 
