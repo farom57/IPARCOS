@@ -28,7 +28,7 @@ import org.w3c.dom.Element;
  * A class representing a INDI Number Element.
  *
  * @author S. Alonso (Zerjillo) [zerjioi at ugr.es]
- * @version 1.32, February 4, 2012
+ * @version 1.38, July 22, 2014
  */
 public class INDINumberElement extends INDIElement {
 
@@ -122,6 +122,10 @@ public class INDINumberElement extends INDIElement {
       sFormatter = new INDISexagesimalFormatter(newNumberFormat);
     }
 
+    if (newNumberFormat.equals("%0.f")) {
+      newNumberFormat = "%.0f";  
+    }
+    
     this.numberFormat = newNumberFormat;
   }
 
@@ -216,6 +220,7 @@ public class INDINumberElement extends INDIElement {
     if (numberFormat.endsWith("m")) {
       aux = sFormatter.format(number);
     } else {
+//      System.out.println("xx" + getNumberFormat());
       Formatter formatter = new Formatter(Locale.US);
       aux = formatter.format(getNumberFormat(), number).toString();
     }
@@ -286,7 +291,7 @@ public class INDINumberElement extends INDIElement {
     value = parseNumber(valueS);
 
     if ((value < min) || (value > max)) {
-      throw new IllegalArgumentException(this.getProperty().getName() + " ; " + getName() + " ; " + "Number (" + valueS + ") not in range [" + min + ", " + max + "]");
+      //throw new IllegalArgumentException(this.getProperty().getName() + " ; " + getName() + " ; " + "Number (" + valueS + ") not in range [" + min + ", " + max + "]");
     }
   }
 

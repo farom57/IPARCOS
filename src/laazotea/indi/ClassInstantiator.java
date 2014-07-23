@@ -48,9 +48,13 @@ public class ClassInstantiator {
 
         return obj;  // If the object could be instantiated return it.
       } catch (ClassNotFoundException ex) {
+     //   ex.printStackTrace();
       } catch (InstantiationException ex) {
+     //   ex.printStackTrace();
       } catch (IllegalAccessException ex) {
+     //   ex.printStackTrace();
       } catch (InvocationTargetException ex) {
+     //   ex.printStackTrace();
       }
     }
 
