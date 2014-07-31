@@ -10,6 +10,8 @@ import java.util.Set;
 import java.util.Vector;
 
 import laazotea.indi.client.INDIDevice;
+import laazotea.indi.client.INDIDeviceListener;
+import laazotea.indi.client.INDIProperty;
 import laazotea.indi.client.INDIServerConnection;
 import laazotea.indi.client.INDIServerConnectionListener;
 import android.app.Activity;
@@ -18,6 +20,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -38,7 +41,7 @@ import android.preference.PreferenceManager;
  * @author Romain Fafet
  *
  */
-public class ConnectionActivity extends Activity implements INDIServerConnectionListener{
+public class ConnectionActivity extends Activity implements INDIServerConnectionListener,INDIDeviceListener{
 
 	
 	private static INDIServerConnection connection;
@@ -64,6 +67,7 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 		loadServerList();
 
 		logView = (TextView) findViewById(R.id.logTextBox); // TODO : correct scroll bug
+		logView.setMovementMethod(new ScrollingMovementMethod());
 
 		connectionButton = ((Button) findViewById(R.id.connectionButton)); 
 
@@ -251,7 +255,7 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 	 */
 	private void connect(java.lang.String host, int port) {
 		connectionButton.setText(R.string.connecting);
-		Log.i("ConnectionActivity","Try to connect to " + host + ":" + port);
+		appendLog("Try to connect to " + host + ":" + port);
 		connection = new INDIServerConnection(host, port);
 		
 		connection.addINDIServerConnectionListener(this); // We listen to all
@@ -264,15 +268,15 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 				try {
 					connection.connect();
 					connection.askForDevices(); // Ask for all the devices.
-					Log.i("ConnectionActivity","connection ok");
+					appendLog("Connected");
 					connectionButton.post(new Runnable() {
 						public void run() {
 							connectionButton.setText(R.string.disconnect);
 						}
 					});
 				} catch (IOException e) {
-					Log.i("ConnectionActivity","Problem with the connection");
-					Log.i("ConnectionActivity",e.getMessage());
+					appendLog("Problem with the connection:");
+					appendLog(e.getMessage());
 					connectionButton.post(new Runnable() {
 						public void run() {
 							connectionButton.setText(R.string.connect);
@@ -293,30 +297,47 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 
 	@Override
 	public void newDevice(INDIServerConnection connection, INDIDevice device) {
-		// TODO Auto-generated method stub
-		
+		device.addINDIDeviceListener(this);		
+		appendLog("New device: "+device.getName());
 	}
 
 	@Override
 	public void removeDevice(INDIServerConnection connection, INDIDevice device) {
-		// TODO Auto-generated method stub
-		
+		device.removeINDIDeviceListener(this);		
+		appendLog("Removed device: "+device.getName());
 	}
 
 	@Override
 	public void connectionLost(INDIServerConnection connection) {
-		Log.i("ConnectionActivity","Connection lost. Bye");
+		appendLog("Connection lost");
 		connectionButton.post(new Runnable() {
 			public void run() {
 				connectionButton.setText(R.string.connect);
+			}
+		});
+		
+		// Open the connection activity
+		Intent intent = new Intent(this, ConnectionActivity.class);
+		startActivity(intent);
+	}
+	
+	/**
+	 * Display the message in the log view
+	 * @param message 
+	 */
+	public void appendLog(String message){
+		final String msg = message+"\n";
+		Log.i("GLOBALLOG",message);
+		logView.post(new Runnable(){
+			public void run(){
+				logView.append(msg);
 			}
 		});
 	}
 
 	@Override
 	public void newMessage(INDIServerConnection connection, Date timestamp, String message) {
-		// TODO Auto-generated method stub
-		
+		appendLog("Connection: "+message);
 	}
 	
 	/**
@@ -353,6 +374,23 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 	 */
 	public static ConnectionActivity getInstance(){
 		return instance;
+	}
+
+	@Override
+	public void newProperty(INDIDevice device, INDIProperty property) {
+		// nothing
+		
+	}
+
+	@Override
+	public void removeProperty(INDIDevice device, INDIProperty property) {
+		// nothing
+		
+	}
+
+	@Override
+	public void messageChanged(INDIDevice device) {
+		appendLog(device.getName()+": "+device.getLastMessage());		
 	}
 	
 
