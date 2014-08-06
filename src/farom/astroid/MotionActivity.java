@@ -116,6 +116,7 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 			if (list != null) {
 				for (Iterator<INDIDevice> it = list.iterator(); it.hasNext();) {
 					INDIDevice device = it.next();
+					device.addINDIDeviceListener(this);
 					List<INDIProperty> properties = device.getPropertiesAsList();
 					for (Iterator<INDIProperty> it2 = properties.iterator(); it2.hasNext();) {
 						this.newProperty(device, it2.next());
