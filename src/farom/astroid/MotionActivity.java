@@ -186,6 +186,17 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 	
 	@Override
 	public void connectionLost(INDIServerConnection arg0) {
+		telescopeMotionNSP = null;
+		telescopeMotionNE = null;
+		telescopeMotionSE = null;
+		telescopeMotionWEP = null;
+		telescopeMotionWE = null;
+		telescopeMotionEE = null;
+		telescopeMotionAbort = null;
+		telescopeMotionAbortE = null;
+		telescopeMotionRate = null;
+		updateBtnState();
+		updateSpeedText();
 		openConnectionActivity(null);
 	}
 
@@ -431,15 +442,15 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 	// Called when a directional button is pressed or released, send the corresponding order to the driver
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
-		SwitchStatus status,negStatus;
+		SwitchStatus status;//,negStatus;
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
 			status = SwitchStatus.ON;
-			negStatus = SwitchStatus.OFF;
+			//negStatus = SwitchStatus.OFF;
 			//log("button pressed");
 			// v.setPressed(true);
 		} else if (event.getAction() == MotionEvent.ACTION_UP) {
 			status = SwitchStatus.OFF;
-			negStatus = SwitchStatus.OFF;
+			//negStatus = SwitchStatus.OFF;
 			//log("button released");
 			// v.setPressed(false);
 		} else {
@@ -451,7 +462,7 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 		case R.id.buttonE:
 			try {
 				telescopeMotionEE.setDesiredValue(status);
-				telescopeMotionWE.setDesiredValue(negStatus);
+				//telescopeMotionWE.setDesiredValue(negStatus);
 				telescopeMotionWEP.sendChangesToDriver();
 			} catch (INDIValueException e) {
 				Log.e("MotionActivity",e.getMessage());
@@ -462,7 +473,7 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 		case R.id.buttonW:
 			try {
 				telescopeMotionWE.setDesiredValue(status);
-				telescopeMotionEE.setDesiredValue(negStatus);
+				//telescopeMotionEE.setDesiredValue(negStatus);
 				telescopeMotionWEP.sendChangesToDriver();
 			} catch (INDIValueException e) {
 				Log.e("MotionActivity",e.getMessage());
@@ -473,7 +484,7 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 		case R.id.buttonN:
 			try {
 				telescopeMotionNE.setDesiredValue(status);
-				telescopeMotionSE.setDesiredValue(negStatus);
+				//telescopeMotionSE.setDesiredValue(negStatus);
 				telescopeMotionNSP.sendChangesToDriver();
 			} catch (INDIValueException e) {
 				Log.e("MotionActivity",e.getMessage());
@@ -484,7 +495,7 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 		case R.id.buttonS:
 			try {
 				telescopeMotionSE.setDesiredValue(status);
-				telescopeMotionNE.setDesiredValue(negStatus);
+				//telescopeMotionNE.setDesiredValue(negStatus);
 				telescopeMotionNSP.sendChangesToDriver();
 			} catch (INDIValueException e) {
 				Log.e("MotionActivity",e.getMessage());
@@ -495,10 +506,10 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 		case R.id.buttonNE:
 			try {
 				telescopeMotionEE.setDesiredValue(status);
-				telescopeMotionWE.setDesiredValue(negStatus);
+				//telescopeMotionWE.setDesiredValue(negStatus);
 				telescopeMotionWEP.sendChangesToDriver();
 				telescopeMotionNE.setDesiredValue(status);
-				telescopeMotionSE.setDesiredValue(negStatus);
+				//telescopeMotionSE.setDesiredValue(negStatus);
 				telescopeMotionNSP.sendChangesToDriver();
 			} catch (INDIValueException e) {
 				Log.e("MotionActivity",e.getMessage());
@@ -509,10 +520,10 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 		case R.id.buttonNW:
 			try {
 				telescopeMotionWE.setDesiredValue(status);
-				telescopeMotionEE.setDesiredValue(negStatus);
+				//telescopeMotionEE.setDesiredValue(negStatus);
 				telescopeMotionWEP.sendChangesToDriver();
 				telescopeMotionNE.setDesiredValue(status);
-				telescopeMotionSE.setDesiredValue(negStatus);
+				//telescopeMotionSE.setDesiredValue(negStatus);
 				telescopeMotionNSP.sendChangesToDriver();
 			} catch (INDIValueException e) {
 				Log.e("MotionActivity",e.getMessage());
@@ -523,10 +534,10 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 		case R.id.buttonSE:
 			try {
 				telescopeMotionEE.setDesiredValue(status);
-				telescopeMotionWE.setDesiredValue(negStatus);
+				//telescopeMotionWE.setDesiredValue(negStatus);
 				telescopeMotionWEP.sendChangesToDriver();
 				telescopeMotionSE.setDesiredValue(status);
-				telescopeMotionNE.setDesiredValue(negStatus);
+				//telescopeMotionNE.setDesiredValue(negStatus);
 				telescopeMotionNSP.sendChangesToDriver();
 			} catch (INDIValueException e) {
 				Log.e("MotionActivity",e.getMessage());
@@ -537,10 +548,10 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 		case R.id.buttonSW:
 			try {
 				telescopeMotionWE.setDesiredValue(status);
-				telescopeMotionEE.setDesiredValue(negStatus);
+				//telescopeMotionEE.setDesiredValue(negStatus);
 				telescopeMotionWEP.sendChangesToDriver();
 				telescopeMotionSE.setDesiredValue(status);
-				telescopeMotionNE.setDesiredValue(negStatus);
+				//telescopeMotionNE.setDesiredValue(negStatus);
 				telescopeMotionNSP.sendChangesToDriver();
 			} catch (INDIValueException e) {
 				Log.e("MotionActivity",e.getMessage());

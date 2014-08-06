@@ -274,3 +274,5 @@ public class INDISwitchProperty extends INDIProperty {
     return aux;
   }
 }
+
+
