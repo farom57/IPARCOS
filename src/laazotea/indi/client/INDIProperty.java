@@ -28,6 +28,8 @@ import laazotea.indi.INDIException;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import android.util.Log;
+
 /**
  * A class representing a INDI Property. The subclasses
  * <code>INDIBLOBProperty</code>,
@@ -414,6 +416,7 @@ public abstract class INDIProperty {
 
       xml = getXMLPropertyChangeInit() + xml + getXMLPropertyChangeEnd();
 
+      Log.w("INDI",xml);
       device.sendMessageToServer(xml);
     }
   }

@@ -184,7 +184,8 @@ public class INDISwitchElement extends INDIElement {
 
   @Override
   public boolean isChanged() {
-    return true; // Always true to send all the elements in a switch property
+    //return true; // Always true to send all the elements in a switch property
+	  return desiredStatus!=null;
   }
 
   /**
