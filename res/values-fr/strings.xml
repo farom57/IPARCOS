@@ -26,9 +26,9 @@
     <string name="back_request">Retour</string>
     <string name="illegal_number_mesage">Nombre incorrect</string>
     <string name="BLOB_not_supported">Non supporté</string>
-    <string name="new_device">Nouveau périphérique : </string>
-    <string name="device_removed">Périphérique retiré : </string>
-    <string name="try_to_connect">Tentative de connexion à </string>
+    <string name="new_device">Nouveau périphérique :\u0020</string>
+    <string name="device_removed">Périphérique retiré :\u0020</string>
+    <string name="try_to_connect">Tentative de connexion à\u0020</string>
     <string name="connection_lost">Connexion perdue</string>
     <string name="ok">OK</string>
     <string name="cancel">Annuler</string>
