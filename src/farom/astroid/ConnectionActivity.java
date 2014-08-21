@@ -40,26 +40,25 @@ import android.preference.PreferenceManager;
  * The main activity of the application. It manages the connection.
  * 
  * @author Romain Fafet
- *
+ * 
  */
-public class ConnectionActivity extends Activity implements INDIServerConnectionListener,INDIDeviceListener{
+public class ConnectionActivity extends Activity implements INDIServerConnectionListener, INDIDeviceListener {
 
-	
 	private static INDIServerConnection connection;
 	private static ConnectionActivity instance = null;
-	
-	// a list to re-add the listener when the connection is destroyed and recreated
+
+	// a list to re-add the listener when the connection is destroyed and
+	// recreated
 	private ArrayList<INDIServerConnectionListener> permanentConnectionListeners;
-	
+
 	// views
 	private TextView logView;
 	private Button connectionButton;
 
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		instance = this;
 		permanentConnectionListeners = new ArrayList<INDIServerConnectionListener>();
 
@@ -67,10 +66,11 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 
 		loadServerList();
 
-		logView = (TextView) findViewById(R.id.logTextBox); // TODO : correct scroll bug
+		logView = (TextView) findViewById(R.id.logTextBox); // TODO : correct
+															// scroll bug
 		logView.setMovementMethod(new ScrollingMovementMethod());
 
-		connectionButton = ((Button) findViewById(R.id.connectionButton)); 
+		connectionButton = ((Button) findViewById(R.id.connectionButton));
 
 		((Spinner) findViewById(R.id.spinnerHost)).setOnItemSelectedListener(new OnItemSelectedListener() {
 			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
@@ -84,7 +84,6 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 				// nothing to do
 			}
 		});
-		
 
 	}
 
@@ -96,21 +95,23 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		Set<String> set = preferences.getStringSet("SERVER_SET", null);
 		List<String> serverList;
-		if(set!=null){
+		if (set != null) {
 			serverList = new Vector<String>(set);
-		}else{
+		} else {
 			serverList = new Vector<String>();
-		}				
-		
+		}
+
 		// update the display
 		serverList.add(getResources().getString(R.string.hostadd));
-		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,serverList);
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
+				serverList);
 		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		((Spinner) findViewById(R.id.spinnerHost)).setAdapter(dataAdapter);
 	}
-	
+
 	/**
 	 * Called when the connect/disconnect button is clicked
+	 * 
 	 * @param v
 	 */
 	public void connectionButtonClicked(View v) {
@@ -123,22 +124,23 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 		} catch (NumberFormatException e) {
 			port = 7624;
 		}
-		
+
 		// Connect (or disconnect)
-		if(connectionButton.getText().equals(getResources().getString(R.string.connect))){
-			if(host.equals(getResources().getString(R.string.hostadd))){
+		if (connectionButton.getText().equals(getResources().getString(R.string.connect))) {
+			if (host.equals(getResources().getString(R.string.hostadd))) {
 				addServer();
-			}else{
+			} else {
 				connect(host, port);
 			}
-		}else if(connectionButton.getText().equals(getResources().getString(R.string.disconnect))){
+		} else if (connectionButton.getText().equals(getResources().getString(R.string.disconnect))) {
 			disconnect();
 		}
 
 	}
-	
+
 	/**
 	 * Add the server address, save the server list and update the spinner
+	 * 
 	 * @param ip
 	 */
 	protected void addServer(String ip) {
@@ -146,20 +148,20 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		Set<String> set = preferences.getStringSet("SERVER_SET", null);
 		List<String> serverList;
-		if(set!=null){
+		if (set != null) {
 			serverList = new Vector<String>(set);
-		}else{
+		} else {
 			serverList = new Vector<String>();
-		}		
-		serverList.add(0,ip);		
-		
+		}
+		serverList.add(0, ip);
+
 		// Save the list
 		Set<String> newSet = new HashSet<String>();
-		newSet.addAll(serverList);		
+		newSet.addAll(serverList);
 		SharedPreferences.Editor editor = preferences.edit();
 		editor.putStringSet("SERVER_SET", newSet);
 		editor.commit();
-		
+
 		// Update
 		loadServerList();
 	}
@@ -180,15 +182,16 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 		final EditText userInput = (EditText) promptsView.findViewById(R.id.editTextDialogUserInput);
 
 		// set dialog message
-		alertDialogBuilder.setCancelable(false).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				addServer(userInput.getText().toString());
-			}
-		}).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				dialog.cancel();
-			}
-		});
+		alertDialogBuilder.setCancelable(false)
+				.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						addServer(userInput.getText().toString());
+					}
+				}).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+					}
+				});
 
 		// create alert dialog
 		AlertDialog alertDialog = alertDialogBuilder.create();
@@ -202,56 +205,71 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.global, menu);
-		
+
 		// hide the item for the current activity
 		MenuItem connectionItem = menu.findItem(R.id.menu_connection);
 		connectionItem.setVisible(false);
+
+		if (connection == null || !connection.isConnected()) {
+			// hide the items which are not available when disconnected
+			MenuItem genericItem = menu.findItem(R.id.menu_generic);
+			genericItem.setVisible(false);
+			MenuItem moveItem = menu.findItem(R.id.menu_move);
+			moveItem.setVisible(false);
+			
+		}
+
 		return true;
 	}
 
 	/**
-	 * open the motion activity, 
-	 * @param v 
+	 * open the motion activity,
+	 * 
+	 * @param v
 	 */
-	public boolean openMotionActivity(MenuItem v){
+	public boolean openMotionActivity(MenuItem v) {
 		Intent intent = new Intent(this, MotionActivity.class);
 		startActivity(intent);
 		return true;
 	}
-	
+
 	/**
 	 * open the settings activity
+	 * 
 	 * @param v
-	 * @return 
+	 * @return
 	 */
-	public boolean openSettingsActivity(MenuItem v){
+	public boolean openSettingsActivity(MenuItem v) {
 		// TODO Add settings
 		return false;
 	}
-	
+
 	/**
 	 * open the generic activity
+	 * 
 	 * @param v
-	 * @return 
+	 * @return
 	 */
-	public boolean openGenericActivity(MenuItem v){
+	public boolean openGenericActivity(MenuItem v) {
 		Intent intent = new Intent(this, GenericActivity.class);
 		startActivity(intent);
 		return true;
 	}
-	
+
 	/**
 	 * open the connection activity
+	 * 
 	 * @param v
-	 * @return 
+	 * @return
 	 */
-	public boolean openConnectionActivity(MenuItem v){
+	public boolean openConnectionActivity(MenuItem v) {
 		// nothing to do, already the current activity
 		return false;
 	}
-	
+
 	/**
 	 * Connect to the driver
+	 * 
 	 * @param host
 	 * @param port
 	 */
@@ -259,12 +277,12 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 		connectionButton.setText(R.string.connecting);
 		appendLog(getString(R.string.try_to_connect) + host + ":" + port);
 		connection = new INDIServerConnection(host, port);
-		
+
 		connection.addINDIServerConnectionListener(this); // We listen to all
-		for(Iterator<INDIServerConnectionListener> it = permanentConnectionListeners.iterator(); it.hasNext();){
+		for (Iterator<INDIServerConnectionListener> it = permanentConnectionListeners.iterator(); it.hasNext();) {
 			connection.addINDIServerConnectionListener(it.next());
 		}
-		
+
 		new Thread(new Runnable() {
 			public void run() {
 				try {
@@ -274,6 +292,7 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 					connectionButton.post(new Runnable() {
 						public void run() {
 							connectionButton.setText(R.string.disconnect);
+							invalidateOptionsMenu();
 						}
 					});
 				} catch (IOException e) {
@@ -289,7 +308,7 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 			}
 		}).start();
 	}
-	
+
 	/**
 	 * Breaks the connection
 	 */
@@ -299,14 +318,14 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 
 	@Override
 	public void newDevice(INDIServerConnection connection, INDIDevice device) {
-		device.addINDIDeviceListener(this);		
-		appendLog(getString(R.string.new_device)+device.getName());
+		device.addINDIDeviceListener(this);
+		appendLog(getString(R.string.new_device) + device.getName());
 	}
 
 	@Override
 	public void removeDevice(INDIServerConnection connection, INDIDevice device) {
-		device.removeINDIDeviceListener(this);		
-		appendLog(getString(R.string.device_removed)+device.getName());
+		device.removeINDIDeviceListener(this);
+		appendLog(getString(R.string.device_removed) + device.getName());
 	}
 
 	@Override
@@ -315,23 +334,25 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 		connectionButton.post(new Runnable() {
 			public void run() {
 				connectionButton.setText(R.string.connect);
+				invalidateOptionsMenu();
 			}
 		});
-		
+
 		// Open the connection activity
 		Intent intent = new Intent(this, ConnectionActivity.class);
 		startActivity(intent);
 	}
-	
+
 	/**
 	 * Display the message in the log view
-	 * @param message 
+	 * 
+	 * @param message
 	 */
-	public void appendLog(String message){
-		final String msg = message+"\n";
-		Log.i("GLOBALLOG",message);
-		logView.post(new Runnable(){
-			public void run(){
+	public void appendLog(String message) {
+		final String msg = message + "\n";
+		Log.i("GLOBALLOG", message);
+		logView.post(new Runnable() {
+			public void run() {
 				logView.append(msg);
 			}
 		});
@@ -341,25 +362,30 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 	public void newMessage(INDIServerConnection connection, Date timestamp, String message) {
 		appendLog(message);
 	}
-	
+
 	/**
-	 * Add a INDIServerConnectionListener to the connection. If the connection is re-created, the listener will be re-installed
-	 * @param arg the listener
+	 * Add a INDIServerConnectionListener to the connection. If the connection
+	 * is re-created, the listener will be re-installed
+	 * 
+	 * @param arg
+	 *            the listener
 	 */
-	public void registerPermanentConnectionListener(INDIServerConnectionListener arg){
+	public void registerPermanentConnectionListener(INDIServerConnectionListener arg) {
 		permanentConnectionListeners.add(arg);
-		if(connection!=null){
+		if (connection != null) {
 			connection.addINDIServerConnectionListener(arg);
 		}
 	}
-	
+
 	/**
 	 * remove the listener
-	 * @param arg the listener
+	 * 
+	 * @param arg
+	 *            the listener
 	 */
-	public void unRegisterPermanentConnectionListener(INDIServerConnectionListener arg){
+	public void unRegisterPermanentConnectionListener(INDIServerConnectionListener arg) {
 		permanentConnectionListeners.remove(arg);
-		if(connection!=null){
+		if (connection != null) {
 			connection.removeINDIServerConnectionListener(arg);
 		}
 	}
@@ -374,26 +400,25 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 	/**
 	 * @return the instance of the activity
 	 */
-	public static ConnectionActivity getInstance(){
+	public static ConnectionActivity getInstance() {
 		return instance;
 	}
 
 	@Override
 	public void newProperty(INDIDevice device, INDIProperty property) {
 		// nothing
-		
+
 	}
 
 	@Override
 	public void removeProperty(INDIDevice device, INDIProperty property) {
 		// nothing
-		
+
 	}
 
 	@Override
 	public void messageChanged(INDIDevice device) {
-		appendLog(device.getName()+": "+device.getLastMessage());		
+		appendLog(device.getName() + ": " + device.getLastMessage());
 	}
-	
 
 }
