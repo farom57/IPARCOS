@@ -3,6 +3,7 @@ package farom.astroid;
 import laazotea.indi.client.INDIProperty;
 import android.content.Context;
 import android.text.Spannable;
+import android.text.SpannableString;
 
 public class BLOBPropPref extends PropPref {
 
@@ -17,8 +18,8 @@ public class BLOBPropPref extends PropPref {
 	 */
 	@Override
 	protected Spannable createSummary() {
-		// TODO Auto-generated method stub
-		return null;
+		Spannable summaryText = new SpannableString(getContext().getString(R.string.BLOB_not_supported));
+		return summaryText;
 	}
 
 }

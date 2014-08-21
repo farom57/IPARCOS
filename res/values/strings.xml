@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Astroid</string>
     <string name="menu_settings">Settings</string>
-    <string name="title_activity_connection">Connection</string>
     <string name="indi_host">INDI Host</string>
     <string name="connect">Connect</string>
     <string name="disconnect">Disconnect</string>
@@ -14,18 +12,26 @@
     <string name="hostadd">Add Server</string>
     <string name="hostauto">Auto</string>
     <string name="host_prompt_text">Host ip address:</string>
-    <string name="connecting">Connection ...</string>
+    <string name="connecting">Connection …</string>
     <string name="menu_motion_short">Move</string>
     <string name="menu_motion">Motion control</string>
     <string name="menu_connection">Connect</string>
-    <string name="menu_generic">Others</string>
+    <string name="menu_generic">Control panel</string>
+    <string name="title_activity_generic">Control panel</string>
     <string name="title_activity_motion">Motion</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_connection">Connection</string>
     <string name="default_speed">Unavailable</string>
-    <string name="title_activity_property">PropertyActivity</string>
-    <string name="title_activity_generic">GenericActivity</string>
     <string name="send_request">Send</string>
     <string name="cancel_request">Cancel</string>
     <string name="back_request">Back</string>
     <string name="illegal_number_mesage">Incorrect number</string>
+    <string name="BLOB_not_supported">Not supported</string>
+    <string name="new_device">New device: </string>
+    <string name="device_removed">Device removed: </string>
+    <string name="try_to_connect">Try to connect to </string>
+    <string name="connection_lost">Connection lost</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="connected">Connected</string>
+    <string name="connection_pb">Connection error</string>
 </resources>

@@ -19,22 +19,17 @@ import laazotea.indi.client.INDISwitchElement;
 import laazotea.indi.client.INDISwitchProperty;
 import laazotea.indi.client.INDIValueException;
 import android.app.Activity;
-import android.app.ActionBar;
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.os.Build;
 
 /**
  * The activity display directional buttons to move a telescope. It also provide
@@ -212,7 +207,7 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 	@Override
 	public void newDevice(INDIServerConnection connection, INDIDevice device) {
 		// We just simply listen to this Device
-		Log.i("MotionActivity", "New device: " + device.getName());
+		Log.i("MotionActivity", getString(R.string.new_device) + device.getName());
 
 		device.addINDIDeviceListener(this);
 	}
@@ -220,7 +215,7 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 	@Override
 	public void removeDevice(INDIServerConnection connection, INDIDevice device) {
 		// We just remove ourselves as a listener of the removed device
-		Log.i("MotionActivity", "Device Removed: " + device.getName());
+		Log.i("MotionActivity", getString(R.string.device_removed) + device.getName());
 		device.removeINDIDeviceListener(this);
 	}
 
@@ -522,9 +517,9 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 				// telescopeMotionWE.setDesiredValue(negStatus);
 				telescopeMotionWEP.sendChangesToDriver();
 			} catch (INDIValueException e) {
-				Log.e("MotionActivity", e.getMessage());
+				Log.e("MotionActivity", e.getLocalizedMessage());
 			} catch (IOException e) {
-				Log.e("MotionActivity", e.getMessage());
+				Log.e("MotionActivity", e.getLocalizedMessage());
 			}
 			return true;
 		case R.id.buttonW:
@@ -533,9 +528,9 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 				// telescopeMotionEE.setDesiredValue(negStatus);
 				telescopeMotionWEP.sendChangesToDriver();
 			} catch (INDIValueException e) {
-				Log.e("MotionActivity", e.getMessage());
+				Log.e("MotionActivity", e.getLocalizedMessage());
 			} catch (IOException e) {
-				Log.e("MotionActivity", e.getMessage());
+				Log.e("MotionActivity", e.getLocalizedMessage());
 			}
 			return true;
 		case R.id.buttonN:
@@ -544,9 +539,9 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 				// telescopeMotionSE.setDesiredValue(negStatus);
 				telescopeMotionNSP.sendChangesToDriver();
 			} catch (INDIValueException e) {
-				Log.e("MotionActivity", e.getMessage());
+				Log.e("MotionActivity", e.getLocalizedMessage());
 			} catch (IOException e) {
-				Log.e("MotionActivity", e.getMessage());
+				Log.e("MotionActivity", e.getLocalizedMessage());
 			}
 			return true;
 		case R.id.buttonS:
@@ -555,9 +550,9 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 				// telescopeMotionNE.setDesiredValue(negStatus);
 				telescopeMotionNSP.sendChangesToDriver();
 			} catch (INDIValueException e) {
-				Log.e("MotionActivity", e.getMessage());
+				Log.e("MotionActivity", e.getLocalizedMessage());
 			} catch (IOException e) {
-				Log.e("MotionActivity", e.getMessage());
+				Log.e("MotionActivity", e.getLocalizedMessage());
 			}
 			return true;
 		case R.id.buttonNE:
@@ -569,9 +564,9 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 				// telescopeMotionSE.setDesiredValue(negStatus);
 				telescopeMotionNSP.sendChangesToDriver();
 			} catch (INDIValueException e) {
-				Log.e("MotionActivity", e.getMessage());
+				Log.e("MotionActivity", e.getLocalizedMessage());
 			} catch (IOException e) {
-				Log.e("MotionActivity", e.getMessage());
+				Log.e("MotionActivity", e.getLocalizedMessage());
 			}
 			return true;
 		case R.id.buttonNW:
@@ -583,9 +578,9 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 				// telescopeMotionSE.setDesiredValue(negStatus);
 				telescopeMotionNSP.sendChangesToDriver();
 			} catch (INDIValueException e) {
-				Log.e("MotionActivity", e.getMessage());
+				Log.e("MotionActivity", e.getLocalizedMessage());
 			} catch (IOException e) {
-				Log.e("MotionActivity", e.getMessage());
+				Log.e("MotionActivity", e.getLocalizedMessage());
 			}
 			return true;
 		case R.id.buttonSE:
@@ -597,9 +592,9 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 				// telescopeMotionNE.setDesiredValue(negStatus);
 				telescopeMotionNSP.sendChangesToDriver();
 			} catch (INDIValueException e) {
-				Log.e("MotionActivity", e.getMessage());
+				Log.e("MotionActivity", e.getLocalizedMessage());
 			} catch (IOException e) {
-				Log.e("MotionActivity", e.getMessage());
+				Log.e("MotionActivity", e.getLocalizedMessage());
 			}
 			return true;
 		case R.id.buttonSW:
@@ -611,9 +606,9 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 				// telescopeMotionNE.setDesiredValue(negStatus);
 				telescopeMotionNSP.sendChangesToDriver();
 			} catch (INDIValueException e) {
-				Log.e("MotionActivity", e.getMessage());
+				Log.e("MotionActivity", e.getLocalizedMessage());
 			} catch (IOException e) {
-				Log.e("MotionActivity", e.getMessage());
+				Log.e("MotionActivity", e.getLocalizedMessage());
 			}
 			return true;
 		default:
@@ -644,9 +639,9 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 					telescopeMotionAbort.sendChangesToDriver();
 				}
 			} catch (INDIValueException e) {
-				Log.e("MotionActivity", e.getMessage());
+				Log.e("MotionActivity", e.getLocalizedMessage());
 			} catch (IOException e) {
-				Log.e("MotionActivity", e.getMessage());
+				Log.e("MotionActivity", e.getLocalizedMessage());
 			}
 			break;
 		case R.id.buttonSpeedUp:
@@ -658,9 +653,9 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 					telescopeMotionRate.getElement("MOTION_RATE").setDesiredValue(speed);
 					telescopeMotionRate.sendChangesToDriver();
 				} catch (INDIValueException e) {
-					Log.e("MotionActivity", e.getMessage());
+					Log.e("MotionActivity", e.getLocalizedMessage());
 				} catch (IOException e) {
-					Log.e("MotionActivity", e.getMessage());
+					Log.e("MotionActivity", e.getLocalizedMessage());
 				}
 			} else if (telescopeMotionRateEQMod != null) {
 				try {
@@ -673,9 +668,9 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 					elements.get(i + 1).setDesiredValue(SwitchStatus.ON);
 					telescopeMotionRateEQMod.sendChangesToDriver();
 				} catch (INDIValueException e) {
-					Log.e("MotionActivity", e.getMessage());
+					Log.e("MotionActivity", e.getLocalizedMessage());
 				} catch (IOException e) {
-					Log.e("MotionActivity", e.getMessage());
+					Log.e("MotionActivity", e.getLocalizedMessage());
 				}
 			} else if (telescopeMotionRateLX200 != null) {
 				try {
@@ -690,9 +685,9 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 					}
 					telescopeMotionRateLX200.sendChangesToDriver();
 				} catch (INDIValueException e) {
-					Log.e("MotionActivity", e.getMessage());
+					Log.e("MotionActivity", e.getLocalizedMessage());
 				} catch (IOException e) {
-					Log.e("MotionActivity", e.getMessage());
+					Log.e("MotionActivity", e.getLocalizedMessage());
 				}
 			}
 			break;
@@ -705,9 +700,9 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 					telescopeMotionRate.getElement("MOTION_RATE").setDesiredValue(speed);
 					telescopeMotionRate.sendChangesToDriver();
 				} catch (INDIValueException e) {
-					Log.e("MotionActivity", e.getMessage());
+					Log.e("MotionActivity", e.getLocalizedMessage());
 				} catch (IOException e) {
-					Log.e("MotionActivity", e.getMessage());
+					Log.e("MotionActivity", e.getLocalizedMessage());
 				}
 			} else if (telescopeMotionRateEQMod != null) {
 				try {
@@ -722,9 +717,9 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 					}
 					telescopeMotionRateEQMod.sendChangesToDriver();
 				} catch (INDIValueException e) {
-					Log.e("MotionActivity", e.getMessage());
+					Log.e("MotionActivity", e.getLocalizedMessage());
 				} catch (IOException e) {
-					Log.e("MotionActivity", e.getMessage());
+					Log.e("MotionActivity", e.getLocalizedMessage());
 				}
 			} else if (telescopeMotionRateLX200 != null) {
 				try {
@@ -737,9 +732,9 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 					elements.get(i + 1).setDesiredValue(SwitchStatus.ON);
 					telescopeMotionRateLX200.sendChangesToDriver();
 				} catch (INDIValueException e) {
-					Log.e("MotionActivity", e.getMessage());
+					Log.e("MotionActivity", e.getLocalizedMessage());
 				} catch (IOException e) {
-					Log.e("MotionActivity", e.getMessage());
+					Log.e("MotionActivity", e.getLocalizedMessage());
 				}
 			}
 			break;

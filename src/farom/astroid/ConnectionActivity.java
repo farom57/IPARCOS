@@ -14,6 +14,7 @@ import laazotea.indi.client.INDIDeviceListener;
 import laazotea.indi.client.INDIProperty;
 import laazotea.indi.client.INDIServerConnection;
 import laazotea.indi.client.INDIServerConnectionListener;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -166,6 +167,7 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 	/**
 	 * Ask to the user to add a new server
 	 */
+	@SuppressLint("InflateParams")
 	protected void addServer() {
 		// get prompts.xml view
 		LayoutInflater li = LayoutInflater.from(this);
@@ -178,11 +180,11 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 		final EditText userInput = (EditText) promptsView.findViewById(R.id.editTextDialogUserInput);
 
 		// set dialog message
-		alertDialogBuilder.setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		alertDialogBuilder.setCancelable(false).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				addServer(userInput.getText().toString());
 			}
-		}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		}).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				dialog.cancel();
 			}
@@ -255,7 +257,7 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 	 */
 	private void connect(java.lang.String host, int port) {
 		connectionButton.setText(R.string.connecting);
-		appendLog("Try to connect to " + host + ":" + port);
+		appendLog(getString(R.string.try_to_connect) + host + ":" + port);
 		connection = new INDIServerConnection(host, port);
 		
 		connection.addINDIServerConnectionListener(this); // We listen to all
@@ -268,15 +270,15 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 				try {
 					connection.connect();
 					connection.askForDevices(); // Ask for all the devices.
-					appendLog("Connected");
+					appendLog(getString(R.string.connected));
 					connectionButton.post(new Runnable() {
 						public void run() {
 							connectionButton.setText(R.string.disconnect);
 						}
 					});
 				} catch (IOException e) {
-					appendLog("Problem with the connection:");
-					appendLog(e.getMessage());
+					appendLog(getString(R.string.connection_pb));
+					appendLog(e.getLocalizedMessage());
 					connectionButton.post(new Runnable() {
 						public void run() {
 							connectionButton.setText(R.string.connect);
@@ -298,18 +300,18 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 	@Override
 	public void newDevice(INDIServerConnection connection, INDIDevice device) {
 		device.addINDIDeviceListener(this);		
-		appendLog("New device: "+device.getName());
+		appendLog(getString(R.string.new_device)+device.getName());
 	}
 
 	@Override
 	public void removeDevice(INDIServerConnection connection, INDIDevice device) {
 		device.removeINDIDeviceListener(this);		
-		appendLog("Removed device: "+device.getName());
+		appendLog(getString(R.string.device_removed)+device.getName());
 	}
 
 	@Override
 	public void connectionLost(INDIServerConnection connection) {
-		appendLog("Connection lost");
+		appendLog(getString(R.string.connection_lost));
 		connectionButton.post(new Runnable() {
 			public void run() {
 				connectionButton.setText(R.string.connect);
@@ -337,7 +339,7 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 
 	@Override
 	public void newMessage(INDIServerConnection connection, Date timestamp, String message) {
-		appendLog("Connection: "+message);
+		appendLog(message);
 	}
 	
 	/**

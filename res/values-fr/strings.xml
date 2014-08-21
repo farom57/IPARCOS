@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Astroid</string>
+    <string name="menu_settings">Paramètres</string>
+    <string name="indi_host">Hôte INDI</string>
+    <string name="connect">Connecter</string>
+    <string name="disconnect">Déconnecter</string>
+    <string name="log">Log</string>
+    <string name="port">Port</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="hostprompt">Adresse de l\'hôte</string>
+    <string name="hostadd">Ajouter un serveur</string>
+    <string name="hostauto">Auto</string>
+    <string name="host_prompt_text">Adresse IP de l\'hôte :</string>
+    <string name="connecting">Connexion …</string>
+    <string name="menu_motion_short">Mouvement</string>
+    <string name="menu_motion">Contrôle du mouvement</string>
+    <string name="menu_connection">Connecter</string>
+    <string name="menu_generic">Autres</string>
+    <string name="title_activity_motion">Mouvement</string>
+    <string name="title_activity_connection">Connexion</string>
+    <string name="title_activity_generic">Panneau de contrôle</string>
+    <string name="default_speed">Non disponble</string>
+    <string name="send_request">Envoyer</string>
+    <string name="cancel_request">Annuler</string>
+    <string name="back_request">Retour</string>
+    <string name="illegal_number_mesage">Nombre incorrect</string>
+    <string name="BLOB_not_supported">Non supporté</string>
+    <string name="new_device">Nouveau périphérique : </string>
+    <string name="device_removed">Périphérique retiré : </string>
+    <string name="try_to_connect">Tentative de connexion à </string>
+    <string name="connection_lost">Connexion perdue</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Annuler</string>
+    <string name="connected">Connecté</string>
+    <string name="connection_pb">Erreur de connexion</string>
+</resources>

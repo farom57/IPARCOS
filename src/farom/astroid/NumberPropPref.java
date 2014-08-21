@@ -3,12 +3,10 @@ package farom.astroid;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import farom.astroid.TextPropPref.TextRequestFragment;
 import laazotea.indi.Constants;
 import laazotea.indi.client.INDIElement;
 import laazotea.indi.client.INDINumberProperty;
 import laazotea.indi.client.INDIProperty;
-import laazotea.indi.client.INDITextProperty;
 import laazotea.indi.client.INDIValueException;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -17,11 +15,9 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.style.StyleSpan;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -122,13 +118,13 @@ public class NumberPropPref extends PropPref {
 							}
 							prop.sendChangesToDriver();
 						} catch (INDIValueException e) {
-							Toast toast = Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG);
+							Toast toast = Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG);
 							toast.show();
 						} catch (IOException e) {
-							Toast toast = Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG);
+							Toast toast = Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG);
 							toast.show();
 						} catch (IllegalArgumentException e){
-							Toast toast = Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG);
+							Toast toast = Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG);
 							toast.show();
 						}
 					}

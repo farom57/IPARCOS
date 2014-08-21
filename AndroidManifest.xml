@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="14"
+        android:minSdkVersion="15"
         android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -17,7 +17,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="farom.astroid.ConnectionActivity"
-            android:label="@string/app_name"
+            android:label="@string/title_activity_connection"
             android:launchMode="singleInstance"
             android:logo="@drawable/icon_connect"
             android:screenOrientation="portrait"
@@ -32,8 +32,8 @@
             android:name="farom.astroid.MotionActivity"
             android:label="@string/title_activity_motion"
             android:launchMode="singleInstance"
-            android:parentActivityName="farom.astroid.ConnectionActivity"
-            android:screenOrientation="portrait" android:logo="@drawable/icon_move">
+            android:screenOrientation="portrait"
+            android:logo="@drawable/icon_move">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="farom.astroid.ConnectionActivity" />
@@ -41,7 +41,9 @@
         <activity
             android:name="farom.astroid.GenericActivity"
             android:label="@string/title_activity_generic"
-            android:parentActivityName="farom.astroid.ConnectionActivity" android:launchMode="singleInstance" android:logo="@drawable/stop" android:screenOrientation="portrait">
+            android:launchMode="singleInstance"
+            android:logo="@drawable/icon_gen"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="farom.astroid.ConnectionActivity" />

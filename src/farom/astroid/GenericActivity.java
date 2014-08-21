@@ -48,7 +48,6 @@ public class GenericActivity extends Activity implements TabListener, INDIServer
 		setContentView(R.layout.activity_generic);
 		actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		actionBar.setDisplayShowTitleEnabled(false);
 
 		tabDeviceMap = new HashMap<ActionBar.Tab, INDIDevice>();
 
@@ -109,17 +108,7 @@ public class GenericActivity extends Activity implements TabListener, INDIServer
 
 	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+
 
 	/**
 	 * open the motion activity,
@@ -212,7 +201,7 @@ public class GenericActivity extends Activity implements TabListener, INDIServer
 			try {
 				fragment.finalize();
 			} catch (Throwable e) {
-				Log.e("GenericActivity","error fragment.finalize() : "+e.getMessage());
+				Log.e("GenericActivity","error fragment.finalize() : "+e.getLocalizedMessage());
 			}
 			fragment=null;
 			
