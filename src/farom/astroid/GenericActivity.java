@@ -61,6 +61,9 @@ public class GenericActivity extends Activity implements TabListener, INDIServer
 		// hide the item for the current activity
 		MenuItem genericItem = menu.findItem(R.id.menu_generic);
 		genericItem.setVisible(false);
+		
+		ActionBar ab = getActionBar();
+		ab.setSubtitle(R.string.title_activity_generic);
 
 		return true;
 	}

@@ -15,6 +15,7 @@ import laazotea.indi.client.INDIProperty;
 import laazotea.indi.client.INDIServerConnection;
 import laazotea.indi.client.INDIServerConnectionListener;
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -218,6 +219,9 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 			moveItem.setVisible(false);
 			
 		}
+		
+		ActionBar ab = getActionBar();
+		ab.setSubtitle(R.string.title_activity_connection);
 
 		return true;
 	}

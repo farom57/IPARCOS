@@ -18,6 +18,7 @@ import laazotea.indi.client.INDIServerConnectionListener;
 import laazotea.indi.client.INDISwitchElement;
 import laazotea.indi.client.INDISwitchProperty;
 import laazotea.indi.client.INDIValueException;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -136,6 +137,10 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 		// hide the menu item for the current activity
 		MenuItem motionItem = menu.findItem(R.id.menu_move);
 		motionItem.setVisible(false);
+		
+		ActionBar ab = getActionBar();
+		ab.setSubtitle(R.string.title_activity_motion);
+		
 		return true;
 	}
 
@@ -746,6 +751,7 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 
 	@Override
 	protected void onDestroy() {
+		super.onDestroy();
 		ConnectionActivity.getInstance().unRegisterPermanentConnectionListener(this);
 	}
 
