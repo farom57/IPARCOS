@@ -204,6 +204,7 @@ public class GenericActivity extends Activity implements TabListener, INDIServer
 			try {
 				fragment.finalize();
 			} catch (Throwable e) {
+				//e.printStackTrace();
 				Log.e("GenericActivity","error fragment.finalize() : "+e.getLocalizedMessage());
 			}
 			fragment=null;
