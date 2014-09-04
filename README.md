@@ -34,7 +34,11 @@ The project main site is https://github.com/farom57/AstroidClient/
   * The properties of the device are displayed in a list. Click on a property to edit it or show the details.
 4. Control the telescope motion
   * Click on the icon with four arrows in the action bar to display the telescope motion control panel
-  * 
+  * The buttons will be enabled (red) or disabled (grey) depending on the devices features.
+    * The arrows are enabled if one device provide the TELESCOPE_ABORT_MOTION, TELESCOPE_MOTION_NS and/or TELESCOPE_MOTION_WE properties
+    * The + and - buttons are enabled if one device provide the standard property to control the speed (TELESCOPE_MOTION_RATE) or the LX200 style property (Slew Rate) or the EQMod style property (SLEWMODE)
+    * If the device is not connected, the properties may not appears and the buttons will be disabled
+
 
 # Developped by
 * Romain Fafet (farom57)
