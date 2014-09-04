@@ -28,9 +28,16 @@ The project main site is https://github.com/farom57/AstroidClient/
   * Choose the server address in the list or touch "Add server" to add a new server in the list
   * Optionally, you can change the port number if you do not use the default value for the INDI protocol (7624)
   * Click on "Connect"
-3. 
+3. Use the generic control panel
+  * Click on the gear icon in the action bar to display the generic control panel
+  * Use the tabs to switch between the devices
+  * The properties of the device are displayed in a list. Click on a property to edit it or show the details.
+4. Control the telescope motion
+  * Click on the icon with four arrows in the action bar to display the telescope motion control panel
+  * 
 
-
+# Developped by
+* Romain Fafet (farom57)
 
 # License
 
