@@ -1,9 +1,10 @@
-package farom.astroid;
+package farom.iparcos;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-import farom.astroid.TextPropPref.TextRequestFragment;
+import farom.iparcos.R;
+import farom.iparcos.TextPropPref.TextRequestFragment;
 import laazotea.indi.Constants;
 import laazotea.indi.Constants.SwitchStatus;
 import laazotea.indi.client.INDIElement;

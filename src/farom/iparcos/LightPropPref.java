@@ -1,4 +1,4 @@
-package farom.astroid;
+package farom.iparcos;
 
 import java.util.ArrayList;
 

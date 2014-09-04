@@ -1,9 +1,10 @@
-package farom.astroid;
+package farom.iparcos;
 
 import laazotea.indi.client.INDIProperty;
 import android.content.Context;
 import android.text.Spannable;
 import android.text.SpannableString;
+import farom.iparcos.R;
 
 public class BLOBPropPref extends PropPref {
 

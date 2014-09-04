@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Astroid</string>
+    <string name="app_name">IPARCOS</string>
     <string name="menu_settings">Settings</string>
     <string name="indi_host">INDI Host</string>
     <string name="connect">Connect</string>

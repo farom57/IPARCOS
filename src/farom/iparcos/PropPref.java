@@ -1,4 +1,4 @@
-package farom.astroid;
+package farom.iparcos;
 
 import laazotea.indi.client.*;
 import android.content.Context;

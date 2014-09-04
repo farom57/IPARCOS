@@ -1,5 +1,6 @@
-package farom.astroid;
+package farom.iparcos;
 
+import farom.iparcos.R;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;

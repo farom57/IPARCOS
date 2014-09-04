@@ -1,8 +1,8 @@
-# Astroid
+# IPARCOS
 
-Astroid is an INDI client for Android. It features a generic control panel and others specialized tools to easily control your devices.
+IPARCOS (Indi Protocol Android Remote COntrol Software) is an INDI client for Android. It features a generic control panel and others specialized tools to easily control your devices.
 
-The project main site is https://github.com/farom57/AstroidClient/
+The project main site is https://github.com/farom57/IPARCOS/
 
 # Features
 
@@ -14,7 +14,7 @@ The project main site is https://github.com/farom57/AstroidClient/
 * ~~From Google Play:~~
   * Not yet available
 * From the .apk file:
-  * Check the release page on the github project to get the .apk: https://github.com/farom57/AstroidClient/releases
+  * Check the release page on the github project to get the .apk: https://github.com/farom57/IPARCOS/releases
   * You need to allow app installs from unknown sources in Android settings (Settings > Security > Unknown sources)
 
 # Usage
@@ -46,5 +46,5 @@ The project main site is https://github.com/farom57/AstroidClient/
 
 # License
 
-The code is released under the GNU General Public License and is available at https://github.com/farom57/AstroidClient/
+The code is released under the GNU General Public License and is available at https://github.com/farom57/IPARCOS/
 
