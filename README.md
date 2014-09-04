@@ -8,6 +8,7 @@ The project main site is https://github.com/farom57/AstroidClient/
 
 + Generic control panel compatible with every devices (BLOB not yet supported)
 + Control of the telescope motion by means of a directional pad and speed buttons
++ Languages: English, French
 
 # Download and install
 * ~~From Google Play:~~
@@ -23,7 +24,7 @@ The project main site is https://github.com/farom57/AstroidClient/
   * An INDI server must be running on the remote computer.
   * You must have a network access to this computer. 
     * To achieve this, the Android device and the remote computer can be placed on your home network.
-    * Alternatively, you can create a wireless network with your Android device and connect the remote computer to this network (the PC adress is likely to be 192.168.43.71)
+    * Alternatively, you can create a wireless network with your Android device and connect the remote computer to this network (the PC address is likely to be 192.168.43.71)
 2. Connection
   * Choose the server address in the list or touch "Add server" to add a new server in the list
   * Optionally, you can change the port number if you do not use the default value for the INDI protocol (7624)
@@ -40,7 +41,7 @@ The project main site is https://github.com/farom57/AstroidClient/
     * If the device is not connected, the properties may not appears and the buttons will be disabled
 
 
-# Developped by
+# Developed by
 * Romain Fafet (farom57)
 
 # License
