@@ -42,7 +42,9 @@ The project main site is https://github.com/farom57/IPARCOS/
 
 
 # Developed by
-* Romain Fafet (farom57)
+* **Romain Fafet** (farom57)
+* **Zerjillo**
+  * INDI for Java http://www.indilib.org/develop/indiforjava.html
 
 # License
 
