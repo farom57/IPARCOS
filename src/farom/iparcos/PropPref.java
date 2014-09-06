@@ -9,11 +9,10 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 public abstract class PropPref extends Preference implements INDIPropertyListener {
 	protected INDIProperty prop;
-	protected TextView title = null;
+	protected View title = null;
 	
 	
 	public static PropPref create(Context context, INDIProperty prop){
@@ -46,7 +45,7 @@ public abstract class PropPref extends Preference implements INDIPropertyListene
 	protected void onBindView(View view) {
 		super.onBindView(view);
 		// INDIAdapter.getInstance().log(view.toString());
-		title = (TextView) view.findViewById(android.R.id.title);
+		title = view;
 		// propertyChanged(prop);
 		// changed ++;
 	}
