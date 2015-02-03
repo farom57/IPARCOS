@@ -17,6 +17,7 @@
     <string name="menu_motion">Contrôle du mouvement</string>
     <string name="menu_connection">Connecter</string>
     <string name="menu_generic">Autres</string>
+    <string name="menu_search">Search</string>
     <string name="title_activity_motion">Mouvement</string>
     <string name="title_activity_connection">Connexion</string>
     <string name="title_activity_generic">Panneau de contrôle</string>
@@ -34,4 +35,5 @@
     <string name="cancel">Annuler</string>
     <string name="connected">Connecté</string>
     <string name="connection_pb">Erreur de connexion</string>
+    <string name="search_hint">Rechercher un objet</string>
 </resources>
