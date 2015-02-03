@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<!--     <item android:id="@+id/menu_settings" -->
+<!--         android:title="@string/menu_settings" -->
+<!--         android:orderInCategory="100" android:onClick="openSettingsActivity"/> -->
+    <item android:id="@+id/menu_move" android:orderInCategory="1" android:title="@string/menu_motion" android:titleCondensed="@string/menu_motion_short" android:icon="@drawable/icon_move" android:showAsAction="ifRoom" android:onClick="openMotionActivity"></item>
+    <item android:id="@+id/menu_connection" android:orderInCategory="0" android:title="@string/menu_connection" android:icon="@drawable/icon_connect" android:showAsAction="ifRoom" android:onClick="openConnectionActivity"></item>
+    <item android:id="@+id/menu_generic" android:orderInCategory="2" android:title="@string/menu_generic" android:icon="@drawable/icon_gen" android:showAsAction="ifRoom" android:onClick="openGenericActivity"></item>
+</menu>
+<!-- From: file:/home/farom/workspace/AndroidstudioProjects/IPARCOS/app/src/main/res/menu/global.xml -->
