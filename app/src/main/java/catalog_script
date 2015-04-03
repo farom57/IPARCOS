@@ -1,0 +1,14 @@
+::script::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+format object form1 "%COO(:2s;A) %COO(:2s;D) | %IDLIST(A;*,NAME,M,NGC,IC,HD,HIP,SAO,GSC,TYC,PPM,SAO,1)"
+set limit 200000
+query sample cat in (ngc,m,ic) & maintypes != '*'
+query sample Vmag < 6 & cat != ngc & cat != m & cat != ic
+
+::console:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+C.D.S.  -  SIMBAD4 rel 1.225  -  2015.02.08CET01:48:32
+total execution time: 1039.397 secs
+simbatch done
+
+::data::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

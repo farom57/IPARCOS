@@ -9,11 +9,14 @@ import android.content.Intent;
 
 
 public class SearchActivity extends Activity {
+    private Catalog catalog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+
+        catalog = new Catalog(this);
 
         // Get the intent, verify the action and get the query
         Intent intent = getIntent();
@@ -21,9 +24,15 @@ public class SearchActivity extends Activity {
             String query = intent.getStringExtra(SearchManager.QUERY);
             doMySearch(query);
         }
+
+
+
     }
 
     private void doMySearch(String query) {
+        while(catalog==null){}
+        while(!catalog.isReady()){}
+        catalog.search(query);
     }
 
     @Override
