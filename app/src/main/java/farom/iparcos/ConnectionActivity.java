@@ -224,7 +224,7 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
         }
 
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+        searchView.setSubmitButtonEnabled(true);
 
 		// hide the item for the current activity
 		MenuItem connectionItem = menu.findItem(R.id.menu_connection);
@@ -240,7 +240,7 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 		}
 		
 		ActionBar ab = getActionBar();
-		ab.setSubtitle(R.string.title_activity_connection);
+		ab.setSubtitle(R.string.menu_connection);
 
 		return true;
 	}
