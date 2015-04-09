@@ -147,6 +147,18 @@ public class GenericActivity extends Activity implements TabListener, INDIServer
 		return false;
 	}
 
+    /**
+     * open the search activity
+     *
+     * @param v
+     * @return
+     */
+    public boolean openSearchActivity(MenuItem v) {
+        Intent intent = new Intent(this, SearchActivity.class);
+        startActivity(intent);
+        return true;
+    }
+
 	/**
 	 * open the connection activity
 	 * 

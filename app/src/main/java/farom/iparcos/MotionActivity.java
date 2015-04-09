@@ -178,6 +178,19 @@ public class MotionActivity extends Activity implements INDIServerConnectionList
 		return true;
 	}
 
+
+    /**
+     * open the search activity
+     *
+     * @param v
+     * @return
+     */
+    public boolean openSearchActivity(MenuItem v) {
+        Intent intent = new Intent(this, SearchActivity.class);
+        startActivity(intent);
+        return true;
+    }
+
 	/**
 	 * open the connection activity
 	 * 

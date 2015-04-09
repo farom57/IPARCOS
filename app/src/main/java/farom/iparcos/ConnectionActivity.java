@@ -38,8 +38,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Button;
 import android.preference.PreferenceManager;
-import android.widget.SearchView;
-import android.app.SearchManager;
+
 /**
  * The main activity of the application. It manages the connection.
  * 
@@ -210,23 +209,7 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.global, menu);
 
-        // Get the SearchView and set the searchable configuration
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-
-        if (searchView == null) {
-            Log.d("GLOBALLOG", "failed to get searchview");
-        }else{
-            Log.d("GLOBALLOG", "ok to get searchview");
-        }
-        if (searchManager == null) {
-            Log.d("GLOBALLOG", "failed to get SearchManager");
-        }
-
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setSubmitButtonEnabled(true);
-
-		// hide the item for the current activity
+       	// hide the item for the current activity
 		MenuItem connectionItem = menu.findItem(R.id.menu_connection);
 		connectionItem.setVisible(false);
 
@@ -278,6 +261,18 @@ public class ConnectionActivity extends Activity implements INDIServerConnection
 		startActivity(intent);
 		return true;
 	}
+
+    /**
+     * open the search activity
+     *
+     * @param v
+     * @return
+     */
+    public boolean openSearchActivity(MenuItem v) {
+        Intent intent = new Intent(this, SearchActivity.class);
+        startActivity(intent);
+        return true;
+    }
 
 	/**
 	 * open the connection activity

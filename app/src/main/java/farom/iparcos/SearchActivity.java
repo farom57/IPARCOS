@@ -22,8 +22,9 @@ public class SearchActivity extends Activity implements MenuItem.OnActionExpandL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(0, 0);
         setContentView(R.layout.activity_search);
-        handleIntent(getIntent());
+
     }
 
     @Override
@@ -70,7 +71,6 @@ public class SearchActivity extends Activity implements MenuItem.OnActionExpandL
 
         search_item=menu.findItem(R.id.menu_search);
         search_item.expandActionView();
-        searchView.setQuery(query,false);
         search_item.setOnActionExpandListener(this);
 
 
@@ -101,6 +101,8 @@ public class SearchActivity extends Activity implements MenuItem.OnActionExpandL
         text.setText("Collapse");
         Log.d("GLOBALLOG", "Collapse");
         finish();
+        overridePendingTransition(0, 0);
         return true;
     }
+
 }

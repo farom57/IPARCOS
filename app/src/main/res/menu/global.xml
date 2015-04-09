@@ -5,5 +5,5 @@
     <item android:id="@+id/menu_move" android:orderInCategory="1" android:title="@string/menu_motion" android:titleCondensed="@string/menu_motion_short" android:icon="@drawable/icon_move" android:showAsAction="ifRoom" android:onClick="openMotionActivity"></item>
     <item android:id="@+id/menu_connection" android:orderInCategory="0" android:title="@string/menu_connection" android:icon="@drawable/icon_connect" android:showAsAction="ifRoom" android:onClick="openConnectionActivity"></item>
     <item android:id="@+id/menu_generic" android:orderInCategory="2" android:title="@string/menu_generic" android:icon="@drawable/icon_gen" android:showAsAction="ifRoom" android:onClick="openGenericActivity"></item>
-    <item android:id="@+id/menu_search" android:orderInCategory="3" android:title="@string/menu_search" android:icon="@drawable/ic_action_search" android:showAsAction="ifRoom|collapseActionView" android:actionViewClass="android.widget.SearchView" ></item>
+    <item android:id="@+id/menu_search" android:orderInCategory="3" android:title="@string/menu_search" android:icon="@drawable/ic_action_search" android:showAsAction="ifRoom" android:onClick="openSearchActivity"></item>
 </menu>
