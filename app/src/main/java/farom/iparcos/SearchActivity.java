@@ -1,6 +1,7 @@
 package farom.iparcos;
 
-import android.app.Activity;
+
+import android.app.ListActivity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,15 +9,24 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.app.SearchManager;
-import android.content.Intent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.SearchView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+
+import farom.iparcos.catalog.CatalogEntry;
+import farom.iparcos.catalog.DSOEntry;
 
 /**
  * Allow the user to search for an astronomical object and display the result.
  */
-public class SearchActivity extends Activity implements MenuItem.OnActionExpandListener, SearchView.OnQueryTextListener {
+public class SearchActivity extends ListActivity implements MenuItem.OnActionExpandListener, SearchView.OnQueryTextListener {
 
+    ArrayAdapter<CatalogEntry> adapter;
+    private ArrayList<CatalogEntry> entries;
 
     /**
      * Called at the activity creation. Disable opening animation and load default content.
@@ -26,7 +36,22 @@ public class SearchActivity extends Activity implements MenuItem.OnActionExpandL
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         overridePendingTransition(0, 0);
-        setContentView(R.layout.activity_search);
+//        setContentView(R.layout.activity_search);
+
+        entries = new ArrayList<CatalogEntry>();
+        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_2, android.R.id.text1, entries) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+                TextView text2 = (TextView) view.findViewById(android.R.id.text2);
+
+                text1.setText(entries.get(position).getName());
+                text2.setText(entries.get(position).getDescription());
+                return view;
+            }
+        };
+        setListAdapter(adapter);
 
     }
 
@@ -35,12 +60,11 @@ public class SearchActivity extends Activity implements MenuItem.OnActionExpandL
      * @param query
      */
     private void doMySearch(String query) {
-//        while(catalog==null){}
-//        while(!catalog.isReady()){}
-//        catalog.search(query);
-        TextView text = (TextView) findViewById(R.id.textViewtest);
-        text.setText(query);
+//        TextView text = (TextView) findViewById(R.id.textViewtest);
+//        text.setText(query);
         Log.d("GLOBALLOG", "Search for " + query);
+        entries.add(new DSOEntry(""));
+        adapter.notifyDataSetChanged();
     }
 
     /**
@@ -70,7 +94,6 @@ public class SearchActivity extends Activity implements MenuItem.OnActionExpandL
         return true;
     }
 
-
     /**
      * (from OnActionExpandListener) Called when the search menu is expanded. It can only happens at the menu initialisation. Nothing to do.
      * @param item
@@ -92,9 +115,6 @@ public class SearchActivity extends Activity implements MenuItem.OnActionExpandL
         overridePendingTransition(0, 0); // Disable the swipe animation for the activity end.
         return true;
     }
-
-
-
 
     /**
      * (from OnQueryTextListener) Called when the user changes the search string
