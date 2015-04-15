@@ -1,90 +1,94 @@
 package farom.iparcos.catalog;
 
+
 import android.content.Context;
 
-import farom.iparcos.catalog.CatalogEntry;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
- * A catalog of astronomical objcets
+ * A catalog of astronomical objects
  */
-public abstract class Catalog {
+public class Catalog {
 
-    //
-    // Fields
-    //
-
-    /**
-     * Size of the entry in the catalog text file (not counting the ne line character)
-     */
-    protected int entryLength;
-    /**
-     * The maximum size of the name in the catalog
-     */
-    protected int entryNameLength;
-    /**
-     * Resource id of the catalog text file
-     */
-    protected int catalogRawResource;
     /**
      * Application context to access the resources
      */
     protected Context context;
 
+    /**
+     * Catalog objects
+     */
+    protected ArrayList<CatalogEntry> entries;
 
-    //
-    // Constructors
-    //
+
+
+    private boolean ready = false;
 
     /**
      * Constructor
-     * @param entryLength   Size of the entry in the catalog text file (not counting the ne line character)
-     * @param entryNameLength   The maximum size of the name in the catalog
-     * @param catalogRawResource    Resource id of the catalog text file
-     * @param context   Application context to access the resources
+     *
+     * @param context Application context to access the resources
      */
-    public Catalog (int entryLength, int entryNameLength, int catalogRawResource, Context context) {
-        this.entryLength=entryLength;
-        this.entryNameLength=entryNameLength;
-        this.catalogRawResource=catalogRawResource;
+    public Catalog(Context context) {
         this.context=context;
+        init();
+
     }
 
-    //
-    // Methods
-    //
-
-
-    /**
-     * Search objects in the catalog whose first characters matches the query. Return
-     * the entry indexes.
-     * @return       int [*]
-     * @param        query
-     */
-    public int[] search(String query)
-    {
-        // TODO
-        return null;
+    private void init() {
+        entries = new ArrayList<CatalogEntry>(DSOEntry.createList(context));
+        entries.addAll(StarEntry.createList(context));
+        Collections.sort(entries);
+        ready = true;
     }
 
-
     /**
-     * Return the i-th entry in the catalog
-     * @return       CatalogEntry
-     * @param        i
+     * @return true if the catalog is fully initialized
      */
-    public CatalogEntry getEntry(int i)
-    {
-        // TODO
-        return null;
+    public boolean isReady(){
+        return ready;
     }
 
+    public ArrayList<CatalogEntry> getEntries(){
+        if(isReady()){
+            return entries;
+        }else{
+            return null;
+        }
+    }
 
-    /**
-     * @return       CatalogEntry
-     * @param        entryRawData The raw data of the entry in the catalog (the line in
-     * the catalog file)
-     */
-    protected abstract CatalogEntry readEntry(char[] entryRawData);
+    public int searchIndex(final String query){
 
+        CatalogEntry fakeEntry = new CatalogEntry() {
+            @Override
+            public Coordinates getCoordinates() {
+                return null;
+            }
 
+            @Override
+            public String getName() {
+                return query;
+            }
+
+            @Override
+            public String getDescription() {
+                return null;
+            }
+
+            @Override
+            public String getSummary() {
+                return null;
+            }
+        };
+        int index = Collections.binarySearch(entries,fakeEntry);
+
+        if(index<0){
+            index = -index - 1;
+        }
+
+        return index;
+    }
 }
+
+

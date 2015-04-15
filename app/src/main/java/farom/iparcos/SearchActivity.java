@@ -1,6 +1,7 @@
 package farom.iparcos;
 
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Context;
 import android.os.Bundle;
@@ -17,8 +18,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import farom.iparcos.catalog.Catalog;
 import farom.iparcos.catalog.CatalogEntry;
-import farom.iparcos.catalog.DSOEntry;
+
 
 /**
  * Allow the user to search for an astronomical object and display the result.
@@ -27,6 +29,7 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
 
     ArrayAdapter<CatalogEntry> adapter;
     private ArrayList<CatalogEntry> entries;
+    private Catalog catalog;
 
     /**
      * Called at the activity creation. Disable opening animation and load default content.
@@ -36,7 +39,6 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         overridePendingTransition(0, 0);
-//        setContentView(R.layout.activity_search);
 
         entries = new ArrayList<CatalogEntry>();
         adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_2, android.R.id.text1, entries) {
@@ -46,12 +48,23 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
                 TextView text1 = (TextView) view.findViewById(android.R.id.text1);
                 TextView text2 = (TextView) view.findViewById(android.R.id.text2);
 
+                Log.d("GLOBALLOG", "text1.setText(entries.get("+position+").getName());");
                 text1.setText(entries.get(position).getName());
                 text2.setText(entries.get(position).getDescription());
                 return view;
             }
         };
         setListAdapter(adapter);
+
+        final Context act = this;
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                catalog = new Catalog(act);
+                entries.addAll(catalog.getEntries());
+
+            }
+        }).start(); // TODO : faire plus propre avec Cursor et Loader
 
     }
 
@@ -62,9 +75,17 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
     private void doMySearch(String query) {
 //        TextView text = (TextView) findViewById(R.id.textViewtest);
 //        text.setText(query);
-        Log.d("GLOBALLOG", "Search for " + query);
-        entries.add(new DSOEntry(""));
-        adapter.notifyDataSetChanged();
+//        Log.d("GLOBALLOG", "Search for " + query);
+//        entries.clear();
+//        entries.addAll(dsoCatalog.search(query));
+//        entries.add(new DSOEntry("48 Tuc                   4 Gb 30.9 00 24 06.1-72 05 00X"));
+//        Log.d("GLOBALLOG", "entries.size() = " + entries.size());
+//        adapter.notifyDataSetChanged();
+        if(catalog!=null){
+            if(catalog.isReady()) {
+                getListView().setSelection(catalog.searchIndex(query));
+            }
+        }
     }
 
     /**

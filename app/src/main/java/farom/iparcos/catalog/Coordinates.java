@@ -1,8 +1,24 @@
 package farom.iparcos.catalog;
 
 /**
- * Created by farom on 09/04/15.
+ * Stellar coordinates with methods to convert from/to String
  */
 public class Coordinates {
-    //TODO
+    /**
+     * Right ascension in arcsec
+     */
+    double ra;
+    /**
+     * Declination in arcsec
+     */
+    double de;
+
+    /**
+     * From String
+     * @param ra_str
+     * @param de_str
+     */
+    public Coordinates(String ra_str, String de_str){
+        // TODO
+    }
 }
