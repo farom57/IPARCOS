@@ -36,4 +36,6 @@
     <string name="connected">Connecté</string>
     <string name="connection_pb">Erreur de connexion</string>
     <string name="search_hint">Rechercher un objet</string>
+    <string name="GOTO">Pointer</string>
+    <string name="sync">Synchroniser</string>
 </resources>

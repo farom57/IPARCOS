@@ -26,7 +26,7 @@
     <string name="send_request">Send</string>
     <string name="cancel_request">Cancel</string>
     <string name="back_request">Back</string>
-    <string name="illegal_number_mesage">Incorrect number</string>
+    <string name="illegal_number_message">Incorrect number</string>
     <string name="BLOB_not_supported">Not supported</string>
     <string name="new_device">New device:\u0020</string>
     <string name="device_removed">Device removed:\u0020</string>
@@ -39,5 +39,7 @@
     <string name="search_hint">Search an object</string>
     <string name="title_activity_search">SearchActivity</string>
     <string name="hello_world">Hello world!</string>
+    <string name="GOTO">Go to</string>
+    <string name="sync">Sync</string>
 
 </resources>

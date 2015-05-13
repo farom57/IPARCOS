@@ -2,8 +2,10 @@ package farom.iparcos;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -12,9 +14,11 @@ import android.view.MenuItem;
 import android.app.SearchManager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -25,7 +29,7 @@ import farom.iparcos.catalog.CatalogEntry;
 /**
  * Allow the user to search for an astronomical object and display the result.
  */
-public class SearchActivity extends ListActivity implements MenuItem.OnActionExpandListener, SearchView.OnQueryTextListener {
+public class SearchActivity extends ListActivity implements MenuItem.OnActionExpandListener, SearchView.OnQueryTextListener, AdapterView.OnItemClickListener {
 
     ArrayAdapter<CatalogEntry> adapter;
     private ArrayList<CatalogEntry> entries;
@@ -48,13 +52,13 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
                 TextView text1 = (TextView) view.findViewById(android.R.id.text1);
                 TextView text2 = (TextView) view.findViewById(android.R.id.text2);
 
-                Log.d("GLOBALLOG", "text1.setText(entries.get("+position+").getName());");
                 text1.setText(entries.get(position).getName());
                 text2.setText(entries.get(position).getDescription());
                 return view;
             }
         };
         setListAdapter(adapter);
+
 
         final Context act = this;
         new Thread(new Runnable(){
@@ -66,6 +70,7 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
             }
         }).start(); // TODO : faire plus propre avec Cursor et Loader
 
+        getListView().setOnItemClickListener(this);
     }
 
     /**
@@ -156,6 +161,48 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
     @Override
     public boolean onQueryTextSubmit(String query) {
         return false;
+    }
+
+
+
+    /**
+     * Callback method to be invoked when an item in this AdapterView has
+     * been clicked.
+     * <p/>
+     * Implementers can call getItemAtPosition(position) if they need
+     * to access the data associated with the selected item.
+     *
+     * @param parent   The AdapterView where the click happened.
+     * @param view     The view within the AdapterView that was clicked (this
+     *                 will be a view provided by the adapter)
+     * @param position The position of the view in the adapter.
+     * @param id       The row id of the item that was clicked.
+     */
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+        builder.setMessage(entries.get(position).getDescription())
+                .setTitle(entries.get(position).getName());
+        builder.setPositiveButton(R.string.GOTO,new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.setNeutralButton(R.string.sync,new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.setNegativeButton(R.string.cancel,new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }
 
