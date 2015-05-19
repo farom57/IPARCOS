@@ -2,6 +2,7 @@ package farom.iparcos.catalog;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.text.Spannable;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -33,16 +34,16 @@ public abstract class CatalogEntry implements Comparable<CatalogEntry> {
 
 
     /**
-     * Return the object description
+     * Create the description rich-text string
      * @return
      */
-    public abstract String getDescription();
+    public abstract Spannable createDescription(Context ctx);
 
     /**
-     * Return the object summary (1 line)
+     * Create the summary rich-text string (1 line)
      * @return
      */
-    public abstract String getSummary();
+    public abstract Spannable createSummary(Context ctx);
 
 
     /**

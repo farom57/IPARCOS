@@ -53,7 +53,7 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
                 TextView text2 = (TextView) view.findViewById(android.R.id.text2);
 
                 text1.setText(entries.get(position).getName());
-                text2.setText(entries.get(position).getDescription());
+                text2.setText(entries.get(position).createSummary(getContext()));
                 return view;
             }
         };
@@ -181,7 +181,7 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-        builder.setMessage(entries.get(position).getDescription())
+        builder.setMessage(entries.get(position).createDescription(this))
                 .setTitle(entries.get(position).getName());
         builder.setPositiveButton(R.string.GOTO,new DialogInterface.OnClickListener() {
             @Override

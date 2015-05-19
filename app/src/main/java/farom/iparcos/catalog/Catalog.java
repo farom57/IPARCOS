@@ -2,6 +2,7 @@ package farom.iparcos.catalog;
 
 
 import android.content.Context;
+import android.text.Spannable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -72,14 +73,11 @@ public class Catalog {
             }
 
             @Override
-            public String getDescription() {
-                return null;
-            }
+            public Spannable createDescription(Context ctx) { return null; }
 
             @Override
-            public String getSummary() {
-                return null;
-            }
+            public Spannable createSummary(Context ctx) { return null; }
+
         };
         int index = Collections.binarySearch(entries,fakeEntry);
 

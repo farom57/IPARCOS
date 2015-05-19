@@ -2,6 +2,9 @@ package farom.iparcos.catalog;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -71,23 +74,123 @@ public class DSOEntry extends CatalogEntry {
     }
 
     /**
-     * Return the object description
-     *
+     * Return the string resource which correspond to the type acronym
      * @return
      */
-    @Override
-    public String getDescription() {
-        return type+", "+size+", "+magnitude;
+    private int getTypeStringResource(){
+        if(type.equals("Gx")) {
+            return R.string.entry_Gx;
+        }else if(type.equals("OC")) {
+            return R.string.entry_OC;
+        }else if(type.equals("Gb")) {
+            return R.string.entry_Gb;
+        }else if(type.equals("Nb")) {
+            return R.string.entry_Nb;
+        }else if(type.equals("Pl")) {
+            return R.string.entry_Pl;
+        }else if(type.equals("C+N")) {
+            return R.string.entry_CplusN;
+        }else if(type.equals("Ast")) {
+            return R.string.entry_Ast;
+        }else if(type.equals("Kt")) {
+            return R.string.entry_Kt;
+        }else if(type.equals("***")) {
+            return R.string.entry_triStar;
+        }else if(type.equals("D*")) {
+            return R.string.entry_doubleStar;
+        }else if(type.equals("*")) {
+            return R.string.entry_star;
+        }else if(type.equals("?")) {
+            return R.string.entry_uncertain;
+        }else if(type.equals("")) {
+            return R.string.entry_blank;
+        }else if(type.equals("-")) {
+            return R.string.entry_minus;
+        }else if(type.equals("PD")) {
+            return R.string.entry_PD;
+        }else{
+            return R.string.entry_blank;
+        }
     }
 
     /**
-     * Return the object summary (1 line)
+     * Return the string resource which correspond to the type acronym
+     * @return
+     */
+    private int getTypeShortStringResource(){
+        if(type.equals("Gx")) {
+            return R.string.entry_short_Gx;
+        }else if(type.equals("OC")) {
+            return R.string.entry_short_OC;
+        }else if(type.equals("Gb")) {
+            return R.string.entry_short_Gb;
+        }else if(type.equals("Nb")) {
+            return R.string.entry_short_Nb;
+        }else if(type.equals("Pl")) {
+            return R.string.entry_short_Pl;
+        }else if(type.equals("C+N")) {
+            return R.string.entry_short_CplusN;
+        }else if(type.equals("Ast")) {
+            return R.string.entry_short_Ast;
+        }else if(type.equals("Kt")) {
+            return R.string.entry_short_Kt;
+        }else if(type.equals("***")) {
+            return R.string.entry_short_triStar;
+        }else if(type.equals("D*")) {
+            return R.string.entry_short_doubleStar;
+        }else if(type.equals("*")) {
+            return R.string.entry_short_star;
+        }else if(type.equals("?")) {
+            return R.string.entry_short_uncertain;
+        }else if(type.equals("")) {
+            return R.string.entry_short_blank;
+        }else if(type.equals("-")) {
+            return R.string.entry_short_minus;
+        }else if(type.equals("PD")) {
+            return R.string.entry_short_PD;
+        }else{
+            return R.string.entry_short_blank;
+        }
+    }
+
+    /**
+     * Create the description rich-text string
      *
+     * @param ctx
      * @return
      */
     @Override
-    public String getSummary() {
-        return type+", "+size+", "+magnitude;
+    public Spannable createDescription(Context ctx) {
+        Resources r = ctx.getResources();
+        String str = "<b>" + r.getString(R.string.entry_type) + r.getString(R.string.colon_with_spaces) + "</b>" + r.getString(getTypeStringResource()) + "<br/>";
+        if(!magnitude.equals("")){
+            str += "<b>" + r.getString(R.string.entry_magnitude) + r.getString(R.string.colon_with_spaces) + "</b>" + magnitude + "<br/>";
+        }
+        if(!size.equals("")){
+            str += "<b>" + r.getString(R.string.entry_size) + r.getString(R.string.colon_with_spaces) + "</b>" + size + " " + r.getString(R.string.arcmin) + "<br/>";
+        }
+        str += "<b>" + r.getString(R.string.entry_RA) + r.getString(R.string.colon_with_spaces) + "</b>" + ra + "<br/>";
+        str += "<b>" + r.getString(R.string.entry_DE) + r.getString(R.string.colon_with_spaces) + "</b>" + de;
+        return new SpannableString(Html.fromHtml(str));
+    }
+
+    /**
+     * Create the summary rich-text string (1 line)
+     *
+     * @param ctx
+     * @return
+     */
+    @Override
+    public Spannable createSummary(Context ctx) {
+        Resources r = ctx.getResources();
+        String str =  "<b>" + r.getString(getTypeShortStringResource()) + "</b> ";
+        if(!magnitude.equals("")){
+            str += r.getString(R.string.entry_mag) + "=" + magnitude + " ";
+        }
+        if(!size.equals("")){
+            str += r.getString(R.string.entry_size).toLowerCase() + "=" + size  + r.getString(R.string.arcmin);
+        }
+        return new SpannableString(Html.fromHtml(str));
     }
 
     /**

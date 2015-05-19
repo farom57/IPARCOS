@@ -2,6 +2,9 @@ package farom.iparcos.catalog;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,7 +38,7 @@ public class StarEntry extends CatalogEntry {
      *
      * @param buf
      */
-    public StarEntry(char[] buf) { // TODO change implementation -> store the complete char[] and parse it only when needed
+    public StarEntry(char[] buf) {
         String data = String.valueOf(buf);
 
         int i = 0;
@@ -47,10 +50,10 @@ public class StarEntry extends CatalogEntry {
         i += namesLength;
 
         ra = data.substring(i, i + raLength).trim();
-        i += raLength;
+        i += raLength+1;
 
         de = data.substring(i, i + deLength).trim();
-        i += deLength;
+        i += deLength+1;
 
         magnitude = data.substring(i, i + magnitudeLength).trim();
         i += magnitudeLength;
@@ -77,24 +80,35 @@ public class StarEntry extends CatalogEntry {
     }
 
     /**
-     * Return the object description
+     * Create the description rich-text string
      *
+     * @param ctx
      * @return
      */
     @Override
-    public String getDescription() {
-        return magnitude + " " + names;
+    public Spannable createDescription(Context ctx) {
+        Resources r = ctx.getResources();
+        String str =  "<b>" + r.getString(R.string.entry_names) + r.getString(R.string.colon_with_spaces) + "</b>" + names + "<br/>";
+        str += "<b>" + r.getString(R.string.entry_type) + r.getString(R.string.colon_with_spaces) + "</b>" + r.getString(R.string.entry_star) + "<br/>";
+        str += "<b>" + r.getString(R.string.entry_magnitude) + r.getString(R.string.colon_with_spaces) + "</b>" + magnitude + "<br/>";
+        str += "<b>" + r.getString(R.string.entry_RA) + r.getString(R.string.colon_with_spaces) + "</b>" + ra + "<br/>";
+        str += "<b>" + r.getString(R.string.entry_DE) + r.getString(R.string.colon_with_spaces) + "</b>" + de;
+        return new SpannableString(Html.fromHtml(str));
     }
 
     /**
-     * Return the object summary (1 line)
+     * Create the summary rich-text string (1 line)
      *
+     * @param ctx
      * @return
      */
     @Override
-    public String getSummary() {
-        return magnitude + " " + names;
+    public Spannable createSummary(Context ctx) {
+        Resources r = ctx.getResources();
+        String str =  "<b>" + r.getString(R.string.entry_star) + "</b> " + r.getString(R.string.entry_mag) + "=" + magnitude;
+        return new SpannableString(Html.fromHtml(str));
     }
+
 
     /**
      * Create the list of DSO entries
