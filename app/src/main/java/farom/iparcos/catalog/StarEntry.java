@@ -93,6 +93,7 @@ public class StarEntry extends CatalogEntry {
         str += "<b>" + r.getString(R.string.entry_magnitude) + r.getString(R.string.colon_with_spaces) + "</b>" + magnitude + "<br/>";
         str += "<b>" + r.getString(R.string.entry_RA) + r.getString(R.string.colon_with_spaces) + "</b>" + ra + "<br/>";
         str += "<b>" + r.getString(R.string.entry_DE) + r.getString(R.string.colon_with_spaces) + "</b>" + de;
+        Coordinates.test();
         return new SpannableString(Html.fromHtml(str));
     }
 
