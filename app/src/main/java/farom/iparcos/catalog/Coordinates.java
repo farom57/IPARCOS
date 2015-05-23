@@ -24,7 +24,8 @@ public class Coordinates {
      * @param de_str
      */
     public Coordinates(String ra_str, String de_str){
-        // TODO
+        ra = convertRa(ra_str);
+        de = convertDe(de_str);
     }
 
     /**
@@ -119,6 +120,51 @@ public class Coordinates {
         }
     }
 
+    /**
+     * Right ascension in deg
+     * @return
+     */
+    public double getRa() {
+        return ra;
+    }
+
+    /**
+     * Declination in deg
+     * @return
+     */
+    public double getDe() {
+        return de;
+    }
+
+    /**
+     * Return a string with the right ascension (hh:mm:ss)
+     * @return
+     */
+    public String getRaStr(){
+        int deg = (int)Math.floor(Math.abs(ra)/15);
+        int min = (int)Math.floor((Math.abs(ra)/15-deg)*60);
+        int sec = (int)Math.round(((Math.abs(ra)/15-deg)*60-min)*60);
+        return String.format("%02d:%02d:%02d",deg,min,sec);
+    }
+
+    /**
+     * Return a string with the right ascension (hh:mm:ss)
+     * @return
+     */
+    public String getDeStr(){
+        int deg = (int)Math.floor(Math.abs(de));
+        int min = (int)Math.floor((Math.abs(de)-deg)*60);
+        int sec = (int)Math.round(((Math.abs(de)-deg)*60-min)*60);
+        if(Math.signum(de)>=0) {
+            return String.format("+%02d:%02d:%02d", deg, min, sec);
+        }else{
+            return String.format("-%02d:%02d:%02d", deg, min, sec);
+        }
+    }
+
+    public String toString(){
+        return "RA: "+getRaStr()+" DE: " + getDeStr();
+    }
 
 //    static void test(){
 //        Log.d("Coordinates_Test"," --- RA --- ");
@@ -178,6 +224,11 @@ public class Coordinates {
 //        }catch(NumberFormatException e) {
 //            Log.d("Coordinates_Test",e.getMessage());
 //        }
+//
+//        Log.d("Coordinates_Test",(new Coordinates("12:34:56.789","-12:34:56.789")).toString());
+//        Log.d("Coordinates_Test",(new Coordinates("1h02m10s","+1:2:3.04")).toString());
+//
+//
 //    }
 
 }

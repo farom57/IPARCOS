@@ -29,8 +29,7 @@ public class StarEntry extends CatalogEntry {
     protected String name;
     protected String names;
     protected String magnitude;
-    protected String ra;
-    protected String de;
+    protected Coordinates coord;
 
     /**
      * Create the entry from a formated line
@@ -49,11 +48,13 @@ public class StarEntry extends CatalogEntry {
         names = data.substring(i, i + namesLength).trim();
         i += namesLength;
 
-        ra = data.substring(i, i + raLength).trim();
+        String ra_str = data.substring(i, i + raLength).trim();
         i += raLength+1;
 
-        de = data.substring(i, i + deLength).trim();
+        String de_str = data.substring(i, i + deLength).trim();
         i += deLength+1;
+
+        coord = new Coordinates(ra_str,de_str);
 
         magnitude = data.substring(i, i + magnitudeLength).trim();
         i += magnitudeLength;
@@ -66,7 +67,7 @@ public class StarEntry extends CatalogEntry {
      */
     @Override
     public Coordinates getCoordinates() {
-        return null;
+        return coord;
     }
 
     /**
@@ -91,9 +92,9 @@ public class StarEntry extends CatalogEntry {
         String str =  "<b>" + r.getString(R.string.entry_names) + r.getString(R.string.colon_with_spaces) + "</b>" + names + "<br/>";
         str += "<b>" + r.getString(R.string.entry_type) + r.getString(R.string.colon_with_spaces) + "</b>" + r.getString(R.string.entry_star) + "<br/>";
         str += "<b>" + r.getString(R.string.entry_magnitude) + r.getString(R.string.colon_with_spaces) + "</b>" + magnitude + "<br/>";
-        str += "<b>" + r.getString(R.string.entry_RA) + r.getString(R.string.colon_with_spaces) + "</b>" + ra + "<br/>";
-        str += "<b>" + r.getString(R.string.entry_DE) + r.getString(R.string.colon_with_spaces) + "</b>" + de;
-        Coordinates.test();
+        str += "<b>" + r.getString(R.string.entry_RA) + r.getString(R.string.colon_with_spaces) + "</b>" + coord.getRaStr() + "<br/>";
+        str += "<b>" + r.getString(R.string.entry_DE) + r.getString(R.string.colon_with_spaces) + "</b>" + coord.getDeStr();
+
         return new SpannableString(Html.fromHtml(str));
     }
 
