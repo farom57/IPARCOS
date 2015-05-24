@@ -76,4 +76,8 @@
     <string name="entry_short_uncertain">Incertain</string>
     <string name="entry_triStar">Étoile triple</string>
     <string name="entry_uncertain">Incertain</string>
+    <string name="sync_slew_error" >Erreur: impossible de demander le pointage ou la synchronisation</string>
+    <string name="sync_ok" >Synchronisation ...</string>
+    <string name="slew_ok" >Pointage en cours</string>
+    <string name="arcmin">arcmin</string>
 </resources>

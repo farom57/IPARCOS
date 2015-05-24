@@ -1,6 +1,5 @@
 package farom.iparcos.catalog;
 
-import android.util.Log;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,8 +19,8 @@ public class Coordinates {
 
     /**
      * From String
-     * @param ra_str
-     * @param de_str
+     * @param ra_str Right ascension string
+     * @param de_str Declination string
      */
     public Coordinates(String ra_str, String de_str){
         ra = convertRa(ra_str);
@@ -30,8 +29,8 @@ public class Coordinates {
 
     /**
      * Convert Sexagesimal string into degrees (ie. "01 02 03.4" -> (1+2/60+3.4/3600)*15°)
-     * @param str
-     * @return
+     * @param str RA string
+     * @return degrees
      */
     static public double convertRa(String str) throws NumberFormatException{
         str = str.trim();
@@ -73,8 +72,8 @@ public class Coordinates {
 
     /**
      * Convert Sexagesimal string into degrees (ie. "01 02 03.4" -> (1+2/60+3.4/3600)°)
-     * @param str
-     * @return
+     * @param str Declination string
+     * @return degrees
      */
     static public double convertDe(String str) throws NumberFormatException{
         str = str.trim();
@@ -122,7 +121,7 @@ public class Coordinates {
 
     /**
      * Right ascension in deg
-     * @return
+     * @return degrees
      */
     public double getRa() {
         return ra;
@@ -130,7 +129,7 @@ public class Coordinates {
 
     /**
      * Declination in deg
-     * @return
+     * @return degrees
      */
     public double getDe() {
         return de;
@@ -138,7 +137,7 @@ public class Coordinates {
 
     /**
      * Return a string with the right ascension (hh:mm:ss)
-     * @return
+     * @return string
      */
     public String getRaStr(){
         int deg = (int)Math.floor(Math.abs(ra)/15);
@@ -149,7 +148,7 @@ public class Coordinates {
 
     /**
      * Return a string with the right ascension (hh:mm:ss)
-     * @return
+     * @return string
      */
     public String getDeStr(){
         int deg = (int)Math.floor(Math.abs(de));

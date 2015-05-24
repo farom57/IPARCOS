@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
+
 
 import farom.iparcos.R;
 
@@ -28,18 +28,17 @@ public class DSOEntry extends CatalogEntry {
     private final static int raLength = 10;
     private final static int deLength = 10;
 
-    protected String name;
+
     protected String type;
     protected String size;
     protected String magnitude;
-    protected String ra;
-    protected String de;
+
 
 
     /**
-     * Create the entry from a formated line
+     * Create the entry from a formatted line
      * (ie. "Dumbbell nebula          8 Pl 15.2 19 59 36.1+22 43 00")
-     * @param buf
+     * @param buf formatted line
      */
     public DSOEntry(char[] buf){
         String data = String.valueOf(buf);
@@ -58,24 +57,19 @@ public class DSOEntry extends CatalogEntry {
         size = data.substring(i, i+sizeLength).trim();
         i+=sizeLength;
 
-        ra = data.substring(i, i+raLength).trim();
-        i+=raLength;
+        String ra_str = data.substring(i, i + raLength).trim();
+        i += raLength+1;
 
-        de = data.substring(i, i+deLength).trim();
+        String de_str = data.substring(i, i + deLength).trim();
+
+        coord = new Coordinates(ra_str,de_str);
     }
 
-    /**
-     * Return the object coordinates     *
-     * @return
-     */
-    @Override
-    public Coordinates getCoordinates() {
-        return null;
-    }
+
 
     /**
      * Return the string resource which correspond to the type acronym
-     * @return
+     * @return text
      */
     private int getTypeStringResource(){
         if(type.equals("Gx")) {
@@ -115,7 +109,7 @@ public class DSOEntry extends CatalogEntry {
 
     /**
      * Return the string resource which correspond to the type acronym
-     * @return
+     * @return short text
      */
     private int getTypeShortStringResource(){
         if(type.equals("Gx")) {
@@ -156,8 +150,8 @@ public class DSOEntry extends CatalogEntry {
     /**
      * Create the description rich-text string
      *
-     * @param ctx
-     * @return
+     * @param ctx Context (to access resource strings)
+     * @return description Spannable
      */
     @Override
     public Spannable createDescription(Context ctx) {
@@ -169,16 +163,16 @@ public class DSOEntry extends CatalogEntry {
         if(!size.equals("")){
             str += "<b>" + r.getString(R.string.entry_size) + r.getString(R.string.colon_with_spaces) + "</b>" + size + " " + r.getString(R.string.arcmin) + "<br/>";
         }
-        str += "<b>" + r.getString(R.string.entry_RA) + r.getString(R.string.colon_with_spaces) + "</b>" + ra + "<br/>";
-        str += "<b>" + r.getString(R.string.entry_DE) + r.getString(R.string.colon_with_spaces) + "</b>" + de;
+        str += "<b>" + r.getString(R.string.entry_RA) + r.getString(R.string.colon_with_spaces) + "</b>" + coord.getRaStr() + "<br/>";
+        str += "<b>" + r.getString(R.string.entry_DE) + r.getString(R.string.colon_with_spaces) + "</b>" + coord.getDeStr();
         return new SpannableString(Html.fromHtml(str));
     }
 
     /**
      * Create the summary rich-text string (1 line)
      *
-     * @param ctx
-     * @return
+     * @param ctx Context (to access resource strings)
+     * @return summary Spannable
      */
     @Override
     public Spannable createSummary(Context ctx) {
@@ -194,18 +188,10 @@ public class DSOEntry extends CatalogEntry {
     }
 
     /**
-     * Return the object name
-     * @return
-     */
-    @Override
-    public String getName(){
-        return name;
-    }
-
-    /**
      * Create the list of DSO entries
-     * @param context
-     * @return
+     *
+     * @param context Context to access the catalog file
+     * @return A list of stars
      */
     public static ArrayList<DSOEntry> createList(Context context){
         ArrayList<DSOEntry> entries = new ArrayList<DSOEntry>();

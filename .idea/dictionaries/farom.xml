@@ -2,6 +2,7 @@
   <dictionary name="farom">
     <words>
       <w>arcsec</w>
+      <w>coord</w>
     </words>
   </dictionary>
 </component>

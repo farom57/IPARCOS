@@ -1,7 +1,7 @@
 package farom.iparcos;
 
 
-import android.app.Activity;
+
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
@@ -21,19 +21,45 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import farom.iparcos.catalog.Catalog;
 import farom.iparcos.catalog.CatalogEntry;
+import farom.iparcos.catalog.Coordinates;
+import laazotea.indi.Constants;
+import laazotea.indi.client.INDIDevice;
+import laazotea.indi.client.INDIDeviceListener;
+import laazotea.indi.client.INDINumberElement;
+import laazotea.indi.client.INDINumberProperty;
+import laazotea.indi.client.INDIProperty;
+import laazotea.indi.client.INDIPropertyListener;
+import laazotea.indi.client.INDIServerConnection;
+import laazotea.indi.client.INDIServerConnectionListener;
+import laazotea.indi.client.INDISwitchElement;
+import laazotea.indi.client.INDISwitchProperty;
+
 
 
 /**
  * Allow the user to search for an astronomical object and display the result.
  */
-public class SearchActivity extends ListActivity implements MenuItem.OnActionExpandListener, SearchView.OnQueryTextListener, AdapterView.OnItemClickListener {
+public class SearchActivity extends ListActivity implements MenuItem.OnActionExpandListener, SearchView.OnQueryTextListener, AdapterView.OnItemClickListener,INDIServerConnectionListener, INDIPropertyListener,
+        INDIDeviceListener {
 
     ArrayAdapter<CatalogEntry> adapter;
     private ArrayList<CatalogEntry> entries;
     private Catalog catalog;
+
+    // INDI properties
+    private INDINumberProperty telescopeCoordP = null;
+    private INDINumberElement telescopeCoordRA = null;
+    private INDINumberElement telescopeCoordDE = null;
+    private INDISwitchProperty telescopeOnCoordSetP = null;
+    private INDISwitchElement telescopeOnCoordSetSync = null;
+    private INDISwitchElement telescopeOnCoordSetSlew = null;
+
 
     /**
      * Called at the activity creation. Disable opening animation and load default content.
@@ -44,6 +70,7 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
         super.onCreate(savedInstanceState);
         overridePendingTransition(0, 0);
 
+        // list setup
         entries = new ArrayList<CatalogEntry>();
         adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_2, android.R.id.text1, entries) {
             @Override
@@ -59,7 +86,7 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
         };
         setListAdapter(adapter);
 
-
+        // List loading
         final Context act = this;
         new Thread(new Runnable(){
             @Override
@@ -69,6 +96,25 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
 
             }
         }).start(); // TODO : faire plus propre avec Cursor et Loader
+
+        // Set up INDI connection
+        ConnectionActivity.getInstance().registerPermanentConnectionListener(this);
+
+        // Enumerate existing properties
+        INDIServerConnection connection = ConnectionActivity.getConnection();
+        if (connection != null) {
+            List<INDIDevice> list = connection.getDevicesAsList();
+            if (list != null) {
+                for (Iterator<INDIDevice> it = list.iterator(); it.hasNext();) {
+                    INDIDevice device = it.next();
+                    device.addINDIDeviceListener(this);
+                    List<INDIProperty> properties = device.getPropertiesAsList();
+                    for (Iterator<INDIProperty> it2 = properties.iterator(); it2.hasNext();) {
+                        this.newProperty(device, it2.next());
+                    }
+                }
+            }
+        }
 
         getListView().setOnItemClickListener(this);
     }
@@ -180,21 +226,53 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
      */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+        final Context ctx = view.getContext();
+        final Coordinates coord = entries.get(position).getCoordinates();
+        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
         builder.setMessage(entries.get(position).createDescription(this))
                 .setTitle(entries.get(position).getName());
-        builder.setPositiveButton(R.string.GOTO,new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
 
-            }
-        });
-        builder.setNeutralButton(R.string.sync,new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        // Only display buttons if the telescope is ready
+        if(telescopeCoordP!=null && telescopeOnCoordSetP!=null){
+            builder.setPositiveButton(R.string.GOTO,new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    try {
+                        telescopeOnCoordSetSlew.setDesiredValue(Constants.SwitchStatus.ON);
+                        telescopeOnCoordSetSync.setDesiredValue(Constants.SwitchStatus.OFF);
+                        telescopeOnCoordSetP.sendChangesToDriver();
+                        telescopeCoordRA.setDesiredValue(coord.getRaStr());
+                        telescopeCoordDE.setDesiredValue(coord.getDeStr());
+                        telescopeCoordP.sendChangesToDriver();
+                        Toast toast = Toast.makeText(ctx, ctx.getString(R.string.slew_ok), Toast.LENGTH_LONG);
+                        toast.show();
+                    } catch (Exception e) {
+                        Toast toast = Toast.makeText(ctx, ctx.getString(R.string.sync_slew_error), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
 
-            }
-        });
+                }
+            });
+            builder.setNeutralButton(R.string.sync,new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    try {
+                        telescopeOnCoordSetSlew.setDesiredValue(Constants.SwitchStatus.ON);
+                        telescopeOnCoordSetSync.setDesiredValue(Constants.SwitchStatus.OFF);
+                        telescopeOnCoordSetP.sendChangesToDriver();
+                        telescopeCoordRA.setDesiredValue(coord.getRaStr());
+                        telescopeCoordDE.setDesiredValue(coord.getDeStr());
+                        telescopeCoordP.sendChangesToDriver();
+                        Toast toast = Toast.makeText(ctx, ctx.getString(R.string.sync_ok), Toast.LENGTH_LONG);
+                        toast.show();
+                    } catch (Exception e) {
+                        Toast toast = Toast.makeText(ctx, ctx.getString(R.string.sync_slew_error), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                }
+            });
+        }
+
         builder.setNegativeButton(R.string.cancel,new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -203,6 +281,93 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
         });
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    @Override
+    public void newProperty(INDIDevice device, INDIProperty property) {
+        // Look for properties
+
+        if (property.getName().equals("ON_COORD_SET")) {
+            telescopeOnCoordSetSlew = (INDISwitchElement) property.getElement("TRACK");
+            if(telescopeOnCoordSetSlew==null){telescopeOnCoordSetSync = (INDISwitchElement) property.getElement("SLEW");}
+            telescopeOnCoordSetSync = (INDISwitchElement) property.getElement("SYNC");
+
+            if (telescopeOnCoordSetSlew != null && telescopeOnCoordSetSync != null) {
+                property.addINDIPropertyListener(this);
+                telescopeOnCoordSetP = (INDISwitchProperty) property;
+                Log.i("SearchActivity", "New Property (" + property.getName() + ") added to device " + device.getName());
+            }else{
+                Log.w("SearchActivity", "Bad property: " + property.getName() + ", device: " + device.getName());
+            }
+        }
+
+        if (property.getName().equals("EQUATORIAL_COORD")) {
+            telescopeCoordRA = (INDINumberElement) property.getElement("RA");
+            telescopeCoordDE = (INDINumberElement) property.getElement("DE");
+
+            if (telescopeCoordDE!= null && telescopeCoordRA != null) {
+                property.addINDIPropertyListener(this);
+                telescopeCoordP = (INDINumberProperty) property;
+                Log.i("SearchActivity", "New Property (" + property.getName() + ") added to device " + device.getName());
+            }else{
+                Log.w("SearchActivity", "Bad property: " + property.getName() + ", device: " + device.getName());
+            }
+        }
+    }
+
+    @Override
+    public void removeProperty(INDIDevice device, INDIProperty property) {
+        if (property.getName().equals("ON_COORD_SET")) {
+            telescopeCoordP = null;
+            telescopeCoordRA = null;
+            telescopeCoordDE = null;
+        }
+        if (property.getName().equals("EQUATORIAL_COORD")) {
+            telescopeOnCoordSetP = null;
+            telescopeOnCoordSetSlew = null;
+            telescopeOnCoordSetSync = null;
+        }
+        Log.d("SearchActivity", "Removed property (" + property.getName() + ") to device " + device.getName());
+    }
+
+    @Override
+    public void messageChanged(INDIDevice device) {
+
+    }
+
+    @Override
+    public void propertyChanged(INDIProperty property) {
+
+    }
+
+    @Override
+    public void newDevice(INDIServerConnection connection, INDIDevice device) {
+        // We just simply listen to this Device
+        Log.i("SearchActivity", getString(R.string.new_device) + device.getName());
+        device.addINDIDeviceListener(this);
+    }
+
+    @Override
+    public void removeDevice(INDIServerConnection connection, INDIDevice device) {
+        // We just remove ourselves as a listener of the removed device
+        Log.i("SearchActivity", getString(R.string.device_removed) + device.getName());
+        device.removeINDIDeviceListener(this);
+    }
+
+    @Override
+    public void connectionLost(INDIServerConnection connection) {
+
+        telescopeCoordP = null;
+        telescopeCoordRA = null;
+        telescopeCoordDE = null;
+        telescopeOnCoordSetP = null;
+        telescopeOnCoordSetSlew = null;
+        telescopeOnCoordSetSync = null;
+    }
+
+    @Override
+    public void newMessage(INDIServerConnection connection, Date timestamp, String message) {
+
     }
 }
 

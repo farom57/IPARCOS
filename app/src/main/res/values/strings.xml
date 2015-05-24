@@ -79,5 +79,8 @@
     <string name="entry_short_blank" >Unknown</string>
     <string name="entry_short_minus" >Nonexistent</string>
     <string name="entry_short_PD" >Photographic defect</string>
+    <string name="sync_slew_error" >Error: can\'t request sync or goto</string>
+    <string name="slew_ok" >Goto started</string>
+    <string name="sync_ok">Sync …</string>
 
 </resources>

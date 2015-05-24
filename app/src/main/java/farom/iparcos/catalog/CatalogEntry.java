@@ -1,47 +1,46 @@
 package farom.iparcos.catalog;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.text.Spannable;
-import android.util.Log;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * An astronomical object
  */
 public abstract class CatalogEntry implements Comparable<CatalogEntry> {
-
+    protected Coordinates coord;
+    protected String name;
 
 
     /**
      * Return the object coordinates
-     * @return
+     * @return coordinates
      */
-    public abstract Coordinates getCoordinates();
+    public Coordinates getCoordinates(){ return coord; }
 
 
     /**
      * Return the object name
-     * @return
+     * @return name
      */
-    public abstract String getName();
+    public String getName(){
+        return name;
+    }
 
 
     /**
      * Create the description rich-text string
-     * @return
+     *
+     * @param ctx Context (to access resource strings)
+     * @return description Spannable
      */
     public abstract Spannable createDescription(Context ctx);
 
     /**
      * Create the summary rich-text string (1 line)
-     * @return
+     *
+     * @param ctx Context (to access resource strings)
+     * @return summary Spannable
      */
     public abstract Spannable createSummary(Context ctx);
 
@@ -60,7 +59,7 @@ public abstract class CatalogEntry implements Comparable<CatalogEntry> {
      */
     @Override
     public int compareTo(CatalogEntry another) {
-        return getName().compareToIgnoreCase(another.getName());
+        return this.getName().compareToIgnoreCase(another.getName());
     }
 }
 

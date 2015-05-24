@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import farom.iparcos.R;
 
 /**
- * Created by farom on 15/04/15.
+ * A star
  */
 public class StarEntry extends CatalogEntry {
     private final static int resource = R.raw.stars;
@@ -26,16 +26,16 @@ public class StarEntry extends CatalogEntry {
     private final static int deLength = 12;
     private final static int magnitudeLength = 7;
 
-    protected String name;
+
     protected String names;
     protected String magnitude;
-    protected Coordinates coord;
+
 
     /**
-     * Create the entry from a formated line
+     * Create the entry from a formatted line
      * (ie. "ALGOL                 ALGOL; BET PER; HD19356; SAO38592                               03 08 10.131 +40 57 20.43    2.1")
      *
-     * @param buf
+     * @param buf formatted line
      */
     public StarEntry(char[] buf) {
         String data = String.valueOf(buf);
@@ -57,34 +57,16 @@ public class StarEntry extends CatalogEntry {
         coord = new Coordinates(ra_str,de_str);
 
         magnitude = data.substring(i, i + magnitudeLength).trim();
-        i += magnitudeLength;
+
     }
 
-    /**
-     * Return the object coordinates
-     *
-     * @return
-     */
-    @Override
-    public Coordinates getCoordinates() {
-        return coord;
-    }
 
-    /**
-     * Return the object name
-     *
-     * @return
-     */
-    @Override
-    public String getName() {
-        return name;
-    }
 
     /**
      * Create the description rich-text string
      *
-     * @param ctx
-     * @return
+     * @param ctx Context (to access resource strings)
+     * @return description Spannable
      */
     @Override
     public Spannable createDescription(Context ctx) {
@@ -101,8 +83,8 @@ public class StarEntry extends CatalogEntry {
     /**
      * Create the summary rich-text string (1 line)
      *
-     * @param ctx
-     * @return
+     * @param ctx Context (to access resource strings)
+     * @return summary Spannable
      */
     @Override
     public Spannable createSummary(Context ctx) {
@@ -113,10 +95,10 @@ public class StarEntry extends CatalogEntry {
 
 
     /**
-     * Create the list of DSO entries
+     * Create the list of star entries
      *
-     * @param context
-     * @return
+     * @param context Context to access the catalog file
+     * @return A list of stars
      */
     public static ArrayList<StarEntry> createList(Context context) {
         ArrayList<StarEntry> entries = new ArrayList<StarEntry>();
