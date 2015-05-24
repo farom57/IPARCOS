@@ -257,8 +257,8 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     try {
-                        telescopeOnCoordSetSlew.setDesiredValue(Constants.SwitchStatus.ON);
-                        telescopeOnCoordSetSync.setDesiredValue(Constants.SwitchStatus.OFF);
+                        telescopeOnCoordSetSync.setDesiredValue(Constants.SwitchStatus.ON);
+                        telescopeOnCoordSetSlew.setDesiredValue(Constants.SwitchStatus.OFF);
                         telescopeOnCoordSetP.sendChangesToDriver();
                         telescopeCoordRA.setDesiredValue(coord.getRaStr());
                         telescopeCoordDE.setDesiredValue(coord.getDeStr());
@@ -301,9 +301,9 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
             }
         }
 
-        if (property.getName().equals("EQUATORIAL_COORD")) {
+        if (property.getName().equals("EQUATORIAL_COORD") || property.getName().equals("EQUATORIAL_EOD_COORD") ) {
             telescopeCoordRA = (INDINumberElement) property.getElement("RA");
-            telescopeCoordDE = (INDINumberElement) property.getElement("DE");
+            telescopeCoordDE = (INDINumberElement) property.getElement("DEC");
 
             if (telescopeCoordDE!= null && telescopeCoordRA != null) {
                 property.addINDIPropertyListener(this);
