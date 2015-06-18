@@ -12,9 +12,9 @@ The project main site is https://github.com/farom57/IPARCOS/
 
 # Screenshots
 
-![connection][docs/connection.png]
-![direction][docs/direction.png]
-![generic][docs/generic.png]
+![connection](docs/connection.png "Connection screen")
+![direction](docs/direction.png "Move screen")
+![generic](docs/generic.png "Generic screen")
 
 # Download and install
 * ~~From Google Play:~~
