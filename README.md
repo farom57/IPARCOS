@@ -10,6 +10,12 @@ The project main site is https://github.com/farom57/IPARCOS/
 + Control of the telescope motion by means of a directional pad and speed buttons
 + Languages: English, French
 
+# Screenshots
+
+![connection][docs/connection.png]
+![direction][docs/direction.png]
+![generic][docs/generic.png]
+
 # Download and install
 * ~~From Google Play:~~
   * Not yet available
