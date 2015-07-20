@@ -126,6 +126,10 @@ public class INDINumberElement extends INDIElement {
       newNumberFormat = "%.0f";  
     }
     
+    if (newNumberFormat.equals("%.f")) {
+      newNumberFormat = "%.0f";  
+    }
+    
     this.numberFormat = newNumberFormat;
   }
 
