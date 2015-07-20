@@ -122,7 +122,7 @@ public class INDINumberElement extends INDIElement {
       sFormatter = new INDISexagesimalFormatter(newNumberFormat);
     }
 
-    if (newNumberFormat.equals("%0.f")) {
+    if (newNumberFormat.equals("%0.f") || newNumberFormat.equals("%.f")) {
       newNumberFormat = "%.0f";  
     }
     
