@@ -1,9 +1,9 @@
 package farom.iparcos;
 
 
-
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.app.SearchManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -41,14 +40,13 @@ import laazotea.indi.client.INDISwitchElement;
 import laazotea.indi.client.INDISwitchProperty;
 
 
-
 /**
  * Allow the user to search for an astronomical object and display the result.
  */
-public class SearchActivity extends ListActivity implements MenuItem.OnActionExpandListener, SearchView.OnQueryTextListener, AdapterView.OnItemClickListener,INDIServerConnectionListener, INDIPropertyListener,
+public class SearchActivity extends ListActivity implements MenuItem.OnActionExpandListener, SearchView.OnQueryTextListener, AdapterView.OnItemClickListener, INDIServerConnectionListener, INDIPropertyListener,
         INDIDeviceListener {
 
-    ArrayAdapter<CatalogEntry> adapter;
+    ArrayAdapter adapter;
     private ArrayList<CatalogEntry> entries;
     private Catalog catalog;
 
@@ -63,6 +61,7 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
 
     /**
      * Called at the activity creation. Disable opening animation and load default content.
+     *
      * @param savedInstanceState
      */
     @Override
@@ -71,13 +70,13 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
         overridePendingTransition(0, 0);
 
         // list setup
-        entries = new ArrayList<CatalogEntry>();
+        entries = new ArrayList<>();
         adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_2, android.R.id.text1, entries) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-                TextView text2 = (TextView) view.findViewById(android.R.id.text2);
+                TextView text1 = view.findViewById(android.R.id.text1);
+                TextView text2 = view.findViewById(android.R.id.text2);
 
                 text1.setText(entries.get(position).getName());
                 text2.setText(entries.get(position).createSummary(getContext()));
@@ -88,7 +87,7 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
 
         // List loading
         final Context act = this;
-        new Thread(new Runnable(){
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 catalog = new Catalog(act);
@@ -105,11 +104,11 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
         if (connection != null) {
             List<INDIDevice> list = connection.getDevicesAsList();
             if (list != null) {
-                for (Iterator<INDIDevice> it = list.iterator(); it.hasNext();) {
+                for (Iterator<INDIDevice> it = list.iterator(); it.hasNext(); ) {
                     INDIDevice device = it.next();
                     device.addINDIDeviceListener(this);
                     List<INDIProperty> properties = device.getPropertiesAsList();
-                    for (Iterator<INDIProperty> it2 = properties.iterator(); it2.hasNext();) {
+                    for (Iterator<INDIProperty> it2 = properties.iterator(); it2.hasNext(); ) {
                         this.newProperty(device, it2.next());
                     }
                 }
@@ -121,6 +120,7 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
 
     /**
      * perform the search
+     *
      * @param query
      */
     private void doMySearch(String query) {
@@ -132,8 +132,8 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
 //        entries.add(new DSOEntry("48 Tuc                   4 Gb 30.9 00 24 06.1-72 05 00X"));
 //        Log.d("GLOBALLOG", "entries.size() = " + entries.size());
 //        adapter.notifyDataSetChanged();
-        if(catalog!=null){
-            if(catalog.isReady()) {
+        if (catalog != null) {
+            if (catalog.isReady()) {
                 getListView().setSelection(catalog.searchIndex(query));
             }
         }
@@ -141,6 +141,7 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
 
     /**
      * Initiate the menu (only the search view in fact).
+     *
      * @param menu
      * @return
      */
@@ -168,6 +169,7 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
 
     /**
      * (from OnActionExpandListener) Called when the search menu is expanded. It can only happens at the menu initialisation. Nothing to do.
+     *
      * @param item
      * @return
      */
@@ -178,6 +180,7 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
 
     /**
      * (from OnActionExpandListener) Called when the user closes the search menu. It shall kill the activity.
+     *
      * @param item
      * @return
      */
@@ -190,6 +193,7 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
 
     /**
      * (from OnQueryTextListener) Called when the user changes the search string
+     *
      * @param newText
      * @return
      */
@@ -201,6 +205,7 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
 
     /**
      * (from OnQueryTextListener) Called when the user submits the query. Nothing to do since it is done in onQueryTextChange
+     *
      * @param query
      * @return
      */
@@ -208,7 +213,6 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
     public boolean onQueryTextSubmit(String query) {
         return false;
     }
-
 
 
     /**
@@ -233,8 +237,8 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
                 .setTitle(entries.get(position).getName());
 
         // Only display buttons if the telescope is ready
-        if(telescopeCoordP!=null && telescopeOnCoordSetP!=null){
-            builder.setPositiveButton(R.string.GOTO,new DialogInterface.OnClickListener() {
+        if (telescopeCoordP != null && telescopeOnCoordSetP != null) {
+            builder.setPositiveButton(R.string.GOTO, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     try {
@@ -246,6 +250,7 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
                         telescopeCoordP.sendChangesToDriver();
                         Toast toast = Toast.makeText(ctx, ctx.getString(R.string.slew_ok), Toast.LENGTH_LONG);
                         toast.show();
+
                     } catch (Exception e) {
                         Toast toast = Toast.makeText(ctx, ctx.getString(R.string.sync_slew_error), Toast.LENGTH_LONG);
                         toast.show();
@@ -253,7 +258,7 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
 
                 }
             });
-            builder.setNeutralButton(R.string.sync,new DialogInterface.OnClickListener() {
+            builder.setNeutralButton(R.string.sync, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     try {
@@ -265,6 +270,7 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
                         telescopeCoordP.sendChangesToDriver();
                         Toast toast = Toast.makeText(ctx, ctx.getString(R.string.sync_ok), Toast.LENGTH_LONG);
                         toast.show();
+
                     } catch (Exception e) {
                         Toast toast = Toast.makeText(ctx, ctx.getString(R.string.sync_slew_error), Toast.LENGTH_LONG);
                         toast.show();
@@ -273,7 +279,7 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
             });
         }
 
-        builder.setNegativeButton(R.string.cancel,new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -286,30 +292,32 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
     @Override
     public void newProperty(INDIDevice device, INDIProperty property) {
         // Look for properties
-
         if (property.getName().equals("ON_COORD_SET")) {
             telescopeOnCoordSetSlew = (INDISwitchElement) property.getElement("TRACK");
-            if(telescopeOnCoordSetSlew==null){telescopeOnCoordSetSync = (INDISwitchElement) property.getElement("SLEW");}
+            if (telescopeOnCoordSetSlew == null) {
+                telescopeOnCoordSetSync = (INDISwitchElement) property.getElement("SLEW");
+            }
             telescopeOnCoordSetSync = (INDISwitchElement) property.getElement("SYNC");
 
             if (telescopeOnCoordSetSlew != null && telescopeOnCoordSetSync != null) {
                 property.addINDIPropertyListener(this);
                 telescopeOnCoordSetP = (INDISwitchProperty) property;
                 Log.i("SearchActivity", "New Property (" + property.getName() + ") added to device " + device.getName());
-            }else{
+
+            } else {
                 Log.w("SearchActivity", "Bad property: " + property.getName() + ", device: " + device.getName());
             }
         }
 
-        if (property.getName().equals("EQUATORIAL_COORD") || property.getName().equals("EQUATORIAL_EOD_COORD") ) {
+        if (property.getName().equals("EQUATORIAL_COORD") || property.getName().equals("EQUATORIAL_EOD_COORD")) {
             telescopeCoordRA = (INDINumberElement) property.getElement("RA");
             telescopeCoordDE = (INDINumberElement) property.getElement("DEC");
 
-            if (telescopeCoordDE!= null && telescopeCoordRA != null) {
+            if (telescopeCoordDE != null && telescopeCoordRA != null) {
                 property.addINDIPropertyListener(this);
                 telescopeCoordP = (INDINumberProperty) property;
                 Log.i("SearchActivity", "New Property (" + property.getName() + ") added to device " + device.getName());
-            }else{
+            } else {
                 Log.w("SearchActivity", "Bad property: " + property.getName() + ", device: " + device.getName());
             }
         }
@@ -356,7 +364,6 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
 
     @Override
     public void connectionLost(INDIServerConnection connection) {
-
         telescopeCoordP = null;
         telescopeCoordRA = null;
         telescopeCoordDE = null;
@@ -370,5 +377,3 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
 
     }
 }
-
-

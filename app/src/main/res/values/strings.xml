@@ -3,7 +3,7 @@
 
     <string name="app_name">IPARCOS</string>
     <string name="menu_settings">Settings</string>
-    <string name="indi_host">INDI Host</string>
+    <string name="indi_host">Select the INDI Host:</string>
     <string name="connect">Connect</string>
     <string name="disconnect">Disconnect</string>
     <string name="log">Log</string>
@@ -12,11 +12,11 @@
     <string name="hostprompt">Host address</string>
     <string name="hostadd">Add Server</string>
     <string name="hostauto">Auto</string>
-    <string name="host_prompt_text">Host ip address:</string>
+    <string name="host_prompt_text">Host IP address:</string>
     <string name="connecting">Connection …</string>
     <string name="menu_motion_short">Move</string>
     <string name="menu_motion">Motion control</string>
-    <string name="menu_connection">Connect</string>
+    <string name="menu_connectionion">Connection</string>
     <string name="menu_generic">Control panel</string>
     <string name="menu_search">Search</string>
     <string name="title_activity_generic">Control panel</string>
