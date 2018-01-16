@@ -1,26 +1,24 @@
 package farom.iparcos;
 
-import android.app.ActionBar;
-import android.app.ActionBar.Tab;
-import android.app.ActionBar.TabListener;
-import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import laazotea.indi.client.INDIDevice;
 import laazotea.indi.client.INDIServerConnection;
 import laazotea.indi.client.INDIServerConnectionListener;
 
-public class GenericActivity extends Activity implements TabListener, INDIServerConnectionListener {
+public class GenericActivity extends AppCompatActivity implements ActionBar.TabListener, INDIServerConnectionListener {
 
     /**
      * The active fragment
@@ -30,7 +28,7 @@ public class GenericActivity extends Activity implements TabListener, INDIServer
     /**
      * Retains the association between the tab and the device
      */
-    private HashMap<Tab, INDIDevice> tabDeviceMap;
+    private HashMap<ActionBar.Tab, INDIDevice> tabDeviceMap;
 
 
     private ActionBar actionBar;
@@ -42,11 +40,15 @@ public class GenericActivity extends Activity implements TabListener, INDIServer
         ConnectionActivity.getInstance().registerPermanentConnectionListener(this);
 
         setContentView(R.layout.activity_generic);
-        actionBar = getActionBar();
+
+        Toolbar toolbar = findViewById(R.id.app_toolbar);
+        // toolbar.setSubtitle(R.string.title_activity_generic);
+        setSupportActionBar(toolbar);
+
+        actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        tabDeviceMap = new HashMap<ActionBar.Tab, INDIDevice>();
-
+        tabDeviceMap = new HashMap<>();
     }
 
     @Override
@@ -58,10 +60,7 @@ public class GenericActivity extends Activity implements TabListener, INDIServer
         MenuItem genericItem = menu.findItem(R.id.menu_generic);
         genericItem.setVisible(false);
 
-        ActionBar ab = getActionBar();
-        ab.setSubtitle(R.string.title_activity_generic);
-
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -78,23 +77,17 @@ public class GenericActivity extends Activity implements TabListener, INDIServer
         }
 
         if (list.size() > 0) {
-
             // Recreate tabs
-            for (Iterator<INDIDevice> it = list.iterator(); it.hasNext(); ) {
-                INDIDevice device = it.next();
-
-                Tab tab = actionBar.newTab();
+            for (INDIDevice device : list) {
+                ActionBar.Tab tab = actionBar.newTab();
 
                 tabDeviceMap.put(tab, device);
 
                 tab.setText(device.getName());
                 tab.setTabListener(this);
                 actionBar.addTab(tab);
-
             }
-
         }
-
     }
 
     @Override
@@ -104,7 +97,6 @@ public class GenericActivity extends Activity implements TabListener, INDIServer
         // Remove the tabs
         actionBar.removeAllTabs();
         tabDeviceMap.clear();
-
     }
 
 
@@ -186,30 +178,33 @@ public class GenericActivity extends Activity implements TabListener, INDIServer
     }
 
     @Override
-    public void onTabReselected(Tab arg0, FragmentTransaction arg1) {
+    public void onTabReselected(ActionBar.Tab arg0, FragmentTransaction arg1) {
         // User selected the already selected tab. Usually do nothing.
     }
 
     @Override
-    public void onTabSelected(Tab tab, FragmentTransaction ft) {
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
         // Check if the fragment is already initialized
         if (fragment == null) {
             fragment = new PrefsFragment();
             fragment.setDevice(tabDeviceMap.get(tab));
-            ft.add(android.R.id.content, fragment);
+            // TODO(squareboot)
+            //ft.add(android.R.id.content, fragment);
+
         } else {
             Log.e("GenericActivity", "error : fragment!=null");
         }
     }
 
     @Override
-    public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
         if (fragment != null) {
-            // Detach the fragment, and delete it because an other will be
-            // created
-            ft.detach(fragment);
+            // Detach the fragment, and delete it because an other will be created
+            // TODO(squareboot)
+            //ft.detach(fragment);
             try {
                 fragment.finalize();
+
             } catch (Throwable e) {
                 //e.printStackTrace();
                 Log.e("GenericActivity", "error fragment.finalize() : " + e.getLocalizedMessage());
@@ -220,5 +215,4 @@ public class GenericActivity extends Activity implements TabListener, INDIServer
             Log.e("GenericActivity", "error : fragment==null");
         }
     }
-
 }

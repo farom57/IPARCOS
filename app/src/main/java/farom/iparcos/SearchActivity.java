@@ -1,6 +1,5 @@
 package farom.iparcos;
 
-
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.SearchManager;
@@ -39,9 +38,8 @@ import laazotea.indi.client.INDIServerConnectionListener;
 import laazotea.indi.client.INDISwitchElement;
 import laazotea.indi.client.INDISwitchProperty;
 
-
 /**
- * Allow the user to search for an astronomical object and display the result.
+ * Allows the user to search for an astronomical object and displays the result.
  */
 public class SearchActivity extends ListActivity implements MenuItem.OnActionExpandListener, SearchView.OnQueryTextListener, AdapterView.OnItemClickListener, INDIServerConnectionListener, INDIPropertyListener,
         INDIDeviceListener {
@@ -161,10 +159,12 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
         searchView.setOnQueryTextListener(this);    // to recover text change
 
         MenuItem searchItem = menu.findItem(R.id.menu_search);
-        searchItem.expandActionView();              // force expand the view at the beginning (the searchView.setIconifiedByDefault is not working)
-        searchItem.setOnActionExpandListener(this); // recover the collapse event to quit the activity
+        // Force expand the view at the beginning (searchView.setIconifiedByDefault is not working)
+        searchItem.expandActionView();
+        // Recover the collapse event to quit the activity
+        searchItem.setOnActionExpandListener(this);
 
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     /**

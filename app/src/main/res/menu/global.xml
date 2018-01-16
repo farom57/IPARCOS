@@ -6,20 +6,20 @@
     <!--         android:orderInCategory="100" android:onClick="openSettingsActivity"/> -->
 
     <item
+        android:id="@+id/menu_connection"
+        android:icon="@drawable/icon_connect"
+        android:onClick="openConnectionActivity"
+        android:orderInCategory="0"
+        android:title="@string/menu_connection"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/menu_move"
         android:icon="@drawable/icon_move"
         android:onClick="openMotionActivity"
         android:orderInCategory="1"
         android:title="@string/menu_motion"
         android:titleCondensed="@string/menu_motion_short"
-        app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/menu_connection"
-        android:icon="@drawable/icon_connect"
-        android:onClick="openConnectionActivity"
-        android:orderInCategory="0"
-        android:title="@string/menu_connection"
         app:showAsAction="ifRoom" />
 
     <item

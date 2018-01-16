@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -79,6 +78,10 @@ public class ConnectionActivity extends AppCompatActivity implements INDIServerC
 
         setContentView(R.layout.activity_connection);
 
+        Toolbar toolbar = findViewById(R.id.app_toolbar);
+        // toolbar.setSubtitle(R.string.menu_connection);
+        setSupportActionBar(toolbar);
+
         loadServerList();
 
         logView = findViewById(R.id.logTextBox); // TODO : correct
@@ -99,27 +102,26 @@ public class ConnectionActivity extends AppCompatActivity implements INDIServerC
                 // nothing to do
             }
         });
-
     }
 
     /**
      * load and update the server list
      */
     protected void loadServerList() {
-        // get preferences
+        // Get the preferences
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         Set<String> set = preferences.getStringSet("SERVER_SET", null);
         List<String> serverList;
         if (set != null) {
             serverList = new Vector<>(set);
+
         } else {
             serverList = new Vector<>();
         }
 
         // update the display
         serverList.add(getResources().getString(R.string.hostadd));
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
-                serverList);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, serverList);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         ((Spinner) findViewById(R.id.spinnerHost)).setAdapter(dataAdapter);
     }
@@ -136,6 +138,7 @@ public class ConnectionActivity extends AppCompatActivity implements INDIServerC
         int port;
         try {
             port = Integer.parseInt(portStr);
+
         } catch (NumberFormatException e) {
             port = 7624;
         }
@@ -144,13 +147,14 @@ public class ConnectionActivity extends AppCompatActivity implements INDIServerC
         if (connectionButton.getText().equals(getResources().getString(R.string.connect))) {
             if (host.equals(getResources().getString(R.string.hostadd))) {
                 addServer();
+
             } else {
                 connect(host, port);
             }
+
         } else if (connectionButton.getText().equals(getResources().getString(R.string.disconnect))) {
             disconnect();
         }
-
     }
 
     /**
@@ -165,6 +169,7 @@ public class ConnectionActivity extends AppCompatActivity implements INDIServerC
         List<String> serverList;
         if (set != null) {
             serverList = new Vector<>(set);
+
         } else {
             serverList = new Vector<>();
         }
@@ -219,24 +224,19 @@ public class ConnectionActivity extends AppCompatActivity implements INDIServerC
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.global, menu);
 
-        // hide the item for the current activity
+        // Hide the item of the current activity
         MenuItem connectionItem = menu.findItem(R.id.menu_connection);
         connectionItem.setVisible(false);
 
         if (connection == null || !connection.isConnected()) {
-            // hide the items which are not available when disconnected
+            // Hide the items which are not available when disconnected
             MenuItem genericItem = menu.findItem(R.id.menu_generic);
             genericItem.setVisible(false);
             MenuItem moveItem = menu.findItem(R.id.menu_move);
             moveItem.setVisible(false);
-
         }
 
-        Toolbar toolbar = findViewById(R.id.app_toolbar);
-        toolbar.setSubtitle(R.string.menu_connection);
-        setSupportActionBar(toolbar);
-
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     /**
@@ -423,13 +423,11 @@ public class ConnectionActivity extends AppCompatActivity implements INDIServerC
     @Override
     public void newProperty(INDIDevice device, INDIProperty property) {
         // nothing
-
     }
 
     @Override
     public void removeProperty(INDIDevice device, INDIProperty property) {
         // nothing
-
     }
 
     @Override
