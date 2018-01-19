@@ -14,9 +14,9 @@ The project main site is https://github.com/farom57/IPARCOS/
 
 # Screenshots
 
-<img align="left" width="700" src="docs/connection.png">
-<img align="center" width="700" src="docs/motion.png">
-<img align="right" width="700" src="docs/control-panel.png">
+<img align="left" width="300" src="docs/connection.png">
+<img align="center" width="300" src="docs/motion.png">
+<img align="right" width="300" src="docs/control-panel.png">
 
 # Download and install
 * ~~From Google Play:~~
