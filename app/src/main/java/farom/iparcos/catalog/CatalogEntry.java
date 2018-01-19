@@ -8,25 +8,27 @@ import android.text.Spannable;
  * An astronomical object
  */
 public abstract class CatalogEntry implements Comparable<CatalogEntry> {
+
     protected Coordinates coord;
     protected String name;
 
-
     /**
      * Return the object coordinates
+     *
      * @return coordinates
      */
-    public Coordinates getCoordinates(){ return coord; }
-
+    public Coordinates getCoordinates() {
+        return coord;
+    }
 
     /**
      * Return the object name
+     *
      * @return name
      */
-    public String getName(){
+    public String getName() {
         return name;
     }
-
 
     /**
      * Create the description rich-text string
@@ -43,7 +45,6 @@ public abstract class CatalogEntry implements Comparable<CatalogEntry> {
      * @return summary Spannable
      */
     public abstract Spannable createSummary(Context ctx);
-
 
     /**
      * Compares this object to the specified object to determine their relative
@@ -62,5 +63,3 @@ public abstract class CatalogEntry implements Comparable<CatalogEntry> {
         return this.getName().compareToIgnoreCase(another.getName());
     }
 }
-
-

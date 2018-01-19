@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
  * Stellar coordinates with methods to convert from/to String
  */
 public class Coordinates {
+
     /**
      * Right ascension in arcsec
      */
@@ -19,108 +20,110 @@ public class Coordinates {
 
     /**
      * From String
+     *
      * @param ra_str Right ascension string
      * @param de_str Declination string
      */
-    public Coordinates(String ra_str, String de_str){
+    public Coordinates(String ra_str, String de_str) {
         ra = convertRa(ra_str);
         de = convertDe(de_str);
     }
 
     /**
      * Convert Sexagesimal string into degrees (ie. "01 02 03.4" -> (1+2/60+3.4/3600)*15°)
+     *
      * @param str RA string
      * @return degrees
      */
-    static public double convertRa(String str) throws NumberFormatException{
+    static public double convertRa(String str) throws NumberFormatException {
         str = str.trim();
 
         Pattern p = Pattern.compile("([0-9]{1,2})[h:\\s]([0-9]{1,2})([m:'\\s]([0-9]{1,2})([,\\.]([0-9]*))?[s\"]?)?[m:'\\s]?");
         Matcher m = p.matcher(str);
 
         double value = 0;
-        if(m.matches()){
+        if (m.matches()) {
 
-            if(m.group(6)!=null) {
+            if (m.group(6) != null) {
                 for (int i = 0; i < m.group(6).length(); ++i) {
                     value += 15. / 3600. * (m.group(6).charAt(i) - '0') * Math.pow(0.1, i + 1);
                 }
             }
-            if(m.group(4)!=null) {
+            if (m.group(4) != null) {
                 for (int i = 0; i < m.group(4).length(); ++i) {
                     value += 15. / 3600. * (m.group(4).charAt(i) - '0') * Math.pow(10, m.group(4).length() - i - 1);
                 }
             }
-            if(m.group(2)!=null) {
-                for(int i = 0; i<m.group(2).length(); ++i){
-                    value += 15./60.*(m.group(2).charAt(i)-'0')*Math.pow(10,m.group(2).length()-i-1);
+            if (m.group(2) != null) {
+                for (int i = 0; i < m.group(2).length(); ++i) {
+                    value += 15. / 60. * (m.group(2).charAt(i) - '0') * Math.pow(10, m.group(2).length() - i - 1);
                 }
             }
 
-            if(m.group(1)!=null) {
-                for(int i = 0; i<m.group(1).length(); ++i){
-                    value += 15.*(m.group(1).charAt(i)-'0')*Math.pow(10,m.group(1).length()-i-1);
+            if (m.group(1) != null) {
+                for (int i = 0; i < m.group(1).length(); ++i) {
+                    value += 15. * (m.group(1).charAt(i) - '0') * Math.pow(10, m.group(1).length() - i - 1);
                 }
             }
 
             return value;
 
-        }else{
+        } else {
             throw new NumberFormatException(str + " is not a valid sexagesimal string");
         }
     }
 
     /**
      * Convert Sexagesimal string into degrees (ie. "01 02 03.4" -> (1+2/60+3.4/3600)°)
+     *
      * @param str Declination string
      * @return degrees
      */
-    static public double convertDe(String str) throws NumberFormatException{
+    static public double convertDe(String str) throws NumberFormatException {
         str = str.trim();
 
         Pattern p = Pattern.compile("([\\+\\-]?)([0-9]{1,2})[°:\\s]([0-9]{1,2})([m:'\\s]([0-9]{1,2})([,\\.]([0-9]*))?[s\"]?)?[m:'\\s]?");
         Matcher m = p.matcher(str);
 
         double value = 0;
-        if(m.matches()){
+        if (m.matches()) {
 
-            if(m.group(7)!=null) {
+            if (m.group(7) != null) {
                 for (int i = 0; i < m.group(7).length(); ++i) {
                     value += 1. / 3600. * (m.group(7).charAt(i) - '0') * Math.pow(0.1, i + 1);
                 }
             }
-            if(m.group(5)!=null) {
+            if (m.group(5) != null) {
                 for (int i = 0; i < m.group(5).length(); ++i) {
                     value += 1. / 3600. * (m.group(5).charAt(i) - '0') * Math.pow(10, m.group(5).length() - i - 1);
                 }
             }
-            if(m.group(3)!=null) {
-                for(int i = 0; i<m.group(3).length(); ++i){
-                    value += 1./60.*(m.group(3).charAt(i)-'0')*Math.pow(10,m.group(3).length()-i-1);
+            if (m.group(3) != null) {
+                for (int i = 0; i < m.group(3).length(); ++i) {
+                    value += 1. / 60. * (m.group(3).charAt(i) - '0') * Math.pow(10, m.group(3).length() - i - 1);
                 }
             }
-
-            if(m.group(2)!=null) {
-                for(int i = 0; i<m.group(2).length(); ++i){
-                    value += (m.group(2).charAt(i)-'0')*Math.pow(10,m.group(2).length()-i-1);
+            if (m.group(2) != null) {
+                for (int i = 0; i < m.group(2).length(); ++i) {
+                    value += (m.group(2).charAt(i) - '0') * Math.pow(10, m.group(2).length() - i - 1);
                 }
             }
-
-            if(m.group(1)!=null) {
-                if(m.group(1).equals("-")){
-                    value=-value;
+            if (m.group(1) != null) {
+                if (m.group(1).equals("-")) {
+                    value = -value;
                 }
             }
 
             return value;
 
-        }else{
+        } else {
             throw new NumberFormatException(str + " is not a valid sexagesimal string");
         }
     }
 
     /**
      * Right ascension in deg
+     *
      * @return degrees
      */
     public double getRa() {
@@ -129,6 +132,7 @@ public class Coordinates {
 
     /**
      * Declination in deg
+     *
      * @return degrees
      */
     public double getDe() {
@@ -137,32 +141,34 @@ public class Coordinates {
 
     /**
      * Return a string with the right ascension (hh:mm:ss)
+     *
      * @return string
      */
-    public String getRaStr(){
-        int deg = (int)Math.floor(Math.abs(ra)/15);
-        int min = (int)Math.floor((Math.abs(ra)/15-deg)*60);
-        int sec = (int)Math.round(((Math.abs(ra)/15-deg)*60-min)*60);
-        return String.format("%02d:%02d:%02d",deg,min,sec);
+    public String getRaStr() {
+        int deg = (int) Math.floor(Math.abs(ra) / 15);
+        int min = (int) Math.floor((Math.abs(ra) / 15 - deg) * 60);
+        int sec = (int) Math.round(((Math.abs(ra) / 15 - deg) * 60 - min) * 60);
+        return String.format("%02d:%02d:%02d", deg, min, sec);
     }
 
     /**
      * Return a string with the right ascension (hh:mm:ss)
+     *
      * @return string
      */
-    public String getDeStr(){
-        int deg = (int)Math.floor(Math.abs(de));
-        int min = (int)Math.floor((Math.abs(de)-deg)*60);
-        int sec = (int)Math.round(((Math.abs(de)-deg)*60-min)*60);
-        if(Math.signum(de)>=0) {
+    public String getDeStr() {
+        int deg = (int) Math.floor(Math.abs(de));
+        int min = (int) Math.floor((Math.abs(de) - deg) * 60);
+        int sec = (int) Math.round(((Math.abs(de) - deg) * 60 - min) * 60);
+        if (Math.signum(de) >= 0) {
             return String.format("+%02d:%02d:%02d", deg, min, sec);
-        }else{
+        } else {
             return String.format("-%02d:%02d:%02d", deg, min, sec);
         }
     }
 
-    public String toString(){
-        return "RA: "+getRaStr()+" DE: " + getDeStr();
+    public String toString() {
+        return "RA: " + getRaStr() + " DE: " + getDeStr();
     }
 
 //    static void test(){
@@ -229,5 +235,4 @@ public class Coordinates {
 //
 //
 //    }
-
 }

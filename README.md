@@ -1,4 +1,5 @@
 <img align="left" width="100" height="100" src="docs/logo.png">
+
 # IPARCOS
 
 IPARCOS (Indi Protocol Android Remote COntrol Software) is an INDI client for Android. It features a generic control panel and others specialized tools to easily control your devices.
@@ -13,16 +14,17 @@ The project main site is https://github.com/farom57/IPARCOS/
 
 # Screenshots
 
-![connection](docs/connection.png "Connection screen")
-![motion](docs/motion.png "Move screen")
-![control-panel](docs/control-panel.png "Generic screen")
+<img align="left" width="700" src="docs/connection.png">
+<img align="center" width="700" src="docs/motion.png">
+<img align="right" width="700" src="docs/control-panel.png">
 
 # Download and install
 * ~~From Google Play:~~
   * Not yet available
 * From the .apk file:
-  * Check the release page on the github project to get the .apk: https://github.com/farom57/IPARCOS/releases
-  * You need to allow app installs from unknown sources in Android settings (Settings > Security > Unknown sources)
+  * Download the latest release from the GitHub project page
+  * Allow app installs from unknown sources in Android settings (Settings → Security → Unknown sources)
+  * Enjoy!
 
 # Usage
 

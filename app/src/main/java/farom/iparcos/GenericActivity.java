@@ -19,11 +19,11 @@ import laazotea.indi.client.INDIServerConnectionListener;
 @SuppressWarnings("FinalizeCalledExplicitly")
 public class GenericActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener, INDIServerConnectionListener {
 
+    PagerAdapter pagerAdapter;
     /**
      * The active fragment
      */
     private PrefsFragment fragment = null;
-    PagerAdapter pagerAdapter;
     private ViewPager viewPager;
     private TabLayout tabLayout;
 

@@ -18,6 +18,7 @@ import farom.iparcos.R;
  * A star
  */
 public class StarEntry extends CatalogEntry {
+
     private final static int resource = R.raw.stars;
     private final static int entryLength = 120;
     private final static int nameLength = 22;
@@ -26,10 +27,8 @@ public class StarEntry extends CatalogEntry {
     private final static int deLength = 12;
     private final static int magnitudeLength = 7;
 
-
     protected String names;
     protected String magnitude;
-
 
     /**
      * Create the entry from a formatted line
@@ -49,50 +48,16 @@ public class StarEntry extends CatalogEntry {
         i += namesLength;
 
         String ra_str = data.substring(i, i + raLength).trim();
-        i += raLength+1;
+        i += raLength + 1;
 
         String de_str = data.substring(i, i + deLength).trim();
-        i += deLength+1;
+        i += deLength + 1;
 
-        coord = new Coordinates(ra_str,de_str);
+        coord = new Coordinates(ra_str, de_str);
 
         magnitude = data.substring(i, i + magnitudeLength).trim();
 
     }
-
-
-
-    /**
-     * Create the description rich-text string
-     *
-     * @param ctx Context (to access resource strings)
-     * @return description Spannable
-     */
-    @Override
-    public Spannable createDescription(Context ctx) {
-        Resources r = ctx.getResources();
-        String str =  "<b>" + r.getString(R.string.entry_names) + r.getString(R.string.colon_with_spaces) + "</b>" + names + "<br/>";
-        str += "<b>" + r.getString(R.string.entry_type) + r.getString(R.string.colon_with_spaces) + "</b>" + r.getString(R.string.entry_star) + "<br/>";
-        str += "<b>" + r.getString(R.string.entry_magnitude) + r.getString(R.string.colon_with_spaces) + "</b>" + magnitude + "<br/>";
-        str += "<b>" + r.getString(R.string.entry_RA) + r.getString(R.string.colon_with_spaces) + "</b>" + coord.getRaStr() + "<br/>";
-        str += "<b>" + r.getString(R.string.entry_DE) + r.getString(R.string.colon_with_spaces) + "</b>" + coord.getDeStr();
-
-        return new SpannableString(Html.fromHtml(str));
-    }
-
-    /**
-     * Create the summary rich-text string (1 line)
-     *
-     * @param ctx Context (to access resource strings)
-     * @return summary Spannable
-     */
-    @Override
-    public Spannable createSummary(Context ctx) {
-        Resources r = ctx.getResources();
-        String str =  "<b>" + r.getString(R.string.entry_star) + "</b> " + r.getString(R.string.entry_mag) + "=" + magnitude;
-        return new SpannableString(Html.fromHtml(str));
-    }
-
 
     /**
      * Create the list of star entries
@@ -123,4 +88,34 @@ public class StarEntry extends CatalogEntry {
         return entries;
     }
 
+    /**
+     * Create the description rich-text string
+     *
+     * @param ctx Context (to access resource strings)
+     * @return description Spannable
+     */
+    @Override
+    public Spannable createDescription(Context ctx) {
+        Resources r = ctx.getResources();
+        String str = "<b>" + r.getString(R.string.entry_names) + r.getString(R.string.colon_with_spaces) + "</b>" + names + "<br/>";
+        str += "<b>" + r.getString(R.string.entry_type) + r.getString(R.string.colon_with_spaces) + "</b>" + r.getString(R.string.entry_star) + "<br/>";
+        str += "<b>" + r.getString(R.string.entry_magnitude) + r.getString(R.string.colon_with_spaces) + "</b>" + magnitude + "<br/>";
+        str += "<b>" + r.getString(R.string.entry_RA) + r.getString(R.string.colon_with_spaces) + "</b>" + coord.getRaStr() + "<br/>";
+        str += "<b>" + r.getString(R.string.entry_DE) + r.getString(R.string.colon_with_spaces) + "</b>" + coord.getDeStr();
+
+        return new SpannableString(Html.fromHtml(str));
+    }
+
+    /**
+     * Create the summary rich-text string (1 line)
+     *
+     * @param ctx Context (to access resource strings)
+     * @return summary Spannable
+     */
+    @Override
+    public Spannable createSummary(Context ctx) {
+        Resources r = ctx.getResources();
+        String str = "<b>" + r.getString(R.string.entry_star) + "</b> " + r.getString(R.string.entry_mag) + "=" + magnitude;
+        return new SpannableString(Html.fromHtml(str));
+    }
 }

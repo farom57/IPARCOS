@@ -23,7 +23,6 @@ public class Catalog {
     protected ArrayList<CatalogEntry> entries;
 
 
-
     private boolean ready = false;
 
     /**
@@ -32,9 +31,8 @@ public class Catalog {
      * @param context Application context to access the resources
      */
     public Catalog(Context context) {
-        this.context=context;
+        this.context = context;
         init();
-
     }
 
     private void init() {
@@ -47,19 +45,20 @@ public class Catalog {
     /**
      * @return true if the catalog is fully initialized
      */
-    public boolean isReady(){
+    public boolean isReady() {
         return ready;
     }
 
-    public ArrayList<CatalogEntry> getEntries(){
-        if(isReady()){
+    public ArrayList<CatalogEntry> getEntries() {
+        if (isReady()) {
             return entries;
-        }else{
+
+        } else {
             return null;
         }
     }
 
-    public int searchIndex(final String query){
+    public int searchIndex(final String query) {
 
         CatalogEntry fakeEntry = new CatalogEntry() {
             @Override
@@ -73,20 +72,22 @@ public class Catalog {
             }
 
             @Override
-            public Spannable createDescription(Context ctx) { return null; }
+            public Spannable createDescription(Context ctx) {
+                return null;
+            }
 
             @Override
-            public Spannable createSummary(Context ctx) { return null; }
+            public Spannable createSummary(Context ctx) {
+                return null;
+            }
 
         };
-        int index = Collections.binarySearch(entries,fakeEntry);
+        int index = Collections.binarySearch(entries, fakeEntry);
 
-        if(index<0){
+        if (index < 0) {
             index = -index - 1;
         }
 
         return index;
     }
 }
-
-
