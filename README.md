@@ -1,7 +1,4 @@
-<div style="text-align:left" markdown="1">
-    ![logo](docs/logo.png "Logo")
-</div>
-
+<img align="left" width="100" height="100" src="docs/logo.png">
 # IPARCOS
 
 IPARCOS (Indi Protocol Android Remote COntrol Software) is an INDI client for Android. It features a generic control panel and others specialized tools to easily control your devices.
