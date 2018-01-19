@@ -15,7 +15,6 @@
     <string name="connecting">Connexion …</string>
     <string name="menu_motion_short">Mouvement</string>
     <string name="menu_motion">Contrôle du mouvement</string>
-    <string name="menu_connection">Connecter</string>
     <string name="menu_generic">Autres</string>
     <string name="menu_search">Search</string>
     <string name="title_activity_motion">Mouvement</string>
@@ -80,4 +79,5 @@
     <string name="sync_ok" >Synchronisation ...</string>
     <string name="slew_ok" >Pointage en cours</string>
     <string name="arcmin">arcmin</string>
+    <string name="menu_connection">Connecter</string>
 </resources>

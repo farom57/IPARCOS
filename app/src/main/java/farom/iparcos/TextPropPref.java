@@ -32,7 +32,6 @@ public class TextPropPref extends PropPref {
 
 	public TextPropPref(Context context, INDIProperty prop) {
 		super(context, prop);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

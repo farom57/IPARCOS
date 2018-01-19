@@ -10,7 +10,6 @@ public class BLOBPropPref extends PropPref {
 
 	public BLOBPropPref(Context context, INDIProperty prop) {
 		super(context, prop);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

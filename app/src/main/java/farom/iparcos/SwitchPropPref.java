@@ -33,7 +33,6 @@ public class SwitchPropPref extends PropPref {
 
 	public SwitchPropPref(Context context, INDIProperty prop) {
 		super(context, prop);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

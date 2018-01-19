@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import farom.iparcos.catalog.Catalog;
@@ -41,8 +40,9 @@ import laazotea.indi.client.INDISwitchProperty;
 /**
  * Allows the user to search for an astronomical object and displays the result.
  */
-public class SearchActivity extends ListActivity implements MenuItem.OnActionExpandListener, SearchView.OnQueryTextListener, AdapterView.OnItemClickListener, INDIServerConnectionListener, INDIPropertyListener,
-        INDIDeviceListener {
+public class SearchActivity extends ListActivity
+        implements MenuItem.OnActionExpandListener, SearchView.OnQueryTextListener,
+        AdapterView.OnItemClickListener, INDIServerConnectionListener, INDIPropertyListener, INDIDeviceListener {
 
     ArrayAdapter adapter;
     private ArrayList<CatalogEntry> entries;
@@ -55,7 +55,6 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
     private INDISwitchProperty telescopeOnCoordSetP = null;
     private INDISwitchElement telescopeOnCoordSetSync = null;
     private INDISwitchElement telescopeOnCoordSetSlew = null;
-
 
     /**
      * Called at the activity creation. Disable opening animation and load default content.
@@ -102,12 +101,11 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
         if (connection != null) {
             List<INDIDevice> list = connection.getDevicesAsList();
             if (list != null) {
-                for (Iterator<INDIDevice> it = list.iterator(); it.hasNext(); ) {
-                    INDIDevice device = it.next();
+                for (INDIDevice device : list) {
                     device.addINDIDeviceListener(this);
                     List<INDIProperty> properties = device.getPropertiesAsList();
-                    for (Iterator<INDIProperty> it2 = properties.iterator(); it2.hasNext(); ) {
-                        this.newProperty(device, it2.next());
+                    for (INDIProperty property : properties) {
+                        this.newProperty(device, property);
                     }
                 }
             }
@@ -213,7 +211,6 @@ public class SearchActivity extends ListActivity implements MenuItem.OnActionExp
     public boolean onQueryTextSubmit(String query) {
         return false;
     }
-
 
     /**
      * Callback method to be invoked when an item in this AdapterView has

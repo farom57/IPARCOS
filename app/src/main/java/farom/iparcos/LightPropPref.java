@@ -19,7 +19,6 @@ public class LightPropPref extends PropPref {
 
 	public LightPropPref(Context context, INDIProperty prop) {
 		super(context, prop);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

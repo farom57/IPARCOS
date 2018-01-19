@@ -2,36 +2,30 @@ package farom.iparcos;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import laazotea.indi.client.INDIDevice;
 import laazotea.indi.client.INDIServerConnection;
 import laazotea.indi.client.INDIServerConnectionListener;
 
-public class GenericActivity extends AppCompatActivity implements ActionBar.TabListener, INDIServerConnectionListener {
+@SuppressWarnings("FinalizeCalledExplicitly")
+public class GenericActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener, INDIServerConnectionListener {
 
     /**
      * The active fragment
      */
     private PrefsFragment fragment = null;
-
-    /**
-     * Retains the association between the tab and the device
-     */
-    private HashMap<ActionBar.Tab, INDIDevice> tabDeviceMap;
-
-
-    private ActionBar actionBar;
+    PagerAdapter pagerAdapter;
+    private ViewPager viewPager;
+    private TabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +39,14 @@ public class GenericActivity extends AppCompatActivity implements ActionBar.TabL
         // toolbar.setSubtitle(R.string.title_activity_generic);
         setSupportActionBar(toolbar);
 
-        actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        tabLayout = findViewById(R.id.tab_layout);
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        tabDeviceMap = new HashMap<>();
+        viewPager = findViewById(R.id.pager);
+        pagerAdapter = new PagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(pagerAdapter);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.setOnTabSelectedListener(this);
     }
 
     @Override
@@ -56,7 +54,7 @@ public class GenericActivity extends AppCompatActivity implements ActionBar.TabL
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.global, menu);
 
-        // hide the item for the current activity
+        // Hide the item for the current activity
         MenuItem genericItem = menu.findItem(R.id.menu_generic);
         genericItem.setVisible(false);
 
@@ -70,33 +68,25 @@ public class GenericActivity extends AppCompatActivity implements ActionBar.TabL
         if (connection == null) {
             return;
         }
-
         List<INDIDevice> list = connection.getDevicesAsList();
         if (list == null) {
             return;
         }
-
-        if (list.size() > 0) {
-            // Recreate tabs
-            for (INDIDevice device : list) {
-                ActionBar.Tab tab = actionBar.newTab();
-
-                tabDeviceMap.put(tab, device);
-
-                tab.setText(device.getName());
-                tab.setTabListener(this);
-                actionBar.addTab(tab);
-            }
+        // Recreate tabs
+        for (INDIDevice device : list) {
+            PrefsFragment f = new PrefsFragment();
+            f.setDevice(device);
+            pagerAdapter.tabDeviceMap.put(f, device);
+            tabLayout.addTab(tabLayout.newTab().setText(device.getName()));
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
-        // Remove the tabs
-        actionBar.removeAllTabs();
-        tabDeviceMap.clear();
+        // Remove all the tabs
+        tabLayout.removeAllTabs();
+        pagerAdapter.tabDeviceMap.clear();
     }
 
 
@@ -106,8 +96,7 @@ public class GenericActivity extends AppCompatActivity implements ActionBar.TabL
      * @param v
      */
     public boolean openMotionActivity(MenuItem v) {
-        Intent intent = new Intent(this, MotionActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(this, MotionActivity.class));
         return true;
     }
 
@@ -129,7 +118,7 @@ public class GenericActivity extends AppCompatActivity implements ActionBar.TabL
      * @return
      */
     public boolean openGenericActivity(MenuItem v) {
-        // nothing to do, already the current activity
+        // Nothing to do, already the current activity
         return false;
     }
 
@@ -140,8 +129,7 @@ public class GenericActivity extends AppCompatActivity implements ActionBar.TabL
      * @return
      */
     public boolean openSearchActivity(MenuItem v) {
-        Intent intent = new Intent(this, SearchActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(this, SearchActivity.class));
         return true;
     }
 
@@ -152,8 +140,7 @@ public class GenericActivity extends AppCompatActivity implements ActionBar.TabL
      * @return
      */
     public boolean openConnectionActivity(MenuItem v) {
-        Intent intent = new Intent(this, ConnectionActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(this, ConnectionActivity.class));
         return true;
     }
 
@@ -178,41 +165,40 @@ public class GenericActivity extends AppCompatActivity implements ActionBar.TabL
     }
 
     @Override
-    public void onTabReselected(ActionBar.Tab arg0, FragmentTransaction arg1) {
-        // User selected the already selected tab. Usually do nothing.
+    public void onTabReselected(TabLayout.Tab arg0) {
+        // User selected the already selected tab. Do nothing.
     }
 
     @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+    public void onTabSelected(TabLayout.Tab tab) {
+        viewPager.setCurrentItem(tab.getPosition());
+
         // Check if the fragment is already initialized
-        if (fragment == null) {
+        /*if (fragment == null) {
             fragment = new PrefsFragment();
-            fragment.setDevice(tabDeviceMap.get(tab));
-            // TODO(squareboot)
-            //ft.add(android.R.id.content, fragment);
+            fragment.setDevice(pagerAdapter.tabDeviceMap.get(tab.get)); //TODO
+            ft.add(android.R.id.content, fragment);
 
         } else {
-            Log.e("GenericActivity", "error : fragment!=null");
-        }
+            Log.e("GenericActivity", "error : fragment != null");
+        }*/
     }
 
     @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
-        if (fragment != null) {
+    public void onTabUnselected(TabLayout.Tab tab) {
+        /*if (fragment != null) {
             // Detach the fragment, and delete it because an other will be created
-            // TODO(squareboot)
-            //ft.detach(fragment);
+            ft.detach(fragment);
             try {
                 fragment.finalize();
 
             } catch (Throwable e) {
-                //e.printStackTrace();
-                Log.e("GenericActivity", "error fragment.finalize() : " + e.getLocalizedMessage());
+                Log.e("GenericActivity", "Error in fragment.finalize(): " + e.getLocalizedMessage());
             }
             fragment = null;
 
         } else {
-            Log.e("GenericActivity", "error : fragment==null");
-        }
+            Log.e("GenericActivity", "Error : fragment = null");
+        }*/
     }
 }

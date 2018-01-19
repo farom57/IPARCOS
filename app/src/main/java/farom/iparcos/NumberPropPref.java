@@ -28,7 +28,6 @@ public class NumberPropPref extends PropPref {
 
 	public NumberPropPref(Context context, INDIProperty prop) {
 		super(context, prop);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

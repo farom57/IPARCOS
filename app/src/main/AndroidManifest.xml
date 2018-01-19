@@ -16,6 +16,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".ConnectionActivity"
             android:description="@string/title_activity_connection"
@@ -24,12 +25,13 @@
             android:logo="@drawable/icon_connect"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".MotionActivity"
             android:description="@string/title_activity_motion"
@@ -37,10 +39,12 @@
             android:launchMode="singleInstance"
             android:logo="@drawable/icon_move"
             android:screenOrientation="portrait">
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="farom.iparcos.ConnectionActivity" />
         </activity>
+
         <activity
             android:name=".GenericActivity"
             android:description="@string/title_activity_generic"
@@ -48,10 +52,12 @@
             android:launchMode="singleInstance"
             android:logo="@drawable/icon_gen"
             android:screenOrientation="portrait">
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="farom.iparcos.ConnectionActivity" />
         </activity>
+
         <activity
             android:name=".SearchActivity"
             android:label="@string/title_activity_search"
@@ -75,5 +81,4 @@
             android:value=".SearchActivity" />
 
     </application>
-
 </manifest>

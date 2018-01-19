@@ -13,10 +13,10 @@
     <string name="hostadd">Add Server</string>
     <string name="hostauto">Auto</string>
     <string name="host_prompt_text">Host IP address:</string>
-    <string name="connecting">Connection …</string>
+    <string name="connecting">Connecting...</string>
     <string name="menu_motion_short">Move</string>
     <string name="menu_motion">Motion control</string>
-    <string name="menu_connectionion">Connection</string>
+    <string name="menu_connection">Connection</string>
     <string name="menu_generic">Control panel</string>
     <string name="menu_search">Search</string>
     <string name="title_activity_generic">Control panel</string>

@@ -1,14 +1,14 @@
 package farom.iparcos;
 
 import android.os.Bundle;
-import android.preference.PreferenceCategory;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceScreen;
+import android.support.annotation.NonNull;
+import android.support.v7.preference.PreferenceCategory;
+import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.preference.PreferenceScreen;
 import android.view.View;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import laazotea.indi.client.INDIDevice;
 import laazotea.indi.client.INDIDeviceListener;
@@ -17,43 +17,41 @@ import laazotea.indi.client.INDIProperty;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class PrefsFragment extends PreferenceFragment implements INDIDeviceListener {
+public class PrefsFragment extends PreferenceFragmentCompat implements INDIDeviceListener {
+
     private INDIDevice device = null;
     private PreferenceScreen prefScreen;
     private HashMap<INDIProperty, PropPref> map;
     private HashMap<String, PreferenceCategory> groups;
 
-    public void setDevice(INDIDevice dev) {
-        device = dev;
-        device.addINDIDeviceListener(this);
-        map = new HashMap<INDIProperty, PropPref>();
-        groups = new HashMap<String, PreferenceCategory>();
-    }
-
-    public void finalize() throws Throwable {
-        super.finalize();
-        device.removeINDIDeviceListener(this);
-    }
-
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.empty_preferences);
-
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @NonNull Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         prefScreen = getPreferenceScreen();
         if (device != null) {
-            for (Iterator<String> it = device.getGroupNames().iterator(); it.hasNext(); ) {
-                String group = it.next();
+            for (String group : device.getGroupNames()) {
                 addPrefGroup(group);
             }
         }
+    }
+
+    public void setDevice(INDIDevice dev) {
+        device = dev;
+        device.addINDIDeviceListener(this);
+        map = new HashMap<>();
+        groups = new HashMap<>();
+    }
+
+    @Override
+    public void finalize() throws Throwable {
+        super.finalize();
+        device.removeINDIDeviceListener(this);
     }
 
     private void addPrefGroup(String group) {
@@ -63,8 +61,7 @@ public class PrefsFragment extends PreferenceFragment implements INDIDeviceListe
             groups.put(group, prefGroup);
             prefGroup.setTitle(group);
             prefScreen.addPreference(prefGroup);
-            for (Iterator<INDIProperty> it = props.iterator(); it.hasNext(); ) {
-                INDIProperty prop = it.next();
+            for (INDIProperty prop : props) {
                 PropPref pref = PropPref.create(getActivity(), prop);
                 map.put(prop, pref);
                 prefGroup.addPreference(pref);
@@ -74,7 +71,6 @@ public class PrefsFragment extends PreferenceFragment implements INDIDeviceListe
 
     @Override
     public void messageChanged(INDIDevice arg0) {
-        // TODO Auto-generated method stub
 
     }
 
@@ -107,5 +103,4 @@ public class PrefsFragment extends PreferenceFragment implements INDIDeviceListe
             map.remove(prop);
         }
     }
-
 }

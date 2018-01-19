@@ -374,7 +374,6 @@ public class MotionActivity extends AppCompatActivity implements INDIServerConne
 
     @Override
     public void messageChanged(INDIDevice device) {
-        // TODO Auto-generated method stub
 
     }
 
