@@ -24,15 +24,21 @@ public class PrefsFragment extends PreferenceFragmentCompat implements INDIDevic
     private HashMap<INDIProperty, PropPref> map;
     private HashMap<String, PreferenceCategory> groups;
 
-    @Override
+    /*@Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.empty_preferences);
+    }*/
+
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @NonNull Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        addPreferencesFromResource(R.xml.empty_preferences);
         prefScreen = getPreferenceScreen();
         if (device != null) {
             for (String group : device.getGroupNames()) {

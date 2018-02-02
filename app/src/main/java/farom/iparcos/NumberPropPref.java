@@ -12,6 +12,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,14 +44,11 @@ public class NumberPropPref extends PropPref {
 
             int i;
             temp.append(elements.get(0).getLabel()).append(": ");
-
             for (i = 0; i < elements.size() - 1; i++) {
                 temp.append(elements.get(i).getValueAsString());
                 temp.append(", ");
-
                 temp.append(elements.get(i + 1).getLabel()).append(": ");
             }
-
             temp.append(elements.get(i).getValueAsString());
 
             return new SpannableString(temp.toString());
@@ -80,28 +78,29 @@ public class NumberPropPref extends PropPref {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
             final ArrayList<INDIElement> elements = prop.getElementsAsList();
-            final ArrayList<EditText> editTextViews = new ArrayList<EditText>(elements.size());
+            final ArrayList<EditText> editTextViews = new ArrayList<>(elements.size());
 
-            LinearLayout layout = new LinearLayout(getContext());
+            LinearLayout layout = new LinearLayout(Application.getAppContext());
             layout.setOrientation(LinearLayout.VERTICAL);
-            int padding = getContext().getResources().getDimensionPixelSize(R.dimen.padding_medium);
+            int padding = Application.getAppContext().getResources().getDimensionPixelSize(R.dimen.padding_medium);
 
             for (int i = 0; i < elements.size(); i++) {
-                TextView textView = new TextView(getContext());
+                TextView textView = new TextView(Application.getAppContext());
                 textView.setText(elements.get(i).getLabel());
-                textView.setTextSize(22);
 
                 textView.setPadding(padding, padding, padding, 0);
                 layout.addView(textView);
 
-                editTextViews.add(new EditText(getContext()));
+                editTextViews.add(new EditText(Application.getAppContext()));
                 editTextViews.get(i).setText(elements.get(i).getValueAsString());
                 editTextViews.get(i).setPadding(padding, padding, padding, padding);
                 editTextViews.get(i).setEnabled(prop.getPermission() != Constants.PropertyPermissions.RO);
                 layout.addView(editTextViews.get(i));
             }
 
-            builder.setView(layout);
+            ScrollView scrollView = new ScrollView(Application.getAppContext());
+            scrollView.addView(layout);
+            builder.setView(scrollView);
 
             builder.setTitle(prop.getLabel());
 
@@ -116,16 +115,8 @@ public class NumberPropPref extends PropPref {
                             }
                             prop.sendChangesToDriver();
 
-                        } catch (INDIValueException e) {
-                            Toast toast = Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG);
-                            toast.show();
-
-                        } catch (IOException e) {
-                            Toast toast = Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG);
-                            toast.show();
-
-                        } catch (IllegalArgumentException e) {
-                            Toast toast = Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG);
+                        } catch (INDIValueException | IOException | IllegalArgumentException e) {
+                            Toast toast = Toast.makeText(Application.getAppContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG);
                             toast.show();
                         }
                     }

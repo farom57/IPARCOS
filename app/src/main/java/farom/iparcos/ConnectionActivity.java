@@ -309,8 +309,8 @@ public class ConnectionActivity extends AppCompatActivity implements INDIServerC
 
         // Listen to all
         connection.addINDIServerConnectionListener(this);
-        for (Iterator<INDIServerConnectionListener> it = permanentConnectionListeners.iterator(); it.hasNext(); ) {
-            connection.addINDIServerConnectionListener(it.next());
+        for (INDIServerConnectionListener permanentConnectionListener : permanentConnectionListeners) {
+            connection.addINDIServerConnectionListener(permanentConnectionListener);
         }
 
         new Thread(new Runnable() {

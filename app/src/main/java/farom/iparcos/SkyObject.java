@@ -78,10 +78,10 @@ public class SkyObject {
     }
 
     public String getIdentifiersStr() {
-        String result = identifiers[0];
+        StringBuilder result = new StringBuilder(identifiers[0]);
         for (int i = 1; i < identifiers.length; i++) {
-            result += ", " + identifiers[i];
+            result.append(", ").append(identifiers[i]);
         }
-        return result;
+        return result.toString();
     }
 }

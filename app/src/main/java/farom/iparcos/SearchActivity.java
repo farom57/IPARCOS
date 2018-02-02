@@ -6,6 +6,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -69,6 +70,7 @@ public class SearchActivity extends ListActivity
         // list setup
         entries = new ArrayList<>();
         adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_2, android.R.id.text1, entries) {
+            @NonNull
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);

@@ -108,9 +108,8 @@ public class SwitchPropPref extends PropPref {
                                 elements.get(i).setDesiredValue(elementsChecked[i] ? SwitchStatus.ON : SwitchStatus.OFF);
                             }
                             prop.sendChangesToDriver();
-                        } catch (INDIValueException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
+
+                        } catch (INDIValueException | IOException e) {
                             e.printStackTrace();
                         }
                     }
@@ -120,6 +119,7 @@ public class SwitchPropPref extends PropPref {
 
                     }
                 });
+
             } else {
                 builder.setNegativeButton(R.string.back_request, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {

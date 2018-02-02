@@ -43,18 +43,25 @@ public class LightPropPref extends PropPref {
         for (int i = 0; i < elements.size(); i++) {
             int color = Color.WHITE;
             switch (((INDILightElement) (elements.get(i))).getValue()) {
-                case ALERT:
+                case ALERT: {
                     color = Color.RED;
                     break;
-                case BUSY:
+                }
+
+                case BUSY: {
                     color = Color.YELLOW;
                     break;
-                case IDLE:
+                }
+
+                case IDLE: {
                     color = Color.WHITE;
                     break;
-                case OK:
+                }
+
+                case OK: {
                     color = Color.GREEN;
                     break;
+                }
             }
             summaryText.setSpan(new ForegroundColorSpan(color), starts[i], ends[i], 0);
 

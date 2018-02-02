@@ -3,13 +3,21 @@ package farom.iparcos;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.commonsware.cwac.pager.PageDescriptor;
+import com.commonsware.cwac.pager.SimplePageDescriptor;
+import com.commonsware.cwac.pager.v4.ArrayPagerAdapter;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import laazotea.indi.client.INDIDevice;
@@ -19,11 +27,15 @@ import laazotea.indi.client.INDIServerConnectionListener;
 @SuppressWarnings("FinalizeCalledExplicitly")
 public class GenericActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener, INDIServerConnectionListener {
 
-    PagerAdapter pagerAdapter;
+    ArrayPagerAdapter pagerAdapter;
+    /**
+     * Retains the association between the tab and the device
+     */
+    HashMap<PrefsFragment, INDIDevice> tabDeviceMap;
     /**
      * The active fragment
      */
-    private PrefsFragment fragment = null;
+    //private PrefsFragment fragment = null;
     private ViewPager viewPager;
     private TabLayout tabLayout;
 
@@ -32,6 +44,8 @@ public class GenericActivity extends AppCompatActivity implements TabLayout.OnTa
         super.onCreate(savedInstanceState);
 
         ConnectionActivity.getInstance().registerPermanentConnectionListener(this);
+
+        tabDeviceMap = new HashMap<>();
 
         setContentView(R.layout.activity_generic);
 
@@ -43,10 +57,10 @@ public class GenericActivity extends AppCompatActivity implements TabLayout.OnTa
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         viewPager = findViewById(R.id.pager);
-        pagerAdapter = new PagerAdapter(getSupportFragmentManager());
+        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), new ArrayList<PageDescriptor>());
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.setOnTabSelectedListener(this);
+        tabLayout.addOnTabSelectedListener(this);
     }
 
     @Override
@@ -76,7 +90,8 @@ public class GenericActivity extends AppCompatActivity implements TabLayout.OnTa
         for (INDIDevice device : list) {
             PrefsFragment f = new PrefsFragment();
             f.setDevice(device);
-            pagerAdapter.tabDeviceMap.put(f, device);
+            tabDeviceMap.put(f, device);
+            pagerAdapter.add(new DeviceDescriptor(device));
             tabLayout.addTab(tabLayout.newTab().setText(device.getName()));
         }
     }
@@ -86,9 +101,11 @@ public class GenericActivity extends AppCompatActivity implements TabLayout.OnTa
         super.onPause();
         // Remove all the tabs
         tabLayout.removeAllTabs();
-        pagerAdapter.tabDeviceMap.clear();
+        for (int i = 0; i < pagerAdapter.getCount(); i++) {
+            pagerAdapter.remove(i);
+        }
+        tabDeviceMap.clear();
     }
-
 
     /**
      * open the motion activity,
@@ -165,40 +182,45 @@ public class GenericActivity extends AppCompatActivity implements TabLayout.OnTa
     }
 
     @Override
-    public void onTabReselected(TabLayout.Tab arg0) {
-        // User selected the already selected tab. Do nothing.
+    public void onTabReselected(TabLayout.Tab tab) {
+
     }
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
         viewPager.setCurrentItem(tab.getPosition());
-
-        // Check if the fragment is already initialized
-        /*if (fragment == null) {
-            fragment = new PrefsFragment();
-            fragment.setDevice(pagerAdapter.tabDeviceMap.get(tab.get)); //TODO
-            ft.add(android.R.id.content, fragment);
-
-        } else {
-            Log.e("GenericActivity", "error : fragment != null");
-        }*/
     }
 
     @Override
     public void onTabUnselected(TabLayout.Tab tab) {
-        /*if (fragment != null) {
-            // Detach the fragment, and delete it because an other will be created
-            ft.detach(fragment);
-            try {
-                fragment.finalize();
 
-            } catch (Throwable e) {
-                Log.e("GenericActivity", "Error in fragment.finalize(): " + e.getLocalizedMessage());
-            }
-            fragment = null;
+    }
 
-        } else {
-            Log.e("GenericActivity", "Error : fragment = null");
-        }*/
+    private class PagerAdapter extends ArrayPagerAdapter<Fragment> {
+
+        PagerAdapter(FragmentManager fragmentManager, List<PageDescriptor> descriptors) {
+            super(fragmentManager, descriptors);
+        }
+
+        @Override
+        protected Fragment createFragment(PageDescriptor desc) {
+            PrefsFragment fragment = new PrefsFragment();
+            fragment.setDevice(((DeviceDescriptor) desc).getDevice());
+            return fragment;
+        }
+    }
+
+    private class DeviceDescriptor extends SimplePageDescriptor {
+
+        private INDIDevice device;
+
+        DeviceDescriptor(INDIDevice device) {
+            super(device.getName(), device.getName());
+            this.device = device;
+        }
+
+        INDIDevice getDevice() {
+            return device;
+        }
     }
 }
