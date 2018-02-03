@@ -12,51 +12,23 @@
         android:maxSdkVersion="18" />
 
     <application
-        android:allowBackup="true"
+        android:name=".Application"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:name="farom.iparcos.Application" >
+        android:theme="@style/AppTheme">
 
         <activity
-            android:name=".ConnectionActivity"
+            android:name=".MainActivity"
             android:description="@string/title_activity_connection"
             android:label="@string/app_name"
             android:launchMode="singleInstance"
-            android:logo="@drawable/icon_connect"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".MotionActivity"
-            android:description="@string/title_activity_motion"
-            android:label="@string/app_name"
-            android:launchMode="singleInstance"
-            android:logo="@drawable/icon_move"
-            android:screenOrientation="portrait">
-
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="farom.iparcos.ConnectionActivity" />
-        </activity>
-
-        <activity
-            android:name=".GenericActivity"
-            android:description="@string/title_activity_generic"
-            android:label="@string/app_name"
-            android:launchMode="singleInstance"
-            android:logo="@drawable/icon_gen"
-            android:screenOrientation="portrait">
-
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="farom.iparcos.ConnectionActivity" />
         </activity>
 
         <activity
@@ -66,7 +38,7 @@
             android:logo="@drawable/ic_action_search">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="farom.iparcos.ConnectionActivity" />
+                android:value="farom.iparcos.MainActivity" />
 
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -80,6 +52,5 @@
         <meta-data
             android:name="android.app.default_searchable"
             android:value=".SearchActivity" />
-
     </application>
 </manifest>

@@ -96,10 +96,10 @@ public class SearchActivity extends ListActivity
         }).start(); // TODO : faire plus propre avec Cursor et Loader
 
         // Set up INDI connection
-        ConnectionActivity.getInstance().registerPermanentConnectionListener(this);
+        ConnectionFragment.getInstance().registerPermanentConnectionListener(this);
 
         // Enumerate existing properties
-        INDIServerConnection connection = ConnectionActivity.getConnection();
+        INDIServerConnection connection = ConnectionFragment.getConnection();
         if (connection != null) {
             List<INDIDevice> list = connection.getDevicesAsList();
             if (list != null) {

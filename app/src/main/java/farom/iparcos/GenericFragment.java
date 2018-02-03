@@ -2,14 +2,18 @@ package farom.iparcos;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.commonsware.cwac.pager.PageDescriptor;
 import com.commonsware.cwac.pager.SimplePageDescriptor;
@@ -25,60 +29,43 @@ import laazotea.indi.client.INDIServerConnection;
 import laazotea.indi.client.INDIServerConnectionListener;
 
 @SuppressWarnings("FinalizeCalledExplicitly")
-public class GenericActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener, INDIServerConnectionListener {
+public class GenericFragment extends Fragment implements TabLayout.OnTabSelectedListener, INDIServerConnectionListener {
 
-    ArrayPagerAdapter pagerAdapter;
     /**
      * Retains the association between the tab and the device
      */
     HashMap<PrefsFragment, INDIDevice> tabDeviceMap;
-    /**
-     * The active fragment
-     */
-    //private PrefsFragment fragment = null;
+
+    // Views
+    private View rootView;
     private ViewPager viewPager;
+    private ArrayPagerAdapter pagerAdapter;
     private TabLayout tabLayout;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        rootView = inflater.inflate(R.layout.activity_generic, container, false);
 
-        ConnectionActivity.getInstance().registerPermanentConnectionListener(this);
+        ConnectionFragment.getInstance().registerPermanentConnectionListener(this);
 
         tabDeviceMap = new HashMap<>();
 
-        setContentView(R.layout.activity_generic);
-
-        Toolbar toolbar = findViewById(R.id.app_toolbar);
-        // toolbar.setSubtitle(R.string.title_activity_generic);
-        setSupportActionBar(toolbar);
-
-        tabLayout = findViewById(R.id.tab_layout);
+        tabLayout = rootView.findViewById(R.id.tab_layout);
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        viewPager = findViewById(R.id.pager);
-        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), new ArrayList<PageDescriptor>());
+        viewPager = rootView.findViewById(R.id.pager);
+        pagerAdapter = new PagerAdapter(getChildFragmentManager(), new ArrayList<PageDescriptor>());
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(this);
+
+        return rootView;
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.global, menu);
-
-        // Hide the item for the current activity
-        MenuItem genericItem = menu.findItem(R.id.menu_generic);
-        genericItem.setVisible(false);
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
-        INDIServerConnection connection = ConnectionActivity.getConnection();
+        INDIServerConnection connection = ConnectionFragment.getConnection();
         if (connection == null) {
             return;
         }
@@ -97,7 +84,7 @@ public class GenericActivity extends AppCompatActivity implements TabLayout.OnTa
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         // Remove all the tabs
         tabLayout.removeAllTabs();
@@ -107,63 +94,9 @@ public class GenericActivity extends AppCompatActivity implements TabLayout.OnTa
         tabDeviceMap.clear();
     }
 
-    /**
-     * open the motion activity,
-     *
-     * @param v
-     */
-    public boolean openMotionActivity(MenuItem v) {
-        startActivity(new Intent(this, MotionActivity.class));
-        return true;
-    }
-
-    /**
-     * open the settings activity
-     *
-     * @param v
-     * @return
-     */
-    public boolean openSettingsActivity(MenuItem v) {
-        // TODO
-        return false;
-    }
-
-    /**
-     * open the generic activity
-     *
-     * @param v
-     * @return
-     */
-    public boolean openGenericActivity(MenuItem v) {
-        // Nothing to do, already the current activity
-        return false;
-    }
-
-    /**
-     * open the search activity
-     *
-     * @param v
-     * @return
-     */
-    public boolean openSearchActivity(MenuItem v) {
-        startActivity(new Intent(this, SearchActivity.class));
-        return true;
-    }
-
-    /**
-     * open the connection activity
-     *
-     * @param v
-     * @return
-     */
-    public boolean openConnectionActivity(MenuItem v) {
-        startActivity(new Intent(this, ConnectionActivity.class));
-        return true;
-    }
-
     @Override
     public void connectionLost(INDIServerConnection arg0) {
-        openConnectionActivity(null);
+        //TODO openConnectionActivity(null);
     }
 
     @Override
@@ -178,7 +111,7 @@ public class GenericActivity extends AppCompatActivity implements TabLayout.OnTa
 
     @Override
     public void removeDevice(INDIServerConnection arg0, INDIDevice arg1) {
-        openConnectionActivity(null);
+        //TODO openConnectionActivity(null);
     }
 
     @Override
