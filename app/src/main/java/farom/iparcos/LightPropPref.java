@@ -44,12 +44,12 @@ public class LightPropPref extends PropPref {
             int color = Color.WHITE;
             switch (((INDILightElement) (elements.get(i))).getValue()) {
                 case ALERT: {
-                    color = Color.RED;
+                    color = Application.getAppContext().getResources().getColor(R.color.light_red);
                     break;
                 }
 
                 case BUSY: {
-                    color = Color.YELLOW;
+                    color = Application.getAppContext().getResources().getColor(R.color.light_yellow);
                     break;
                 }
 
@@ -59,7 +59,7 @@ public class LightPropPref extends PropPref {
                 }
 
                 case OK: {
-                    color = Color.GREEN;
+                    color = Application.getAppContext().getResources().getColor(R.color.light_green);
                     break;
                 }
             }

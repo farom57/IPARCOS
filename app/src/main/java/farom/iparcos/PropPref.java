@@ -74,12 +74,12 @@ public abstract class PropPref extends Preference implements INDIPropertyListene
         int color = 0;
         switch (prop.getState()) {
             case ALERT: {
-                color = Color.RED;
+                color = Application.getAppContext().getResources().getColor(R.color.light_red);
                 break;
             }
 
             case BUSY: {
-                color = Color.YELLOW;
+                color = Application.getAppContext().getResources().getColor(R.color.light_yellow);
                 break;
             }
 
@@ -89,7 +89,7 @@ public abstract class PropPref extends Preference implements INDIPropertyListene
             }
 
             case OK: {
-                color = Color.GREEN;
+                color = Application.getAppContext().getResources().getColor(R.color.light_green);
                 break;
             }
         }

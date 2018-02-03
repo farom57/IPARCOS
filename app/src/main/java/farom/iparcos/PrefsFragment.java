@@ -26,13 +26,12 @@ public class PrefsFragment extends PreferenceFragmentCompat implements INDIDevic
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-
+        addPreferencesFromResource(R.xml.empty_preferences);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @NonNull Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        addPreferencesFromResource(R.xml.empty_preferences);
         prefScreen = getPreferenceScreen();
         if (device != null) {
             for (String group : device.getGroupNames()) {

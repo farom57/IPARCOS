@@ -4,6 +4,10 @@
     <color name="colorPrimaryDark">#ab000d</color>
     <color name="colorAccent">#ff6f00</color>
 
+    <color name="light_green">#4CAF50</color>
+    <color name="light_red">#F44336</color>
+    <color name="light_yellow">#FFEB3B</color>
+
     <color name="emphasis">#CC0000</color>
     <color name="bg_gray">#cecbce</color>
     <color name="bg_black">#000000</color>
