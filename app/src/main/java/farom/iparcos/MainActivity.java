@@ -43,16 +43,8 @@ public class MainActivity extends AppCompatActivity {
                 for (Pages p : Pages.values()) {
                     int id = item.getItemId();
                     if (p.getItemId() == id) {
-                        boolean beforeAfter;
                         Pages current = Pages.fromId(id);
-                        try {
-                            int c = current.getIndex(), l = lastPage.getIndex();
-                            if (l == c) {
-                                return false;
-                            }
-                            beforeAfter = (l > current.getIndex());
-
-                        } catch (NullPointerException e) {
+                        if ((current == null) || (current.getIndex() == lastPage.getIndex())) {
                             return false;
                         }
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -64,9 +56,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                         getSupportFragmentManager().beginTransaction().setCustomAnimations(
-                                beforeAfter ? R.anim.slide_in_right : R.anim.slide_in_left,
-                                beforeAfter ? R.anim.slide_out_right : R.anim.slide_out_left,
-                                0, 0)
+                                R.anim.fade_in, R.anim.fade_out, 0, 0)
                                 .replace(R.id.content_frame, fragments[p.getIndex()]).commit();
                         lastPage = current;
                         return true;
@@ -82,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     toolbar.setElevation(4);
                 }
-                getSupportFragmentManager().beginTransaction().setCustomAnimations(
-                        R.anim.slide_in_left, R.anim.slide_out_left, 0, 0)
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.fade_in, R.anim.fade_out, 0, 0)
                         .replace(R.id.content_frame, fragments[Pages.CONNECTION.getIndex()]).commit();
             }
         });

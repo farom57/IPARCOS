@@ -23,10 +23,6 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
      * A list to re-add the listener when the connection is destroyed and recreated.
      */
     private ArrayList<INDIServerConnectionListener> permanentConnectionListeners;
-    /**
-     * Stores the current state of this connection manager.
-     */
-    private boolean isConnected = false;
 
     /**
      * Class constructor.
@@ -39,7 +35,7 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
      * @return the current state of this connection manager (connected or not).
      */
     public boolean isConnected() {
-        return isConnected;
+        return (connection != null) && (connection.isConnected());
     }
 
     /**
@@ -56,11 +52,11 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
      * @param port the port of the INDI server
      */
     public void connect(String host, int port) {
-        if (!isConnected) {
-            isConnected = true;
+        if (!isConnected()) {
             Application.setState(Application.getContext().getResources().getString(R.string.connecting));
             Application.log(Application.getContext().getResources().getString(R.string.try_to_connect) + host + ":" + port);
 
+            System.out.println("Trying to connect to " + host + ":" + port);
             connection = new INDIServerConnection(host, port);
             // Listen to all
             connection.addINDIServerConnectionListener(this);
@@ -81,7 +77,6 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
                         Application.log(Application.getContext().getResources().getString(R.string.connection_pb));
                         Application.log(e.getLocalizedMessage());
                         Application.setState(Application.getContext().getResources().getString(R.string.connect));
-                        isConnected = false;
                     }
 
                 }
@@ -96,7 +91,7 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
      * Breaks the connection.
      */
     public void disconnect() {
-        if (isConnected) {
+        if (isConnected()) {
             connection.disconnect();
             Application.setState(Application.getContext().getResources().getString(R.string.connect));
 

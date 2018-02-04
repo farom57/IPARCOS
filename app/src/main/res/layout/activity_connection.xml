@@ -57,22 +57,19 @@
         app:layout_constraintTop_toBottomOf="@+id/connectionButton" />
 
     <ScrollView
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:fillViewport="true"
+        android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/LogSection">
 
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/logTextBox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="" />
-        </HorizontalScrollView>
+        <TextView
+            android:id="@+id/logTextBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="" />
     </ScrollView>
 </android.support.constraint.ConstraintLayout>
