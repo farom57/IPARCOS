@@ -1,5 +1,6 @@
 package farom.iparcos;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -14,15 +15,31 @@ import laazotea.indi.client.INDIServerConnectionListener;
  */
 public class ConnectionManager implements INDIServerConnectionListener, INDIDeviceListener {
 
+    /**
+     * The connection to the INDI server.
+     */
     private INDIServerConnection connection;
-    // A list to re-add the listener when the connection is destroyed and recreated
+    /**
+     * A list to re-add the listener when the connection is destroyed and recreated.
+     */
     private ArrayList<INDIServerConnectionListener> permanentConnectionListeners;
+    /**
+     * Stores the current state of this connection manager.
+     */
+    private boolean isConnected = false;
 
     /**
      * Class constructor.
      */
     public ConnectionManager() {
         permanentConnectionListeners = new ArrayList<>();
+    }
+
+    /**
+     * @return the current state of this connection manager (connected or not).
+     */
+    public boolean isConnected() {
+        return isConnected;
     }
 
     /**
@@ -33,42 +50,85 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
     }
 
     /**
-     * Breaks the connection
+     * Connects to the driver
+     *
+     * @param host the host / IP address of the INDI server
+     * @param port the port of the INDI server
+     */
+    public void connect(String host, int port) {
+        if (!isConnected) {
+            isConnected = true;
+            Application.setState(Application.getContext().getResources().getString(R.string.connecting));
+            Application.log(Application.getContext().getResources().getString(R.string.try_to_connect) + host + ":" + port);
+
+            connection = new INDIServerConnection(host, port);
+            // Listen to all
+            connection.addINDIServerConnectionListener(this);
+            for (INDIServerConnectionListener permanentConnectionListener : permanentConnectionListeners) {
+                connection.addINDIServerConnectionListener(permanentConnectionListener);
+            }
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        connection.connect();
+                        // Ask for all the devices
+                        connection.askForDevices();
+                        Application.log(Application.getContext().getResources().getString(R.string.connected));
+                        Application.setState(Application.getContext().getResources().getString(R.string.disconnect));
+
+                    } catch (IOException e) {
+                        Application.log(Application.getContext().getResources().getString(R.string.connection_pb));
+                        Application.log(e.getLocalizedMessage());
+                        Application.setState(Application.getContext().getResources().getString(R.string.connect));
+                        isConnected = false;
+                    }
+
+                }
+            }).start();
+
+        } else {
+            Application.log("Already connected!");
+        }
+    }
+
+    /**
+     * Breaks the connection.
      */
     public void disconnect() {
-        connection.disconnect();
+        if (isConnected) {
+            connection.disconnect();
+            Application.setState(Application.getContext().getResources().getString(R.string.connect));
+
+        } else {
+            Application.log("Not connected!");
+        }
     }
 
     @Override
     public void newDevice(INDIServerConnection connection, INDIDevice device) {
         device.addINDIDeviceListener(this);
-        appendLog(getString(R.string.new_device) + device.getName());
+        Application.log(Application.getContext().getResources().getString(R.string.new_device) + device.getName());
     }
 
     @Override
     public void removeDevice(INDIServerConnection connection, INDIDevice device) {
         device.removeINDIDeviceListener(this);
-        appendLog(getString(R.string.device_removed) + device.getName());
+        Application.log(Application.getContext().getResources().getString(R.string.device_removed) + device.getName());
     }
 
     @Override
     public void connectionLost(INDIServerConnection connection) {
-        appendLog(getString(R.string.connection_lost));
-        connectionButton.post(new Runnable() {
-            public void run() {
-                connectionButton.setText(R.string.connect);
-                //TODO invalidateOptionsMenu();
-            }
-        });
+        Application.log(Application.getContext().getResources().getString(R.string.connection_lost));
+        Application.setState(Application.getContext().getResources().getString(R.string.connect));
 
-        // Open the connection activity TODO
-        //Intent intent = new Intent(this, ConnectionFragment.class);
-        //startActivity(intent);
+        // Move to the connection tab
+        Application.goToConnectionTab();
     }
 
     @Override
     public void newMessage(INDIServerConnection connection, Date timestamp, String message) {
-        appendLog(message);
+        Application.log(message);
     }
 
     /**
@@ -108,6 +168,6 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
 
     @Override
     public void messageChanged(INDIDevice device) {
-        appendLog(device.getName() + ": " + device.getLastMessage());
+        Application.log(device.getName() + ": " + device.getLastMessage());
     }
 }

@@ -55,8 +55,9 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
     private INDISwitchProperty telescopeMotionRateLX200 = null;
     private INDISwitchProperty telescopeMotionRateEQMod = null;
 
+    private ConnectionManager connectionManager;
+
     // Views
-    private View rootView;
     private Button btnMoveN = null;
     private Button btnMoveS = null;
     private Button btnMoveE = null;
@@ -72,7 +73,7 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.activity_motion, container, false);
+        View rootView = inflater.inflate(R.layout.activity_motion, container, false);
 
         // Set up the UI
         btnMoveN = rootView.findViewById(R.id.buttonN);
@@ -100,10 +101,11 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
         btnSpeedDown.setOnClickListener(this);
 
         // Set up INDI connection
-        ConnectionFragment.getInstance().registerPermanentConnectionListener(this);
+        connectionManager = Application.getConnectionManager();
+        connectionManager.registerPermanentConnectionListener(this);
 
         // Enumerate existing properties
-        INDIServerConnection connection = ConnectionFragment.getConnection();
+        INDIServerConnection connection = connectionManager.getConnection();
         if (connection != null) {
             List<INDIDevice> list = connection.getDevicesAsList();
             if (list != null) {
@@ -141,7 +143,8 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
         telescopeMotionRateLX200 = null;
         updateBtnState();
         updateSpeedText();
-        //TODO openConnectionActivity(null);
+        // Move to the connection tab
+        Application.goToConnectionTab();
     }
 
     @Override
@@ -243,11 +246,9 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
         if (property.getName().equals("TELESCOPE_MOTION_RATE")) {
             telescopeMotionRate = null;
         }
-
         if (property.getName().equals("Slew Rate")) {
             telescopeMotionRateLX200 = null;
         }
-
         if (property.getName().equals("SLEWMODE")) {
             telescopeMotionRateEQMod = null;
         }
@@ -306,7 +307,7 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
     // ------ UI functions ------
 
     /**
-     * Enable the buttons if the corresponding property was found
+     * Enables the buttons if the corresponding property was found
      */
     public void updateBtnState() {
         if (btnMoveE != null) {
@@ -392,7 +393,7 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
     }
 
     /**
-     * Update the speed text
+     * Updates the speed text
      */
     public void updateSpeedText() {
         if (speedText != null) {
@@ -427,7 +428,7 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
     }
 
     /**
-     * Called when a directional button is pressed or released, send the
+     * Called when a directional button is pressed or released. Send the
      * corresponding order to the driver.
      */
     @Override
@@ -566,8 +567,10 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
         return false;
     }
 
-    // Called when one of the stop, speed up and speed dow buttons is clcked.
-    // Send the corresponding order to the driver
+    /**
+     * Called when one of the stop, speed up and speed down buttons is clicked.
+     * Sends the corresponding order to the driver.
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -588,10 +591,7 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
                         telescopeMotionAbort.sendChangesToDriver();
                     }
 
-                } catch (INDIValueException e) {
-                    Log.e("MotionFragment", e.getLocalizedMessage());
-
-                } catch (IOException e) {
+                } catch (INDIValueException | IOException e) {
                     Log.e("MotionFragment", e.getLocalizedMessage());
                 }
                 break;
@@ -703,6 +703,6 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ConnectionFragment.getInstance().unRegisterPermanentConnectionListener(this);
+        connectionManager.unRegisterPermanentConnectionListener(this);
     }
 }

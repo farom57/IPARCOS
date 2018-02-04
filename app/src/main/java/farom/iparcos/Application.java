@@ -1,9 +1,9 @@
 package farom.iparcos;
 
 import android.content.Context;
+import android.text.format.DateFormat;
 import android.util.Log;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -15,18 +15,46 @@ public class Application extends android.app.Application {
      * The context of the whole app.
      */
     private static Context context;
+    /**
+     * UI updater
+     *
+     * @see UIUpdater
+     */
+    private static UIUpdater uiUpdater = null;
+    /**
+     * Global connection manager.
+     */
+    private static ConnectionManager connectionManager;
+    private static Runnable goToConnection;
+
+    /**
+     * @return the Connection Manager for this application.
+     */
+    public static ConnectionManager getConnectionManager() {
+        return connectionManager;
+    }
+
+    /**
+     * @param u a new {@link UIUpdater}
+     */
+    public static void setUiUpdater(UIUpdater u) {
+        uiUpdater = u;
+    }
+
+    /**
+     * Sets the action to fire to go back to the connection tab.
+     *
+     * @param runnable the action.
+     */
+    public static void setGoToConnectionTab(Runnable runnable) {
+        goToConnection = runnable;
+    }
 
     /**
      * @return the context of the whole app.
      */
-    public static Context getAppContext() {
-        return Application.context;
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Application.context = getApplicationContext();
+    public static Context getContext() {
+        return context;
     }
 
     /**
@@ -34,13 +62,58 @@ public class Application extends android.app.Application {
      *
      * @param message
      */
-    public void appendLog(String message) {
-        final String msg = new SimpleDateFormat("MM/dd/yyyy HH:mm").format(new Date()) + ": " + message + "\n";
+    public static void log(String message) {
         Log.i("GLOBALLOG", message);
-        logView.post(new Runnable() {
-            public void run() {
-                logView.append(msg);
-            }
-        });
+        Date now = new Date();
+        message = DateFormat.getDateFormat(context).format(now) + " " +
+                DateFormat.getTimeFormat(context).format(now) + ": " + message + "\n";
+        if (uiUpdater != null) {
+            uiUpdater.appendLog(message);
+        }
+    }
+
+    /**
+     * @param state the new state of the Connection button.
+     */
+    public static void setState(String state) {
+        if (uiUpdater != null) {
+            uiUpdater.setConnectionState(state);
+        }
+    }
+
+    /**
+     * Makes {@link MainActivity} change the current fragment to {@link ConnectionFragment}.
+     */
+    public static void goToConnectionTab() {
+        if (goToConnection != null) {
+            goToConnection.run();
+        }
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Application.context = getApplicationContext();
+        if (connectionManager == null) {
+            connectionManager = new ConnectionManager();
+        }
+    }
+
+    /**
+     * This class offers a safe way to update the UI statically instead of keeping in memory Android Widgets,
+     * which implement the class {@link Context}.
+     *
+     * @author SquareBoot
+     */
+    public interface UIUpdater {
+        /**
+         * Appends a log to the Log TextView.
+         */
+        void appendLog(final String msg);
+
+        /**
+         * @param state a new state for the Connection button.
+         */
+        void setConnectionState(final String state);
     }
 }

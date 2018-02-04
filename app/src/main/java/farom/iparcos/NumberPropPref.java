@@ -80,25 +80,25 @@ public class NumberPropPref extends PropPref {
             final ArrayList<INDIElement> elements = prop.getElementsAsList();
             final ArrayList<EditText> editTextViews = new ArrayList<>(elements.size());
 
-            LinearLayout layout = new LinearLayout(Application.getAppContext());
+            LinearLayout layout = new LinearLayout(Application.getContext());
             layout.setOrientation(LinearLayout.VERTICAL);
-            int padding = Application.getAppContext().getResources().getDimensionPixelSize(R.dimen.padding_medium);
+            int padding = Application.getContext().getResources().getDimensionPixelSize(R.dimen.padding_medium);
 
             for (int i = 0; i < elements.size(); i++) {
-                TextView textView = new TextView(Application.getAppContext());
+                TextView textView = new TextView(Application.getContext());
                 textView.setText(elements.get(i).getLabel());
 
                 textView.setPadding(padding, padding, padding, 0);
                 layout.addView(textView);
 
-                editTextViews.add(new EditText(Application.getAppContext()));
+                editTextViews.add(new EditText(Application.getContext()));
                 editTextViews.get(i).setText(elements.get(i).getValueAsString());
                 editTextViews.get(i).setPadding(padding, padding, padding, padding);
                 editTextViews.get(i).setEnabled(prop.getPermission() != Constants.PropertyPermissions.RO);
                 layout.addView(editTextViews.get(i));
             }
 
-            ScrollView scrollView = new ScrollView(Application.getAppContext());
+            ScrollView scrollView = new ScrollView(Application.getContext());
             scrollView.addView(layout);
             builder.setView(scrollView);
 
@@ -116,7 +116,7 @@ public class NumberPropPref extends PropPref {
                             prop.sendChangesToDriver();
 
                         } catch (INDIValueException | IOException | IllegalArgumentException e) {
-                            Toast toast = Toast.makeText(Application.getAppContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(Application.getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG);
                             toast.show();
                         }
                     }

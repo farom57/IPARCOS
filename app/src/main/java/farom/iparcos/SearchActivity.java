@@ -96,10 +96,11 @@ public class SearchActivity extends ListActivity
         }).start(); // TODO : faire plus propre avec Cursor et Loader
 
         // Set up INDI connection
-        ConnectionFragment.getInstance().registerPermanentConnectionListener(this);
+        //TODO(squareboot): use field
+        Application.getConnectionManager().registerPermanentConnectionListener(this);
 
         // Enumerate existing properties
-        INDIServerConnection connection = ConnectionFragment.getConnection();
+        INDIServerConnection connection = Application.getConnectionManager().getConnection();
         if (connection != null) {
             List<INDIDevice> list = connection.getDevicesAsList();
             if (list != null) {

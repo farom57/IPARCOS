@@ -46,7 +46,11 @@ public class MainActivity extends AppCompatActivity {
                         boolean beforeAfter;
                         Pages current = Pages.fromId(id);
                         try {
-                            beforeAfter = (lastPage.getIndex() > current.getIndex());
+                            int c = current.getIndex(), l = lastPage.getIndex();
+                            if (l == c) {
+                                return false;
+                            }
+                            beforeAfter = (l > current.getIndex());
 
                         } catch (NullPointerException e) {
                             return false;
@@ -69,6 +73,18 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 return false;
+            }
+        });
+
+        Application.setGoToConnectionTab(new Runnable() {
+            @Override
+            public void run() {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    toolbar.setElevation(4);
+                }
+                getSupportFragmentManager().beginTransaction().setCustomAnimations(
+                        R.anim.slide_in_left, R.anim.slide_out_left, 0, 0)
+                        .replace(R.id.content_frame, fragments[Pages.CONNECTION.getIndex()]).commit();
             }
         });
     }

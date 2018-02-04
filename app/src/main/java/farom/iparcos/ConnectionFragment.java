@@ -8,8 +8,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,20 +20,10 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
-
-import laazotea.indi.client.INDIDevice;
-import laazotea.indi.client.INDIDeviceListener;
-import laazotea.indi.client.INDIProperty;
-import laazotea.indi.client.INDIServerConnection;
-import laazotea.indi.client.INDIServerConnectionListener;
 
 /**
  * The main activity of the application, which manages the connection.
@@ -44,34 +32,26 @@ import laazotea.indi.client.INDIServerConnectionListener;
  */
 public class ConnectionFragment extends Fragment {
 
-    private static ConnectionFragment instance = null;
+    private static boolean restore = false;
+    private static String logsText;
+    private static String buttonText;
 
     // Views
     private View rootView;
-    private TextView logView;
     private Button connectionButton;
-
-    /**
-     * @return the instance of the activity
-     */
-    public static ConnectionFragment getInstance() {
-        return instance;
-    }
+    private TextView logView;
+    private Spinner serversSpinner;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        instance = this;
-
         rootView = inflater.inflate(R.layout.activity_connection, container, false);
 
-        loadServerList();
-
-        logView = rootView.findViewById(R.id.logTextBox); // TODO : correct
-        logView.setMovementMethod(new ScrollingMovementMethod());
+        logView = rootView.findViewById(R.id.logTextBox);
 
         connectionButton = rootView.findViewById(R.id.connectionButton);
 
-        ((Spinner) rootView.findViewById(R.id.spinnerHost)).setOnItemSelectedListener(new OnItemSelectedListener() {
+        serversSpinner = rootView.findViewById(R.id.spinnerHost);
+        serversSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 if (parent.getItemAtPosition(pos).toString().equals(getResources().getString(R.string.hostadd))) {
@@ -84,8 +64,9 @@ public class ConnectionFragment extends Fragment {
 
             }
         });
+        loadServerList();
 
-        rootView.findViewById(R.id.connectionButton).setOnClickListener(new View.OnClickListener() {
+        connectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Retrieve Hostname and port number
@@ -99,26 +80,64 @@ public class ConnectionFragment extends Fragment {
                     port = 7624;
                 }
 
-                // Connect (or disconnect)
+                // Connect or disconnect
                 if (connectionButton.getText().equals(getResources().getString(R.string.connect))) {
                     if (host.equals(getResources().getString(R.string.hostadd))) {
                         addServer();
 
                     } else {
-                        connect(host, port);
+                        Application.getConnectionManager().connect(host, port);
                     }
 
                 } else if (connectionButton.getText().equals(getResources().getString(R.string.disconnect))) {
-                    disconnect();
+                    Application.getConnectionManager().disconnect();
                 }
+            }
+        });
+
+        if (restore) {
+            logView.setText(logsText);
+            connectionButton.setText(buttonText);
+
+        } else {
+            logsText = "";
+            buttonText = getResources().getString(R.string.connect);
+        }
+
+        Application.setUiUpdater(new Application.UIUpdater() {
+            @Override
+            public void appendLog(final String msg) {
+                logView.post(new Runnable() {
+                    public void run() {
+                        logView.append(msg);
+                    }
+                });
+            }
+
+            @Override
+            public void setConnectionState(final String state) {
+                connectionButton.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        connectionButton.setText(state);
+                    }
+                });
             }
         });
 
         return rootView;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        restore = true;
+        logsText = logView.getText().toString();
+        buttonText = connectionButton.getText().toString();
+    }
+
     /**
-     * load and update the server list
+     * load and update the servers list.
      */
     protected void loadServerList() {
         // Get the preferences
@@ -135,13 +154,13 @@ public class ConnectionFragment extends Fragment {
         serverList.add(getResources().getString(R.string.hostadd));
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, serverList);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        ((Spinner) rootView.findViewById(R.id.spinnerHost)).setAdapter(dataAdapter);
+        serversSpinner.setAdapter(dataAdapter);
     }
 
     /**
-     * Add the server address, save the server list and update the spinner
+     * Adds the server address, saves the servers list and updates the spinner.
      *
-     * @param ip
+     * @param ip the IP address of the new Server
      */
     protected void addServer(String ip) {
         // Retrieve the list
@@ -168,7 +187,7 @@ public class ConnectionFragment extends Fragment {
     }
 
     /**
-     * Ask to the user to add a new server
+     * Asks the user to add a new server.
      */
     @SuppressLint("InflateParams")
     protected void addServer() {
@@ -198,50 +217,5 @@ public class ConnectionFragment extends Fragment {
                 });
 
         builder.create().show();
-    }
-
-    /**
-     * Connect to the driver
-     *
-     * @param host
-     * @param port
-     */
-    private void connect(java.lang.String host, int port) {
-        connectionButton.setText(R.string.connecting);
-        appendLog(getString(R.string.try_to_connect) + host + ":" + port);
-        connection = new INDIServerConnection(host, port);
-
-        // Listen to all
-        connection.addINDIServerConnectionListener(this);
-        for (INDIServerConnectionListener permanentConnectionListener : permanentConnectionListeners) {
-            connection.addINDIServerConnectionListener(permanentConnectionListener);
-        }
-
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    connection.connect();
-                    // Ask for all the devices
-                    connection.askForDevices();
-                    appendLog(getString(R.string.connected));
-                    connectionButton.post(new Runnable() {
-                        public void run() {
-                            connectionButton.setText(R.string.disconnect);
-                            //TODO invalidateOptionsMenu();
-                        }
-                    });
-
-                } catch (IOException e) {
-                    appendLog(getString(R.string.connection_pb));
-                    appendLog(e.getLocalizedMessage());
-                    connectionButton.post(new Runnable() {
-                        public void run() {
-                            connectionButton.setText(R.string.connect);
-                        }
-                    });
-                }
-
-            }
-        }).start();
     }
 }
