@@ -64,11 +64,10 @@ public class Application extends android.app.Application {
      */
     public static void log(String message) {
         Log.i("GLOBALLOG", message);
-        Date now = new Date();
-        message = DateFormat.getDateFormat(context).format(now) + " " +
-                DateFormat.getTimeFormat(context).format(now) + ": " + message + "\n";
         if (uiUpdater != null) {
-            uiUpdater.appendLog(message);
+            Date now = new Date();
+            uiUpdater.appendLog(message, DateFormat.getDateFormat(context).format(now) + " " +
+                    DateFormat.getTimeFormat(context).format(now));
         }
     }
 
@@ -109,7 +108,7 @@ public class Application extends android.app.Application {
         /**
          * Appends a log to the Log TextView.
          */
-        void appendLog(final String msg);
+        void appendLog(final String msg, final String timestamp);
 
         /**
          * @param state a new state for the Connection button.

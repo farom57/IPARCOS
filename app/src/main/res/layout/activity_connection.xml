@@ -1,4 +1,4 @@
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,64 +12,71 @@
         style="@android:style/TextAppearance.DeviceDefault.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/indi_host"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/indi_host" />
 
     <Spinner
         android:id="@+id/spinnerHost"
         android:layout_width="186dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_alignBottom="@+id/editTextPort"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:prompt="@string/hostprompt"
-        app:layout_constraintBottom_toBottomOf="@+id/editTextPort"
-        app:layout_constraintEnd_toStartOf="@+id/editTextPort"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_marginBottom="8dp"/>
 
     <EditText
         android:id="@+id/editTextPort"
-        android:layout_width="103dp"
         android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/HostSection"
         android:ems="6"
         android:hint="7624"
-        android:inputType="number"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/HostSection" />
+        android:inputType="number" />
 
     <Button
         android:id="@+id/connectionButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/spinnerHost"
         android:layout_marginTop="8dp"
-        android:text="@string/connect"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextPort" />
+        android:text="@string/connect" />
 
     <TextView
         android:id="@+id/LogSection"
         style="@android:style/TextAppearance.DeviceDefault.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/connectionButton"
         android:layout_marginTop="8dp"
-        android:text="@string/log"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/connectionButton" />
+        android:text="@string/log" />
 
-    <ScrollView
-        android:layout_width="fill_parent"
+    <ListView
+        android:id="@+id/logsList"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_marginTop="8dp"
-        android:fillViewport="true"
-        android:scrollbars="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/LogSection">
+        android:layout_below="@+id/LogSection" />
 
-        <TextView
-            android:id="@+id/logTextBox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="" />
-    </ScrollView>
-</android.support.constraint.ConstraintLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        app:srcCompat="@drawable/clear"
+        android:layout_marginEnd="16dp" />
+</RelativeLayout>
