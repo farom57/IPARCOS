@@ -7,11 +7,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -42,14 +44,50 @@ public class ConnectionFragment extends Fragment {
     private View rootView;
     private Button connectionButton;
     private Spinner serversSpinner;
+    /**
+     * The original position of the floating action button.
+     */
+    private int fabPosY;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.activity_connection, container, false);
+        rootView = inflater.inflate(R.layout.fragment_connection, container, false);
 
         final ListView logsList = rootView.findViewById(R.id.logsList);
         final LogAdapter logAdapter = new LogAdapter(getContext(), logs);
         logsList.setAdapter(logAdapter);
+
+        final FloatingActionButton clearLogsButton = rootView.findViewById(R.id.clearLogsButton);
+        clearLogsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logs.clear();
+                logAdapter.notifyDataSetChanged();
+                clearLogsButton.animate().translationY(150);
+            }
+        });
+
+        fabPosY = clearLogsButton.getScrollY();
+
+        logsList.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (firstVisibleItem >= visibleItemCount) {
+                    clearLogsButton.animate().cancel();
+                    clearLogsButton.animate().translationYBy(150);
+
+                } else {
+                    clearLogsButton.animate().cancel();
+                    clearLogsButton.animate().translationY(fabPosY);
+                }
+            }
+        });
 
         connectionButton = rootView.findViewById(R.id.connectionButton);
 
@@ -108,8 +146,17 @@ public class ConnectionFragment extends Fragment {
         Application.setUiUpdater(new Application.UIUpdater() {
             @Override
             public void appendLog(final String msg, final String timestamp) {
-                logs.add(new LogItem(msg, timestamp));
-                logAdapter.notifyDataSetChanged();
+                logsList.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        logs.add(new LogItem(msg, timestamp));
+                        logAdapter.notifyDataSetChanged();
+                        if (logs.size() == 1) {
+                            clearLogsButton.animate().cancel();
+                            clearLogsButton.animate().translationY(fabPosY);
+                        }
+                    }
+                });
             }
 
             @Override

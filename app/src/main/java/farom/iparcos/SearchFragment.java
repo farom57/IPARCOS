@@ -1,13 +1,14 @@
 package farom.iparcos;
 
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,13 +43,9 @@ import laazotea.indi.client.INDISwitchProperty;
 /**
  * Allows the user to search for an astronomical object and displays the result.
  */
-public class SearchActivity extends ListActivity
+public class SearchFragment extends Fragment
         implements MenuItem.OnActionExpandListener, SearchView.OnQueryTextListener,
         AdapterView.OnItemClickListener, INDIServerConnectionListener, INDIPropertyListener, INDIDeviceListener {
-
-    ArrayAdapter adapter;
-    private ArrayList<CatalogEntry> entries;
-    private Catalog catalog;
 
     // INDI properties
     private INDINumberProperty telescopeCoordP = null;
@@ -57,22 +55,31 @@ public class SearchActivity extends ListActivity
     private INDISwitchElement telescopeOnCoordSetSync = null;
     private INDISwitchElement telescopeOnCoordSetSlew = null;
 
+    // Views
+    private View rootView;
+    private ListView searchObjListView;
+
+    ArrayAdapter adapter;
+    private ArrayList<CatalogEntry> entries;
+    private Catalog catalog;
+
     /**
      * Called at the activity creation. Disable opening animation and load default content.
      *
      * @param savedInstanceState
      */
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        overridePendingTransition(0, 0);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        rootView = inflater.inflate(R.layout.fragment_search, container, false);
+        //overridePendingTransition(0, 0); TODO(squareboot): why?
 
-        // list setup
+        // List setup
+        searchObjListView = rootView.findViewById(R.id.searchObjListView);
         entries = new ArrayList<>();
-        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_2, android.R.id.text1, entries) {
+        adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_2, android.R.id.text1, entries) {
             @NonNull
             @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
+            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
                 TextView text1 = view.findViewById(android.R.id.text1);
                 TextView text2 = view.findViewById(android.R.id.text2);
@@ -82,25 +89,24 @@ public class SearchActivity extends ListActivity
                 return view;
             }
         };
-        setListAdapter(adapter);
+        searchObjListView.setAdapter(adapter);
+        searchObjListView.setOnItemClickListener(this);
 
         // List loading
-        final Context act = this;
         new Thread(new Runnable() {
             @Override
             public void run() {
-                catalog = new Catalog(act);
+                catalog = new Catalog(getContext());
                 entries.addAll(catalog.getEntries());
-
             }
-        }).start(); // TODO : faire plus propre avec Cursor et Loader
+        }).start(); // TODO : faire plus propre avec Cursor et Loader //TODO(squareboot): I don't understand :-)
 
         // Set up INDI connection
-        //TODO(squareboot): use field
-        Application.getConnectionManager().registerPermanentConnectionListener(this);
+        ConnectionManager connectionManager = Application.getConnectionManager();
+        connectionManager.registerPermanentConnectionListener(this);
 
         // Enumerate existing properties
-        INDIServerConnection connection = Application.getConnectionManager().getConnection();
+        INDIServerConnection connection = connectionManager.getConnection();
         if (connection != null) {
             List<INDIDevice> list = connection.getDevicesAsList();
             if (list != null) {
@@ -114,11 +120,11 @@ public class SearchActivity extends ListActivity
             }
         }
 
-        getListView().setOnItemClickListener(this);
+        return rootView;
     }
 
     /**
-     * perform the search
+     * Perform the search
      *
      * @param query
      */
@@ -133,7 +139,7 @@ public class SearchActivity extends ListActivity
 //        adapter.notifyDataSetChanged();
         if (catalog != null) {
             if (catalog.isReady()) {
-                getListView().setSelection(catalog.searchIndex(query));
+                searchObjListView.setSelection(catalog.searchIndex(query));
             }
         }
     }
@@ -302,10 +308,10 @@ public class SearchActivity extends ListActivity
             if (telescopeOnCoordSetSlew != null && telescopeOnCoordSetSync != null) {
                 property.addINDIPropertyListener(this);
                 telescopeOnCoordSetP = (INDISwitchProperty) property;
-                Log.i("SearchActivity", "New Property (" + property.getName() + ") added to device " + device.getName());
+                Log.i("SearchFragment", "New Property (" + property.getName() + ") added to device " + device.getName());
 
             } else {
-                Log.w("SearchActivity", "Bad property: " + property.getName() + ", device: " + device.getName());
+                Log.w("SearchFragment", "Bad property: " + property.getName() + ", device: " + device.getName());
             }
         }
 
@@ -316,9 +322,10 @@ public class SearchActivity extends ListActivity
             if (telescopeCoordDE != null && telescopeCoordRA != null) {
                 property.addINDIPropertyListener(this);
                 telescopeCoordP = (INDINumberProperty) property;
-                Log.i("SearchActivity", "New Property (" + property.getName() + ") added to device " + device.getName());
+                Log.i("SearchFragment", "New Property (" + property.getName() + ") added to device " + device.getName());
+
             } else {
-                Log.w("SearchActivity", "Bad property: " + property.getName() + ", device: " + device.getName());
+                Log.w("SearchFragment", "Bad property: " + property.getName() + ", device: " + device.getName());
             }
         }
     }
@@ -335,7 +342,7 @@ public class SearchActivity extends ListActivity
             telescopeOnCoordSetSlew = null;
             telescopeOnCoordSetSync = null;
         }
-        Log.d("SearchActivity", "Removed property (" + property.getName() + ") to device " + device.getName());
+        Log.d("SearchFragment", "Removed property (" + property.getName() + ") to device " + device.getName());
     }
 
     @Override
@@ -351,14 +358,14 @@ public class SearchActivity extends ListActivity
     @Override
     public void newDevice(INDIServerConnection connection, INDIDevice device) {
         // We just simply listen to this Device
-        Log.i("SearchActivity", getString(R.string.new_device) + device.getName());
+        Log.i("SearchFragment", getString(R.string.new_device) + device.getName());
         device.addINDIDeviceListener(this);
     }
 
     @Override
     public void removeDevice(INDIServerConnection connection, INDIDevice device) {
         // We just remove ourselves as a listener of the removed device
-        Log.i("SearchActivity", getString(R.string.device_removed) + device.getName());
+        Log.i("SearchFragment", getString(R.string.device_removed) + device.getName());
         device.removeINDIDeviceListener(this);
     }
 

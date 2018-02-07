@@ -38,7 +38,7 @@ public class GenericFragment extends Fragment implements TabLayout.OnTabSelected
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.activity_generic, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_control_panel, container, false);
 
         connectionManager = Application.getConnectionManager();
         System.out.println("Register");

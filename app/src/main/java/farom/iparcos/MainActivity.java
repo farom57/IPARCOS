@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         fragments[Pages.CONNECTION.getIndex()] = new ConnectionFragment();
         fragments[Pages.MOTION.getIndex()] = new MotionFragment();
         fragments[Pages.GENERIC.getIndex()] = new GenericFragment();
-        fragments[Pages.SEARCH.getIndex()] = null;
+        fragments[Pages.SEARCH.getIndex()] = new SearchFragment();
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
