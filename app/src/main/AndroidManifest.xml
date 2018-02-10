@@ -30,8 +30,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- TODO(squareboot): move them in the right place for Fragments
+        <activity
+            android:name=".SearchActivity"
+            android:label="@string/title_activity_search"
+            android:launchMode="singleTop"
+            android:logo="@drawable/ic_action_search">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="farom.iparcos.MainActivity" />
 
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -40,7 +46,7 @@
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
-        -->
+        </activity>
 
         <meta-data
             android:name="android.app.default_searchable"

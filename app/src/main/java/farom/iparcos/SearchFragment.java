@@ -1,23 +1,24 @@
 package farom.iparcos;
 
 import android.app.AlertDialog;
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,117 +42,22 @@ import laazotea.indi.client.INDISwitchElement;
 import laazotea.indi.client.INDISwitchProperty;
 
 /**
- * Allows the user to search for an astronomical object and displays the result.
+ * Allows the user to look for an astronomical object and slew the telescope.
  */
-public class SearchFragment extends Fragment
-        implements MenuItem.OnActionExpandListener, SearchView.OnQueryTextListener,
-        AdapterView.OnItemClickListener, INDIServerConnectionListener, INDIPropertyListener, INDIDeviceListener {
+public class SearchFragment extends ListFragment
+        implements /*MenuItem.OnActionExpandListener, */SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Catalog>,
+        INDIServerConnectionListener, INDIPropertyListener, INDIDeviceListener {
 
-    // INDI properties
-    private INDINumberProperty telescopeCoordP = null;
-    private INDINumberElement telescopeCoordRA = null;
-    private INDINumberElement telescopeCoordDE = null;
-    private INDISwitchProperty telescopeOnCoordSetP = null;
-    private INDISwitchElement telescopeOnCoordSetSync = null;
-    private INDISwitchElement telescopeOnCoordSetSlew = null;
-
-    // Views
-    private View rootView;
-    private ListView searchObjListView;
-
-    ArrayAdapter adapter;
-    private ArrayList<CatalogEntry> entries;
-    private Catalog catalog;
-
-    /**
-     * Called at the activity creation. Disable opening animation and load default content.
-     *
-     * @param savedInstanceState
-     */
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_search, container, false);
-        //overridePendingTransition(0, 0); TODO(squareboot): why?
-
-        // List setup
-        searchObjListView = rootView.findViewById(R.id.searchObjListView);
-        entries = new ArrayList<>();
-        adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_2, android.R.id.text1, entries) {
-            @NonNull
-            @Override
-            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView text1 = view.findViewById(android.R.id.text1);
-                TextView text2 = view.findViewById(android.R.id.text2);
-
-                text1.setText(entries.get(position).getName());
-                text2.setText(entries.get(position).createSummary(getContext()));
-                return view;
-            }
-        };
-        searchObjListView.setAdapter(adapter);
-        searchObjListView.setOnItemClickListener(this);
-
-        // List loading
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                catalog = new Catalog(getContext());
-                entries.addAll(catalog.getEntries());
-            }
-        }).start(); // TODO : faire plus propre avec Cursor et Loader //TODO(squareboot): I don't understand :-)
-
-        // Set up INDI connection
-        ConnectionManager connectionManager = Application.getConnectionManager();
-        connectionManager.registerPermanentConnectionListener(this);
-
-        // Enumerate existing properties
-        INDIServerConnection connection = connectionManager.getConnection();
-        if (connection != null) {
-            List<INDIDevice> list = connection.getDevicesAsList();
-            if (list != null) {
-                for (INDIDevice device : list) {
-                    device.addINDIDeviceListener(this);
-                    List<INDIProperty> properties = device.getPropertiesAsList();
-                    for (INDIProperty property : properties) {
-                        this.newProperty(device, property);
-                    }
-                }
-            }
-        }
-
-        return rootView;
-    }
-
-    /**
-     * Perform the search
-     *
-     * @param query
-     */
-    private void doMySearch(String query) {
-//        TextView text = (TextView) findViewById(R.id.textViewtest);
-//        text.setText(query);
-//        Log.d("GLOBALLOG", "Search for " + query);
-//        entries.clear();
-//        entries.addAll(dsoCatalog.search(query));
-//        entries.add(new DSOEntry("48 Tuc                   4 Gb 30.9 00 24 06.1-72 05 00X"));
-//        Log.d("GLOBALLOG", "entries.size() = " + entries.size());
-//        adapter.notifyDataSetChanged();
-        if (catalog != null) {
-            if (catalog.isReady()) {
-                searchObjListView.setSelection(catalog.searchIndex(query));
-            }
-        }
-    }
-
+    // App menu
+    private static int searchViewId = -1;
     /**
      * Initiate the menu (only the search view in fact).
      *
      * @param menu
      * @return
      */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    /*@Override*/
+    /*public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the options menu from XML
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_search, menu);
@@ -172,7 +78,85 @@ public class SearchFragment extends Fragment
         searchItem.setOnActionExpandListener(this);
 
         return super.onCreateOptionsMenu(menu);
+    }*/
+
+    // INDI properties
+    private INDINumberProperty telescopeCoordP = null;
+    private INDINumberElement telescopeCoordRA = null;
+    private INDINumberElement telescopeCoordDE = null;
+    private INDISwitchProperty telescopeOnCoordSetP = null;
+    private INDISwitchElement telescopeOnCoordSetSync = null;
+    private INDISwitchElement telescopeOnCoordSetSlew = null;
+    // ListView stuff
+    private ArrayList<CatalogEntry> catalogEntries = new ArrayList<>();
+    private ArrayAdapter<CatalogEntry> entriesAdapter;
+    private Catalog catalog;
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        setEmptyText("Empty catalog"); //TODO(squareboot): use resource
+
+        setHasOptionsMenu(true);
+
+        catalogEntries = new ArrayList<>();
+        entriesAdapter = new ArrayAdapter<CatalogEntry>(getContext(),
+                android.R.layout.simple_list_item_2, android.R.id.text1, catalogEntries) {
+            @NonNull
+            @Override
+            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                ((TextView) view.findViewById(android.R.id.text1))
+                        .setText(catalogEntries.get(position).getName());
+                ((TextView) view.findViewById(android.R.id.text2))
+                        .setText(catalogEntries.get(position).createSummary(getContext()));
+                return view;
+            }
+        };
+        setListAdapter(entriesAdapter);
+
+        // List loading
+        setListShown(false);
+        getLoaderManager().initLoader(0, null, this).forceLoad();
+
+        // Set up INDI connection
+        ConnectionManager connectionManager = Application.getConnectionManager();
+        connectionManager.registerPermanentConnectionListener(this);
+
+        // Enumerate existing properties
+        INDIServerConnection connection = connectionManager.getConnection();
+        if (connection != null) {
+            List<INDIDevice> list = connection.getDevicesAsList();
+            if (list != null) {
+                for (INDIDevice device : list) {
+                    device.addINDIDeviceListener(this);
+                    List<INDIProperty> properties = device.getPropertiesAsList();
+                    for (INDIProperty property : properties) {
+                        this.newProperty(device, property);
+                    }
+                }
+            }
+        }
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if ((searchViewId != -1) && (menu.findItem(searchViewId) != null)) {
+            MenuItem item = menu.add("Search"); //TODO(squareboot): use resource
+            item.setIcon(R.drawable.ic_action_search);
+            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            SearchView searchView = new SearchView(getActivity());
+            searchView.setOnQueryTextListener(this);
+            item.setActionView(searchView);
+            searchViewId = item.getItemId();
+        }
+    }
+
+    /*@Override
+    public void onDestroyOptionsMenu() {
+        // TODO(squareboot): remove search view here?
+    }*/
 
     /**
      * (from OnActionExpandListener) Called when the search menu is expanded. It can only happens at the menu initialisation. Nothing to do.
@@ -180,10 +164,10 @@ public class SearchFragment extends Fragment
      * @param item
      * @return
      */
-    @Override
+    /*@Override
     public boolean onMenuItemActionExpand(MenuItem item) {
         return true;
-    }
+    }*/
 
     /**
      * (from OnActionExpandListener) Called when the user closes the search menu. It shall kill the activity.
@@ -191,56 +175,45 @@ public class SearchFragment extends Fragment
      * @param item
      * @return
      */
-    @Override
+    /*@Override
     public boolean onMenuItemActionCollapse(MenuItem item) {
-        finish();
-        overridePendingTransition(0, 0); // Disable the swipe animation for the activity end.
+        //finish();
+        //overridePendingTransition(0, 0); // Disable the swipe animation for the activity end.
         return true;
-    }
+    }*/
 
     /**
-     * (from OnQueryTextListener) Called when the user changes the search string
+     * Called when the user changes the search string.
      *
-     * @param newText
-     * @return
+     * @param newText the new query.
+     * @return {@code false}, because the action is being handled by this listener.
      */
     @Override
     public boolean onQueryTextChange(String newText) {
-        doMySearch(newText);
+        if ((catalog != null) && (catalog.isReady())) {
+            setSelection(catalog.searchIndex(newText));
+        }
         return false;
     }
 
     /**
-     * (from OnQueryTextListener) Called when the user submits the query. Nothing to do since it is done in onQueryTextChange
+     * Called when the user submits the query. Nothing to do since it is done in {@link #onQueryTextChange(String)}
      *
-     * @param query
-     * @return
+     * @param query the new query. Ignored.
+     * @return always {@code false}.
      */
     @Override
     public boolean onQueryTextSubmit(String query) {
         return false;
     }
 
-    /**
-     * Callback method to be invoked when an item in this AdapterView has
-     * been clicked.
-     * <p/>
-     * Implementers can call getItemAtPosition(position) if they need
-     * to access the data associated with the selected item.
-     *
-     * @param parent   The AdapterView where the click happened.
-     * @param view     The view within the AdapterView that was clicked (this
-     *                 will be a view provided by the adapter)
-     * @param position The position of the view in the adapter.
-     * @param id       The row id of the item that was clicked.
-     */
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        final Context ctx = view.getContext();
-        final Coordinates coord = entries.get(position).getCoordinates();
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        final Context ctx = l.getContext(); //TODO(squareboot): why not getContext()? Maybe change it
+        final Coordinates coord = catalogEntries.get(position).getCoordinates();
         AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-        builder.setMessage(entries.get(position).createDescription(this))
-                .setTitle(entries.get(position).getName());
+        builder.setMessage(catalogEntries.get(position).createDescription(getContext()))
+                .setTitle(catalogEntries.get(position).getName());
 
         // Only display buttons if the telescope is ready
         if (telescopeCoordP != null && telescopeOnCoordSetP != null) {
@@ -293,6 +266,46 @@ public class SearchFragment extends Fragment
         });
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    /**
+     * @return a catalog loader.
+     * @see CatalogLoader
+     */
+    public Loader<Catalog> onCreateLoader(int id, Bundle args) {
+        return new CatalogLoader(getContext());
+    }
+
+    /**
+     * Binds the given catalog, loaded using {@link CatalogLoader}, to the Fragment's ListView.
+     *
+     * @param loader the loader. Ignored.
+     * @param data   the new catalog.
+     */
+    public void onLoadFinished(Loader<Catalog> loader, Catalog data) {
+        Log.i("CatalogManager", "Catalog loaded. Binding data...");
+        this.catalog = data;
+        if (catalogEntries.size() != 0) {
+            catalogEntries.clear();
+        }
+        catalogEntries.addAll(catalog.getEntries());
+        entriesAdapter.notifyDataSetChanged();
+        if (isResumed()) {
+            setListShown(true);
+
+        } else {
+            setListShownNoAnimation(true);
+        }
+        Log.i("CatalogManager", "Catalog binded.");
+    }
+
+    /**
+     * Here the application should remove any references it has to the {@link CatalogLoader}'s data.
+     *
+     * @param loader the loader to unbind.
+     */
+    public void onLoaderReset(Loader<Catalog> loader) {
+        // TODO(squareboot): do something here?
     }
 
     @Override
@@ -382,5 +395,34 @@ public class SearchFragment extends Fragment
     @Override
     public void newMessage(INDIServerConnection connection, Date timestamp, String message) {
 
+    }
+
+    /**
+     * Catalog loader.
+     *
+     * @author SquareBoot
+     */
+    private static class CatalogLoader extends AsyncTaskLoader<Catalog> {
+
+        /**
+         * Class constructor.
+         *
+         * @param context the context that will be used to fetch entries.
+         */
+        CatalogLoader(@NonNull Context context) {
+            super(context);
+        }
+
+        /**
+         * Calls {@link #CatalogLoader(Context)} to load the entire catalog.
+         *
+         * @return the complete catalog.
+         */
+        @Nullable
+        @Override
+        public Catalog loadInBackground() {
+            Log.i("CatalogManager", "Loading catalog...");
+            return new Catalog(getContext());
+        }
     }
 }
