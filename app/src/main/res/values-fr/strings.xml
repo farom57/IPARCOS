@@ -12,7 +12,7 @@
     <string name="hostadd">Ajouter un serveur</string>
     <string name="hostauto">Auto</string>
     <string name="host_prompt_text">Adresse IP de l\'hôte :</string>
-    <string name="connecting">Connexion …</string>
+    <string name="connecting">Connexion…</string>
     <string name="menu_motion_short">Mouvement</string>
     <string name="menu_motion">Contrôle du mouvement</string>
     <string name="menu_generic">Autres</string>
@@ -38,7 +38,7 @@
     <string name="GOTO">Pointer</string>
     <string name="sync">Synchroniser</string>
     <string name="entry_star">Étoile</string>
-    <string name="colon_with_spaces">\u0020:\u0020</string>
+    <string name="colon_with_spaces">": "</string>
     <string name="entry_names">Noms</string>
     <string name="entry_type">Type</string>
     <string name="entry_magnitude">Magnitude</string>

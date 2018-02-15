@@ -8,14 +8,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * A catalog of astronomical objects
+ * A catalog of astronomical objects.
+ *
+ * @see DSOEntry
+ * @see StarEntry
  */
 public class Catalog {
 
-    /**
-     * The application's context used to access resources.
-     */
-    protected Context context;
     /**
      * Catalog objects.
      */
@@ -31,7 +30,6 @@ public class Catalog {
      * @param context Application context to access the resources
      */
     public Catalog(Context context) {
-        this.context = context;
         Log.i("CatalogManager", "Loading DSO...");
         entries = new ArrayList<CatalogEntry>(DSOEntry.createList(context));
         Log.i("CatalogManager", "Loading stars...");

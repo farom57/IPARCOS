@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import farom.iparcos.R;
 
 /**
- * Deep sky object
+ * Represents a deep sky object. This class also contains a loader to fetch DSO from the app's catalog.
  */
 public class DSOEntry extends CatalogEntry {
 
@@ -50,11 +50,11 @@ public class DSOEntry extends CatalogEntry {
     /**
      * The length of the DEC coordinate in each line.
      */
-    private final static int DEC_LENGTH = 9;
+    //private final static int DEC_LENGTH = 9;
 
-    protected String type;
-    protected String size;
-    protected String magnitude;
+    private String type;
+    private String size;
+    private String magnitude;
 
     /**
      * Create the entry from a formatted line
@@ -262,10 +262,10 @@ public class DSOEntry extends CatalogEntry {
         Resources r = ctx.getResources();
         String str = "<b>" + r.getString(getTypeShortStringResource()) + "</b> ";
         if (!magnitude.equals("")) {
-            str += r.getString(R.string.entry_mag) + "=" + magnitude + " ";
+            str += r.getString(R.string.entry_mag) + ": " + magnitude + " ";
         }
         if (!size.equals("")) {
-            str += r.getString(R.string.entry_size).toLowerCase() + "=" + size + r.getString(R.string.arcmin);
+            str += r.getString(R.string.entry_size).toLowerCase() + ": " + size + r.getString(R.string.arcmin);
         }
         return new SpannableString(Html.fromHtml(str));
     }

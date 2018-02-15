@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import farom.iparcos.R;
 
 /**
- * A star
+ * Represents a star. This class also contains a loader to fetch stars from the app's catalog.
  */
 public class StarEntry extends CatalogEntry {
 
@@ -46,10 +46,10 @@ public class StarEntry extends CatalogEntry {
     /**
      * The length of the magnitude in each line.
      */
-    private final static int MAGNITUDE_LENGTH = 7;
+    //private final static int MAGNITUDE_LENGTH = 7;
 
-    protected String names;
-    protected String magnitude;
+    private String names;
+    private String magnitude;
 
     /**
      * Create the entry from a formatted line
@@ -135,7 +135,7 @@ public class StarEntry extends CatalogEntry {
     @Override
     public Spannable createSummary(Context ctx) {
         Resources r = ctx.getResources();
-        String str = "<b>" + r.getString(R.string.entry_star) + "</b> " + r.getString(R.string.entry_mag) + "=" + magnitude;
+        String str = "<b>" + r.getString(R.string.entry_star) + "</b> " + r.getString(R.string.entry_mag) + ": " + magnitude;
         return new SpannableString(Html.fromHtml(str));
     }
 }

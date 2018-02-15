@@ -45,40 +45,8 @@ import laazotea.indi.client.INDISwitchProperty;
  * Allows the user to look for an astronomical object and slew the telescope.
  */
 public class SearchFragment extends ListFragment
-        implements /*MenuItem.OnActionExpandListener, */SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Catalog>,
+        implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Catalog>,
         INDIServerConnectionListener, INDIPropertyListener, INDIDeviceListener {
-
-    // App menu
-    private static int searchViewId = -1;
-    /**
-     * Initiate the menu (only the search view in fact).
-     *
-     * @param menu
-     * @return
-     */
-    /*@Override*/
-    /*public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the options menu from XML
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_search, menu);
-
-        // Get the SearchView and set the searchable configuration
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-
-        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setIconifiedByDefault(false);    // expand the view at the beginning
-        searchView.setSubmitButtonEnabled(false);   // disable the submit button (the search is done every time the user change the text in the searchView)
-        searchView.setOnQueryTextListener(this);    // to recover text change
-
-        MenuItem searchItem = menu.findItem(R.id.menu_search);
-        // Force expand the view at the beginning (searchView.setIconifiedByDefault is not working)
-        searchItem.expandActionView();
-        // Recover the collapse event to quit the activity
-        searchItem.setOnActionExpandListener(this);
-
-        return super.onCreateOptionsMenu(menu);
-    }*/
 
     // INDI properties
     private INDINumberProperty telescopeCoordP = null;
@@ -88,37 +56,41 @@ public class SearchFragment extends ListFragment
     private INDISwitchElement telescopeOnCoordSetSync = null;
     private INDISwitchElement telescopeOnCoordSetSlew = null;
     // ListView stuff
-    private ArrayList<CatalogEntry> catalogEntries = new ArrayList<>();
-    private ArrayAdapter<CatalogEntry> entriesAdapter;
-    private Catalog catalog;
+    private static ArrayList<CatalogEntry> catalogEntries = new ArrayList<>();
+    private static ArrayAdapter<CatalogEntry> entriesAdapter;
+    private static Catalog catalog;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        setEmptyText("Empty catalog"); //TODO(squareboot): use resource
+        setEmptyText(getString(R.string.empty_catalog));
 
         setHasOptionsMenu(true);
 
-        catalogEntries = new ArrayList<>();
-        entriesAdapter = new ArrayAdapter<CatalogEntry>(getContext(),
-                android.R.layout.simple_list_item_2, android.R.id.text1, catalogEntries) {
-            @NonNull
-            @Override
-            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                ((TextView) view.findViewById(android.R.id.text1))
-                        .setText(catalogEntries.get(position).getName());
-                ((TextView) view.findViewById(android.R.id.text2))
-                        .setText(catalogEntries.get(position).createSummary(getContext()));
-                return view;
-            }
-        };
-        setListAdapter(entriesAdapter);
+        if ((catalog == null) || (!catalog.isReady())) {
+            catalogEntries = new ArrayList<>();
+            entriesAdapter = new ArrayAdapter<CatalogEntry>(getContext(),
+                    android.R.layout.simple_list_item_2, android.R.id.text1, catalogEntries) {
+                @NonNull
+                @Override
+                public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+                    View view = super.getView(position, convertView, parent);
+                    ((TextView) view.findViewById(android.R.id.text1))
+                            .setText(catalogEntries.get(position).getName());
+                    ((TextView) view.findViewById(android.R.id.text2))
+                            .setText(catalogEntries.get(position).createSummary(getContext()));
+                    return view;
+                }
+            };
+            setListAdapter(entriesAdapter);
+            // List loading
+            setListShown(false);
+            getLoaderManager().initLoader(0, null, this).forceLoad();
 
-        // List loading
-        setListShown(false);
-        getLoaderManager().initLoader(0, null, this).forceLoad();
+        } else {
+            setListAdapter(entriesAdapter);
+        }
 
         // Set up INDI connection
         ConnectionManager connectionManager = Application.getConnectionManager();
@@ -142,45 +114,14 @@ public class SearchFragment extends ListFragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        if ((searchViewId != -1) && (menu.findItem(searchViewId) != null)) {
-            MenuItem item = menu.add("Search"); //TODO(squareboot): use resource
-            item.setIcon(R.drawable.ic_action_search);
-            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-            SearchView searchView = new SearchView(getActivity());
-            searchView.setOnQueryTextListener(this);
-            item.setActionView(searchView);
-            searchViewId = item.getItemId();
-        }
+        System.out.println("Creating menu");
+        MenuItem item = menu.add(R.string.menu_search);
+        item.setIcon(R.drawable.ic_action_search);
+        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        SearchView searchView = new SearchView(getActivity());
+        searchView.setOnQueryTextListener(this);
+        item.setActionView(searchView);
     }
-
-    /*@Override
-    public void onDestroyOptionsMenu() {
-        // TODO(squareboot): remove search view here?
-    }*/
-
-    /**
-     * (from OnActionExpandListener) Called when the search menu is expanded. It can only happens at the menu initialisation. Nothing to do.
-     *
-     * @param item
-     * @return
-     */
-    /*@Override
-    public boolean onMenuItemActionExpand(MenuItem item) {
-        return true;
-    }*/
-
-    /**
-     * (from OnActionExpandListener) Called when the user closes the search menu. It shall kill the activity.
-     *
-     * @param item
-     * @return
-     */
-    /*@Override
-    public boolean onMenuItemActionCollapse(MenuItem item) {
-        //finish();
-        //overridePendingTransition(0, 0); // Disable the swipe animation for the activity end.
-        return true;
-    }*/
 
     /**
      * Called when the user changes the search string.
@@ -284,7 +225,7 @@ public class SearchFragment extends ListFragment
      */
     public void onLoadFinished(Loader<Catalog> loader, Catalog data) {
         Log.i("CatalogManager", "Catalog loaded. Binding data...");
-        this.catalog = data;
+        catalog = data;
         if (catalogEntries.size() != 0) {
             catalogEntries.clear();
         }

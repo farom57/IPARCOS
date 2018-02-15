@@ -36,11 +36,11 @@
     <string name="connected">Connected</string>
     <string name="connection_pb">Connection error</string>
     <string name="search_hint">Search an object</string>
-    <string name="title_activity_search">SearchActivity</string>
+    <string name="title_activity_search">Search activity</string>
     <string name="GOTO">Go to</string>
     <string name="sync">Sync</string>
     <string name="entry_star">Star</string>
-    <string name="colon_with_spaces">:\u0020</string>
+    <string name="colon_with_spaces">": "</string>
     <string name="entry_names">Names</string>
     <string name="entry_type">Type</string>
     <string name="entry_magnitude">Magnitude</string>
@@ -81,4 +81,5 @@
     <string name="sync_slew_error">Error: can\'t request sync or goto</string>
     <string name="slew_ok">Goto started</string>
     <string name="sync_ok">Sync …</string>
+    <string name="empty_catalog">Empty catalog</string>
 </resources>

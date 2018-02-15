@@ -12,7 +12,7 @@
     <string name="hostadd">Aggiungi server</string>
     <string name="hostauto">Automatico</string>
     <string name="host_prompt_text">Indirizzo IP del server:</string>
-    <string name="connecting">Connessione...</string>
+    <string name="connecting">Connessione…</string>
     <string name="menu_motion_short">Muovi</string>
     <string name="menu_motion">Controllo movimento</string>
     <string name="menu_connection">Connessione</string>
@@ -81,4 +81,5 @@
     <string name="sync_slew_error">Errore: impossibile richiedere sincronizzazione o vai a</string>
     <string name="slew_ok">Goto iniziato</string>
     <string name="sync_ok">Sincronizzazione...</string>
+    <string name="empty_catalog">Catalogo vuoto</string>
 </resources>
