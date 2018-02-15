@@ -1,45 +1,53 @@
 package farom.iparcos.catalog;
 
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Stellar coordinates with methods to convert from/to String
+ * Stores equatorial coordinates and contains some utilities to convert decimal degrees to strings and vice-versa.
  */
 public class Coordinates {
 
     /**
      * Right ascension in arcsec
      */
-    double ra;
+    private double ra;
     /**
      * Declination in arcsec
      */
-    double de;
+    private double dec;
 
     /**
-     * From String
+     * Class constructor. Processes the input strings and calculates right ascension and declination.
      *
-     * @param ra_str Right ascension string
-     * @param de_str Declination string
+     * @param ra  Right ascension (string).
+     * @param dec Declination (string).
      */
-    public Coordinates(String ra_str, String de_str) {
-        ra = convertRa(ra_str);
-        de = convertDe(de_str);
+    public Coordinates(String ra, String dec) {
+        this.ra = convertRa(ra.trim());
+        this.dec = convertDec(dec.trim());
     }
 
     /**
-     * Convert Sexagesimal string into degrees (ie. "01 02 03.4" -> (1+2/60+3.4/3600)*15°)
+     * Class constructor.
      *
-     * @param str RA string
-     * @return degrees
+     * @param ra  Right ascension (decimal degrees).
+     * @param dec Declination (decimal degrees).
      */
-    static public double convertRa(String str) throws NumberFormatException {
-        str = str.trim();
+    public Coordinates(double ra, double dec) {
+        this.ra = ra;
+        this.dec = dec;
+    }
 
+    /**
+     * Converts the sexagesimal degrees contained in the input string into degrees (ie. "01 02 03.4" → (1+2/60+3.4/3600)*15°)
+     *
+     * @param string an input string (right ascension)
+     * @return the right ascension converted in decimal degrees.
+     */
+    private static double convertRa(String string) throws NumberFormatException {
         Pattern p = Pattern.compile("([0-9]{1,2})[h:\\s]([0-9]{1,2})([m:'\\s]([0-9]{1,2})([,\\.]([0-9]*))?[s\"]?)?[m:'\\s]?");
-        Matcher m = p.matcher(str);
+        Matcher m = p.matcher(string);
 
         double value = 0;
         if (m.matches()) {
@@ -69,21 +77,19 @@ public class Coordinates {
             return value;
 
         } else {
-            throw new NumberFormatException(str + " is not a valid sexagesimal string");
+            throw new NumberFormatException(string + " is not a valid sexagesimal string");
         }
     }
 
     /**
-     * Convert Sexagesimal string into degrees (ie. "01 02 03.4" -> (1+2/60+3.4/3600)°)
+     * Converts the sexagesimal degrees contained in the input string into degrees (ie. "01 02 03.4" → (1+2/60+3.4/3600)*15°)
      *
-     * @param str Declination string
-     * @return degrees
+     * @param string an input string (declination)
+     * @return the declination converted in decimal degrees.
      */
-    static public double convertDe(String str) throws NumberFormatException {
-        str = str.trim();
-
+    private static double convertDec(String string) throws NumberFormatException {
         Pattern p = Pattern.compile("([\\+\\-]?)([0-9]{1,2})[°:\\s]([0-9]{1,2})([m:'\\s]([0-9]{1,2})([,\\.]([0-9]*))?[s\"]?)?[m:'\\s]?");
-        Matcher m = p.matcher(str);
+        Matcher m = p.matcher(string);
 
         double value = 0;
         if (m.matches()) {
@@ -117,32 +123,26 @@ public class Coordinates {
             return value;
 
         } else {
-            throw new NumberFormatException(str + " is not a valid sexagesimal string");
+            throw new NumberFormatException(string + " is not a valid sexagesimal string");
         }
     }
 
     /**
-     * Right ascension in deg
-     *
-     * @return degrees
+     * @return the right ascension in decimal degrees.
      */
     public double getRa() {
         return ra;
     }
 
     /**
-     * Declination in deg
-     *
-     * @return degrees
+     * @return the declination in decimal degrees.
      */
-    public double getDe() {
-        return de;
+    public double getDec() {
+        return dec;
     }
 
     /**
-     * Return a string with the right ascension (hh:mm:ss)
-     *
-     * @return string
+     * @return a string containing the right ascension (hh:mm:ss)
      */
     public String getRaStr() {
         int deg = (int) Math.floor(Math.abs(ra) / 15);
@@ -152,87 +152,21 @@ public class Coordinates {
     }
 
     /**
-     * Return a string with the right ascension (hh:mm:ss)
-     *
-     * @return string
+     * @return a string containing the declination (hh:mm:ss)
      */
     public String getDeStr() {
-        int deg = (int) Math.floor(Math.abs(de));
-        int min = (int) Math.floor((Math.abs(de) - deg) * 60);
-        int sec = (int) Math.round(((Math.abs(de) - deg) * 60 - min) * 60);
-        if (Math.signum(de) >= 0) {
+        int deg = (int) Math.floor(Math.abs(dec));
+        int min = (int) Math.floor((Math.abs(dec) - deg) * 60);
+        int sec = (int) Math.round(((Math.abs(dec) - deg) * 60 - min) * 60);
+        if (Math.signum(dec) >= 0) {
             return String.format("+%02d:%02d:%02d", deg, min, sec);
+
         } else {
             return String.format("-%02d:%02d:%02d", deg, min, sec);
         }
     }
 
     public String toString() {
-        return "RA: " + getRaStr() + " DE: " + getDeStr();
+        return "RA: " + getRaStr() + " Dec: " + getDeStr();
     }
-
-//    static void test(){
-//        Log.d("Coordinates_Test"," --- RA --- ");
-//        Log.d("Coordinates_Test","\"00 00:01.000\" -> " + convertRa("00 00:01.000") + "(true value = 0.00416666666)");
-//        Log.d("Coordinates_Test","\"10:00 00.000\" -> " + convertRa("10:00 00.000") + "(true value = 150)");
-//        Log.d("Coordinates_Test","\"21:00m00.000\" -> " + convertRa("21:00m00.000") + "(true value = 315)");
-//        Log.d("Coordinates_Test","\"21:00'20.000\" -> " + convertRa("21:00'20.000") + "(true value = ?)");
-//        Log.d("Coordinates_Test","\"21:00m00\"\" -> " + convertRa("21:00m00\"") + "(true value = 315)");
-//        Log.d("Coordinates_Test", "\"12:34:56.789\" -> " + convertRa("12:34:56.789") + "(true value = 188.736620833)");
-//        Log.d("Coordinates_Test","\"  1:2:3.04 \" -> " + convertRa("  1:2:3.04 ") + "(true value = 15.5126666667)");
-//        Log.d("Coordinates_Test","\"  1:2:3. \" -> " + convertRa("  1:2:3. ") + "(true value = 15.5125)");
-//        Log.d("Coordinates_Test","\"  1:2:3s\" -> " + convertRa("  1:2:3s") + "(true value = 15.5125)");
-//        Log.d("Coordinates_Test","\"  1h2\" -> " + convertRa("  1h2") + "(true value = 15.5...)");
-//        Log.d("Coordinates_Test","\"  1h2m \" -> " + convertRa("  1h2m ") + "(true value = 15.5...)");
-//        Log.d("Coordinates_Test","\"  1h02m10s\" -> " + convertRa("  1h02m10s") + "(true value = 15.5...)");
-//        try {
-//            Log.d("Coordinates_Test", "\"  1a:2:3. \" -> " + convertRa("  1a:2:3. ") + "(wrong)");
-//        }catch(NumberFormatException e) {
-//            Log.d("Coordinates_Test",e.getMessage());
-//        }
-//        try{
-//            Log.d("Coordinates_Test","\"10m2:3.\" -> " + convertRa("10m2:3.") + "(wrong)");
-//        }catch(NumberFormatException e) {
-//            Log.d("Coordinates_Test",e.getMessage());
-//        }
-//        try{
-//            Log.d("Coordinates_Test","\"-10:02:34.1 \" -> " + convertRa("-10:02:34.1 ") + "(wrong)");
-//        }catch(NumberFormatException e) {
-//            Log.d("Coordinates_Test",e.getMessage());
-//        }
-//        try{
-//            Log.d("Coordinates_Test","\"110:02:34.1 \" -> " + convertRa("110:02:34.1 ") + "(wrong)");
-//        }catch(NumberFormatException e) {
-//            Log.d("Coordinates_Test",e.getMessage());
-//        }
-//        try{
-//            Log.d("Coordinates_Test","\"10:012:34.1 \" -> " + convertRa("10:012:34.1 ") + "(wrong)");
-//        }catch(NumberFormatException e) {
-//            Log.d("Coordinates_Test",e.getMessage());
-//        }        try{
-//            Log.d("Coordinates_Test","\"10::34.1 \" -> " + convertRa("10::34.1 ") + "(wrong)");
-//        }catch(NumberFormatException e) {
-//            Log.d("Coordinates_Test",e.getMessage());
-//        }
-//
-//        Log.d("Coordinates_Test"," --- DE --- ");
-//        Log.d("Coordinates_Test","\"+00 00:01.000\" -> " + convertDe("+00 00:01.000") + "(true value = 0.000277777)");
-//        Log.d("Coordinates_Test","\"10:00 00.000\" -> " + convertDe("10:00 00.000") + "(true value = 10)");
-//        Log.d("Coordinates_Test","\"-21:00m00.000\" -> " + convertDe("-21:00m00.000") + "(true value = -21)");
-//        Log.d("Coordinates_Test","\"21:00'20.000\" -> " + convertDe("21:00'20.000") + "(true value = 21.0055555556)");
-//        Log.d("Coordinates_Test","\"21:00m00\"\" -> " + convertDe("21:00m00\"") + "(true value = 21)");
-//        Log.d("Coordinates_Test", "\"-12:34:56.789\" -> " + convertDe("-12:34:56.789") + "(true value = -12.5824413889)");
-//        Log.d("Coordinates_Test","\"  +1:2:3.04 \" -> " + convertDe("  +1:2:3.04 ") + "(true value = 1.03417777778)");
-//
-//        try {
-//            Log.d("Coordinates_Test", "\"+ 00 00:01.000\" -> " + convertDe("+ 00 00:01.000") + "(wrong)");
-//        }catch(NumberFormatException e) {
-//            Log.d("Coordinates_Test",e.getMessage());
-//        }
-//
-//        Log.d("Coordinates_Test",(new Coordinates("12:34:56.789","-12:34:56.789")).toString());
-//        Log.d("Coordinates_Test",(new Coordinates("1h02m10s","+1:2:3.04")).toString());
-//
-//
-//    }
 }

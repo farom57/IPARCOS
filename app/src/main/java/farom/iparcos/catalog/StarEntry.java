@@ -19,13 +19,34 @@ import farom.iparcos.R;
  */
 public class StarEntry extends CatalogEntry {
 
-    private final static int resource = R.raw.stars;
-    private final static int entryLength = 120;
-    private final static int nameLength = 22;
-    private final static int namesLength = 64;
-    private final static int raLength = 12;
-    private final static int deLength = 12;
-    private final static int magnitudeLength = 7;
+    /**
+     * Resource file.
+     */
+    private final static int RESOURCE = R.raw.stars;
+    /**
+     * The length of each line in the resource file.
+     */
+    private final static int ENTRY_LENGTH = 118;
+    /**
+     * The length of the name in each line.
+     */
+    private final static int NAME_LENGTH = 22;
+    /**
+     * The length of the string containing all the other names in each line.
+     */
+    private final static int NAMES_LENGTH = 64;
+    /**
+     * The length of the RA coordinate in each line.
+     */
+    private final static int RA_LENGTH = 13;
+    /**
+     * The length of the DEC coordinate in each line.
+     */
+    private final static int DEC_LENGTH = 12;
+    /**
+     * The length of the magnitude in each line.
+     */
+    private final static int MAGNITUDE_LENGTH = 7;
 
     protected String names;
     protected String magnitude;
@@ -41,22 +62,21 @@ public class StarEntry extends CatalogEntry {
 
         int i = 0;
 
-        name = data.substring(i, i + nameLength).trim();
-        i += nameLength;
+        name = data.substring(i, i + NAME_LENGTH).trim();
+        i += NAME_LENGTH;
 
-        names = data.substring(i, i + namesLength).trim();
-        i += namesLength;
+        names = data.substring(i, i + NAMES_LENGTH).trim();
+        i += NAMES_LENGTH;
 
-        String ra_str = data.substring(i, i + raLength).trim();
-        i += raLength + 1;
+        String raString = data.substring(i, i + RA_LENGTH).trim();
+        i += RA_LENGTH;
 
-        String de_str = data.substring(i, i + deLength).trim();
-        i += deLength + 1;
+        String decString = data.substring(i, i + DEC_LENGTH).trim();
+        i += DEC_LENGTH;
 
-        coord = new Coordinates(ra_str, de_str);
+        coord = new Coordinates(raString, decString);
 
-        magnitude = data.substring(i, i + magnitudeLength).trim();
-
+        magnitude = data.substring(i, ENTRY_LENGTH).trim();
     }
 
     /**
@@ -66,25 +86,25 @@ public class StarEntry extends CatalogEntry {
      * @return A list of stars
      */
     public static ArrayList<StarEntry> createList(Context context) {
-        ArrayList<StarEntry> entries = new ArrayList<StarEntry>();
-
+        ArrayList<StarEntry> entries = new ArrayList<>();
         // Open and read the catalog file
         try {
             final Resources resources = context.getResources();
-            InputStream inputStream = resources.openRawResource(resource);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream), entryLength);
-            char[] buf = new char[entryLength];
+            InputStream inputStream = resources.openRawResource(RESOURCE);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream), ENTRY_LENGTH);
+            char[] buf = new char[ENTRY_LENGTH];
 
-            while (reader.read(buf, 0, entryLength) > 0) {
+            while (reader.read(buf, 0, ENTRY_LENGTH) > 0) {
                 entries.add(new StarEntry(buf));
+                // Skip new line "\n"
+                reader.skip(1);
             }
 
             inputStream.close();
 
-        } catch (IOException e) {
+        } catch (IOException | NumberFormatException e) {
             e.printStackTrace();
         }
-
         return entries;
     }
 

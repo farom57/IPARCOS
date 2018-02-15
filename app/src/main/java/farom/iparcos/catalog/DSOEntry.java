@@ -19,14 +19,38 @@ import farom.iparcos.R;
  */
 public class DSOEntry extends CatalogEntry {
 
-    private final static int resource = R.raw.ngc_ic_b;
-    private final static int entryLength = 56;
-    private final static int nameLength = 25;
-    private final static int magnitudeLength = 2;
-    private final static int typeLength = 3;
-    private final static int sizeLength = 5;
-    private final static int raLength = 10;
-    private final static int deLength = 10;
+    /**
+     * Resource file.
+     */
+    private final static int RESOURCE = R.raw.ngc_ic_b;
+    /**
+     * The length of each line in the resource file.
+     */
+    private final static int ENTRY_LENGTH = 54;
+    /**
+     * The length of the name in each line.
+     */
+    private final static int NAME_LENGTH = 25;
+    /**
+     * The length of the magnitude in each line.
+     */
+    private final static int MAGNITUDE_LENGTH = 2;
+    /**
+     * The length of the type string in each line.
+     */
+    private final static int TYPE_LENGTH = 3;
+    /**
+     * The length of the object size in each line.
+     */
+    private final static int SIZE_LENGTH = 5;
+    /**
+     * The length of the RA coordinate in each line.
+     */
+    private final static int RA_LENGTH = 10;
+    /**
+     * The length of the DEC coordinate in each line.
+     */
+    private final static int DEC_LENGTH = 9;
 
     protected String type;
     protected String size;
@@ -43,24 +67,24 @@ public class DSOEntry extends CatalogEntry {
 
         int i = 0;
 
-        name = data.substring(i, i + nameLength).trim();
-        i += nameLength;
+        name = data.substring(i, i + NAME_LENGTH).trim();
+        i += NAME_LENGTH;
 
-        magnitude = data.substring(i, i + magnitudeLength).trim();
-        i += magnitudeLength;
+        magnitude = data.substring(i, i + MAGNITUDE_LENGTH).trim();
+        i += MAGNITUDE_LENGTH;
 
-        type = data.substring(i, i + typeLength).trim();
-        i += typeLength;
+        type = data.substring(i, i + TYPE_LENGTH).trim();
+        i += TYPE_LENGTH;
 
-        size = data.substring(i, i + sizeLength).trim();
-        i += sizeLength;
+        size = data.substring(i, i + SIZE_LENGTH).trim();
+        i += SIZE_LENGTH;
 
-        String ra_str = data.substring(i, i + raLength).trim();
-        i += raLength + 1;
+        String raString = data.substring(i, i + RA_LENGTH).trim();
+        i += RA_LENGTH;
 
-        String de_str = data.substring(i, i + deLength).trim();
+        String decString = data.substring(i, ENTRY_LENGTH).trim();
 
-        coord = new Coordinates(ra_str, de_str);
+        coord = new Coordinates(raString, decString);
     }
 
     /**
@@ -70,25 +94,25 @@ public class DSOEntry extends CatalogEntry {
      * @return A list of stars
      */
     public static ArrayList<DSOEntry> createList(Context context) {
-        ArrayList<DSOEntry> entries = new ArrayList<DSOEntry>();
-
+        ArrayList<DSOEntry> entries = new ArrayList<>();
         // Open and read the catalog file
         try {
             final Resources resources = context.getResources();
-            InputStream inputStream = resources.openRawResource(resource);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream), entryLength);
-            char[] buf = new char[entryLength];
+            InputStream inputStream = resources.openRawResource(RESOURCE);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream), ENTRY_LENGTH);
+            char[] buf = new char[ENTRY_LENGTH];
 
-            while (reader.read(buf, 0, entryLength) > 0) {
+            while (reader.read(buf, 0, ENTRY_LENGTH) > 0) {
                 entries.add(new DSOEntry(buf));
+                // Skip new line "\n"
+                reader.skip(1);
             }
 
             inputStream.close();
 
-        } catch (IOException e) {
+        } catch (IOException | NumberFormatException e) {
             e.printStackTrace();
         }
-
         return entries;
     }
 
@@ -98,53 +122,54 @@ public class DSOEntry extends CatalogEntry {
      * @return text
      */
     private int getTypeStringResource() {
-        if (type.equals("Gx")) {
-            return R.string.entry_Gx;
+        switch (type) {
+            case "Gx":
+                return R.string.entry_Gx;
 
-        } else if (type.equals("OC")) {
-            return R.string.entry_OC;
+            case "OC":
+                return R.string.entry_OC;
 
-        } else if (type.equals("Gb")) {
-            return R.string.entry_Gb;
+            case "Gb":
+                return R.string.entry_Gb;
 
-        } else if (type.equals("Nb")) {
-            return R.string.entry_Nb;
+            case "Nb":
+                return R.string.entry_Nb;
 
-        } else if (type.equals("Pl")) {
-            return R.string.entry_Pl;
+            case "Pl":
+                return R.string.entry_Pl;
 
-        } else if (type.equals("C+N")) {
-            return R.string.entry_CplusN;
+            case "C+N":
+                return R.string.entry_CplusN;
 
-        } else if (type.equals("Ast")) {
-            return R.string.entry_Ast;
+            case "Ast":
+                return R.string.entry_Ast;
 
-        } else if (type.equals("Kt")) {
-            return R.string.entry_Kt;
+            case "Kt":
+                return R.string.entry_Kt;
 
-        } else if (type.equals("***")) {
-            return R.string.entry_triStar;
+            case "***":
+                return R.string.entry_triStar;
 
-        } else if (type.equals("D*")) {
-            return R.string.entry_doubleStar;
+            case "D*":
+                return R.string.entry_doubleStar;
 
-        } else if (type.equals("*")) {
-            return R.string.entry_star;
+            case "*":
+                return R.string.entry_star;
 
-        } else if (type.equals("?")) {
-            return R.string.entry_uncertain;
+            case "?":
+                return R.string.entry_uncertain;
 
-        } else if (type.equals("")) {
-            return R.string.entry_blank;
+            case "":
+                return R.string.entry_blank;
 
-        } else if (type.equals("-")) {
-            return R.string.entry_minus;
+            case "-":
+                return R.string.entry_minus;
 
-        } else if (type.equals("PD")) {
-            return R.string.entry_PD;
+            case "PD":
+                return R.string.entry_PD;
 
-        } else {
-            return R.string.entry_blank;
+            default:
+                return R.string.entry_blank;
         }
     }
 
@@ -154,53 +179,54 @@ public class DSOEntry extends CatalogEntry {
      * @return short text
      */
     private int getTypeShortStringResource() {
-        if (type.equals("Gx")) {
-            return R.string.entry_short_Gx;
+        switch (type) {
+            case "Gx":
+                return R.string.entry_short_Gx;
 
-        } else if (type.equals("OC")) {
-            return R.string.entry_short_OC;
+            case "OC":
+                return R.string.entry_short_OC;
 
-        } else if (type.equals("Gb")) {
-            return R.string.entry_short_Gb;
+            case "Gb":
+                return R.string.entry_short_Gb;
 
-        } else if (type.equals("Nb")) {
-            return R.string.entry_short_Nb;
+            case "Nb":
+                return R.string.entry_short_Nb;
 
-        } else if (type.equals("Pl")) {
-            return R.string.entry_short_Pl;
+            case "Pl":
+                return R.string.entry_short_Pl;
 
-        } else if (type.equals("C+N")) {
-            return R.string.entry_short_CplusN;
+            case "C+N":
+                return R.string.entry_short_CplusN;
 
-        } else if (type.equals("Ast")) {
-            return R.string.entry_short_Ast;
+            case "Ast":
+                return R.string.entry_short_Ast;
 
-        } else if (type.equals("Kt")) {
-            return R.string.entry_short_Kt;
+            case "Kt":
+                return R.string.entry_short_Kt;
 
-        } else if (type.equals("***")) {
-            return R.string.entry_short_triStar;
+            case "***":
+                return R.string.entry_short_triStar;
 
-        } else if (type.equals("D*")) {
-            return R.string.entry_short_doubleStar;
+            case "D*":
+                return R.string.entry_short_doubleStar;
 
-        } else if (type.equals("*")) {
-            return R.string.entry_short_star;
+            case "*":
+                return R.string.entry_short_star;
 
-        } else if (type.equals("?")) {
-            return R.string.entry_short_uncertain;
+            case "?":
+                return R.string.entry_short_uncertain;
 
-        } else if (type.equals("")) {
-            return R.string.entry_short_blank;
+            case "":
+                return R.string.entry_short_blank;
 
-        } else if (type.equals("-")) {
-            return R.string.entry_short_minus;
+            case "-":
+                return R.string.entry_short_minus;
 
-        } else if (type.equals("PD")) {
-            return R.string.entry_short_PD;
+            case "PD":
+                return R.string.entry_short_PD;
 
-        } else {
-            return R.string.entry_short_blank;
+            default:
+                return R.string.entry_short_blank;
         }
     }
 
