@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_connection"
+        android:icon="@drawable/icon_connect"
+        android:title="@string/menu_connection"/>
+
+    <item
+        android:id="@+id/menu_move"
+        android:icon="@drawable/icon_move"
+        android:title="@string/menu_motion"/>
+
+    <item
+        android:id="@+id/menu_generic"
+        android:icon="@drawable/icon_gen"
+        android:title="@string/menu_generic" />
+
+    <item
+        android:id="@+id/menu_search"
+        android:icon="@drawable/ic_action_search"
+        android:title="@string/menu_search" />
+</menu>

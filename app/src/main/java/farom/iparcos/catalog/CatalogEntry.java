@@ -1,32 +1,36 @@
 package farom.iparcos.catalog;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.text.Spannable;
 
-
 /**
- * An astronomical object
+ * An abstract astronomical object.
  */
 public abstract class CatalogEntry implements Comparable<CatalogEntry> {
+
+    /**
+     * His coordinates.
+     */
     protected Coordinates coord;
+    /**
+     * His name.
+     */
     protected String name;
 
-
     /**
-     * Return the object coordinates
-     * @return coordinates
+     * @return the stored coordinates.
      */
-    public Coordinates getCoordinates(){ return coord; }
-
-
-    /**
-     * Return the object name
-     * @return name
-     */
-    public String getName(){
-        return name;
+    public Coordinates getCoordinates() {
+        return coord;
     }
 
+    /**
+     * @return the object's name.
+     */
+    public String getName() {
+        return name;
+    }
 
     /**
      * Create the description rich-text string
@@ -44,7 +48,6 @@ public abstract class CatalogEntry implements Comparable<CatalogEntry> {
      */
     public abstract Spannable createSummary(Context ctx);
 
-
     /**
      * Compares this object to the specified object to determine their relative
      * order.
@@ -58,9 +61,7 @@ public abstract class CatalogEntry implements Comparable<CatalogEntry> {
      *                            comparable to {@code this} instance.
      */
     @Override
-    public int compareTo(CatalogEntry another) {
+    public int compareTo(@NonNull CatalogEntry another) {
         return this.getName().compareToIgnoreCase(another.getName());
     }
 }
-
-

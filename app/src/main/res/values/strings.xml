@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">IPARCOS</string>
     <string name="menu_settings">Settings</string>
-    <string name="indi_host">INDI Host</string>
+    <string name="indi_host">Select the INDI Host:</string>
     <string name="connect">Connect</string>
     <string name="disconnect">Disconnect</string>
     <string name="log">Log</string>
@@ -12,11 +11,11 @@
     <string name="hostprompt">Host address</string>
     <string name="hostadd">Add Server</string>
     <string name="hostauto">Auto</string>
-    <string name="host_prompt_text">Host ip address:</string>
-    <string name="connecting">Connection …</string>
+    <string name="host_prompt_text">Host IP address:</string>
+    <string name="connecting">Connecting...</string>
     <string name="menu_motion_short">Move</string>
     <string name="menu_motion">Motion control</string>
-    <string name="menu_connection">Connect</string>
+    <string name="menu_connection">Connection</string>
     <string name="menu_generic">Control panel</string>
     <string name="menu_search">Search</string>
     <string name="title_activity_generic">Control panel</string>
@@ -37,11 +36,11 @@
     <string name="connected">Connected</string>
     <string name="connection_pb">Connection error</string>
     <string name="search_hint">Search an object</string>
-    <string name="title_activity_search">SearchActivity</string>
+    <string name="title_activity_search">Search activity</string>
     <string name="GOTO">Go to</string>
     <string name="sync">Sync</string>
     <string name="entry_star">Star</string>
-    <string name="colon_with_spaces">:\u0020</string>
+    <string name="colon_with_spaces">": "</string>
     <string name="entry_names">Names</string>
     <string name="entry_type">Type</string>
     <string name="entry_magnitude">Magnitude</string>
@@ -64,23 +63,23 @@
     <string name="entry_blank">Unidentified at the place given, or type unknown</string>
     <string name="entry_minus">Object called nonexistent in the RNGC</string>
     <string name="entry_PD">Photographic plate defect</string>
-    <string name="entry_short_Gx" >Galaxy</string>
-    <string name="entry_short_OC" >Open cluster</string>
-    <string name="entry_short_Gb" >Globular cluster</string>
-    <string name="entry_short_Nb" >Nebula</string>
-    <string name="entry_short_Pl" >Planetary nebula</string>
-    <string name="entry_short_CplusN" >Cluster and nebula</string>
-    <string name="entry_short_Ast" >Asterism</string>
-    <string name="entry_short_Kt" >Knot</string>
-    <string name="entry_short_triStar" >Triple star</string>
-    <string name="entry_short_doubleStar" >Double star</string>
-    <string name="entry_short_star" >Star</string>
-    <string name="entry_short_uncertain" >Uncertain</string>
-    <string name="entry_short_blank" >Unknown</string>
-    <string name="entry_short_minus" >Nonexistent</string>
-    <string name="entry_short_PD" >Photographic defect</string>
-    <string name="sync_slew_error" >Error: can\'t request sync or goto</string>
-    <string name="slew_ok" >Goto started</string>
+    <string name="entry_short_Gx">Galaxy</string>
+    <string name="entry_short_OC">Open cluster</string>
+    <string name="entry_short_Gb">Globular cluster</string>
+    <string name="entry_short_Nb">Nebula</string>
+    <string name="entry_short_Pl">Planetary nebula</string>
+    <string name="entry_short_CplusN">Cluster and nebula</string>
+    <string name="entry_short_Ast">Asterism</string>
+    <string name="entry_short_Kt">Knot</string>
+    <string name="entry_short_triStar">Triple star</string>
+    <string name="entry_short_doubleStar">Double star</string>
+    <string name="entry_short_star">Star</string>
+    <string name="entry_short_uncertain">Uncertain</string>
+    <string name="entry_short_blank">Unknown</string>
+    <string name="entry_short_minus">Nonexistent</string>
+    <string name="entry_short_PD">Photographic defect</string>
+    <string name="sync_slew_error">Error: can\'t request sync or goto</string>
+    <string name="slew_ok">Goto started</string>
     <string name="sync_ok">Sync …</string>
-
+    <string name="empty_catalog">Empty catalog</string>
 </resources>

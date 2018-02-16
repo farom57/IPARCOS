@@ -1,67 +1,70 @@
 package farom.iparcos.catalog;
 
-
 import android.content.Context;
 import android.text.Spannable;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * A catalog of astronomical objects
+ * A catalog of astronomical objects.
+ *
+ * @see DSOEntry
+ * @see StarEntry
  */
 public class Catalog {
 
     /**
-     * Application context to access the resources
+     * Catalog objects.
      */
-    protected Context context;
-
+    private ArrayList<CatalogEntry> entries;
     /**
-     * Catalog objects
+     * {@code true} if the catalog is fully initialized.
      */
-    protected ArrayList<CatalogEntry> entries;
-
-
-
     private boolean ready = false;
 
     /**
-     * Constructor
+     * Class constructor. Loads the catalog from the resources and initializes it.
      *
      * @param context Application context to access the resources
      */
     public Catalog(Context context) {
-        this.context=context;
-        init();
-
-    }
-
-    private void init() {
+        Log.i("CatalogManager", "Loading DSO...");
         entries = new ArrayList<CatalogEntry>(DSOEntry.createList(context));
+        Log.i("CatalogManager", "Loading stars...");
         entries.addAll(StarEntry.createList(context));
         Collections.sort(entries);
         ready = true;
     }
 
     /**
-     * @return true if the catalog is fully initialized
+     * @return {@code true} if the catalog is fully initialized.
      */
-    public boolean isReady(){
+    public boolean isReady() {
         return ready;
     }
 
-    public ArrayList<CatalogEntry> getEntries(){
-        if(isReady()){
+    /**
+     * @return an {@link ArrayList} containing all the entries of this catalog.
+     */
+    public ArrayList<CatalogEntry> getEntries() {
+        if (isReady()) {
             return entries;
-        }else{
+
+        } else {
             return null;
         }
     }
 
-    public int searchIndex(final String query){
-
-        CatalogEntry fakeEntry = new CatalogEntry() {
+    /**
+     * Performs a search in the entries.
+     *
+     * @param query what to look for.
+     * @return the first index corresponding to the given query.
+     */
+    public int searchIndex(final String query) {
+        int index = Collections.binarySearch(entries, new CatalogEntry() {
             @Override
             public Coordinates getCoordinates() {
                 return null;
@@ -73,20 +76,18 @@ public class Catalog {
             }
 
             @Override
-            public Spannable createDescription(Context ctx) { return null; }
+            public Spannable createDescription(Context ctx) {
+                return null;
+            }
 
             @Override
-            public Spannable createSummary(Context ctx) { return null; }
-
-        };
-        int index = Collections.binarySearch(entries,fakeEntry);
-
-        if(index<0){
+            public Spannable createSummary(Context ctx) {
+                return null;
+            }
+        });
+        if (index < 0) {
             index = -index - 1;
         }
-
         return index;
     }
 }
-
-

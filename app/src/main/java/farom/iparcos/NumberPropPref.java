@@ -1,14 +1,5 @@
 package farom.iparcos;
 
-import farom.iparcos.R;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import laazotea.indi.Constants;
-import laazotea.indi.client.INDIElement;
-import laazotea.indi.client.INDINumberProperty;
-import laazotea.indi.client.INDIProperty;
-import laazotea.indi.client.INDIValueException;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -21,131 +12,130 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
+import laazotea.indi.Constants;
+import laazotea.indi.client.INDIElement;
+import laazotea.indi.client.INDINumberProperty;
+import laazotea.indi.client.INDIProperty;
+import laazotea.indi.client.INDIValueException;
+
 public class NumberPropPref extends PropPref {
 
-	public NumberPropPref(Context context, INDIProperty prop) {
-		super(context, prop);
-		// TODO Auto-generated constructor stub
-	}
+    public NumberPropPref(Context context, INDIProperty prop) {
+        super(context, prop);
+    }
 
-	/**
-	 * Create the summary rich-text string
-	 * 
-	 * @return the summary
-	 */
-	@Override
-	protected Spannable createSummary() {
-		ArrayList<INDIElement> elements = prop.getElementsAsList();
-		if (elements.size() > 0) {
-			String temp = "";
+    /**
+     * Create the summary rich-text string
+     *
+     * @return the summary
+     */
+    @Override
+    protected Spannable createSummary() {
+        ArrayList<INDIElement> elements = prop.getElementsAsList();
+        if (elements.size() > 0) {
+            StringBuilder temp = new StringBuilder();
 
-			int i = 0;
+            int i;
+            temp.append(elements.get(0).getLabel()).append(": ");
+            for (i = 0; i < elements.size() - 1; i++) {
+                temp.append(elements.get(i).getValueAsString());
+                temp.append(", ");
+                temp.append(elements.get(i + 1).getLabel()).append(": ");
+            }
+            temp.append(elements.get(i).getValueAsString());
 
-			temp = temp + elements.get(0).getLabel() + ": ";
+            return new SpannableString(temp.toString());
 
-			for (i = 0; i < elements.size() - 1; i++) {
-				temp = temp + elements.get(i).getValueAsString();
-				temp = temp + ", ";
+        } else {
+            return new SpannableString("");
+        }
+    }
 
-				temp = temp + elements.get(i + 1).getLabel() + ": ";
-			}
+    @Override
+    protected void onClick() {
+        DialogFragment newFragment = new NumberRequestFragment((INDINumberProperty) prop);
+        newFragment.show(((Activity) getContext()).getFragmentManager(), "request");
+    }
 
-			temp = temp + elements.get(i).getValueAsString();
+    @SuppressLint("ValidFragment")
+    public class NumberRequestFragment extends DialogFragment {
+        private INDINumberProperty prop;
 
-			Spannable summaryText = new SpannableString(temp);
+        public NumberRequestFragment(INDINumberProperty prop) {
+            this.prop = prop;
+        }
 
-			return summaryText;
-		} else {
-			return new SpannableString("");
-		}
-	}
-	
-	@Override
-	protected void onClick() {
-		DialogFragment newFragment = new NumberRequestFragment((INDINumberProperty) prop);
-		newFragment.show(((Activity) getContext()).getFragmentManager(), "request");
-	}
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the Builder class for convenient dialog construction
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-	@SuppressLint("ValidFragment")
-	public class NumberRequestFragment extends DialogFragment {
-		private INDINumberProperty prop;
+            final ArrayList<INDIElement> elements = prop.getElementsAsList();
+            final ArrayList<EditText> editTextViews = new ArrayList<>(elements.size());
 
-		public NumberRequestFragment(INDINumberProperty prop) {
-			this.prop = prop;
-		}
+            LinearLayout layout = new LinearLayout(Application.getContext());
+            layout.setOrientation(LinearLayout.VERTICAL);
+            int padding = Application.getContext().getResources().getDimensionPixelSize(R.dimen.padding_medium);
 
-		@Override
-		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			// Use the Builder class for convenient dialog construction
-			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            for (int i = 0; i < elements.size(); i++) {
+                TextView textView = new TextView(Application.getContext());
+                textView.setText(elements.get(i).getLabel());
 
-			final ArrayList<INDIElement> elements = prop.getElementsAsList();
-			final ArrayList<EditText> editTextViews = new ArrayList<EditText>(elements.size());
+                textView.setPadding(padding, padding, padding, 0);
+                layout.addView(textView);
 
-			LinearLayout layout = new LinearLayout(getContext());
-			layout.setOrientation(LinearLayout.VERTICAL);
-			int padding = getContext().getResources().getDimensionPixelSize(R.dimen.padding_medium);
+                editTextViews.add(new EditText(Application.getContext()));
+                editTextViews.get(i).setText(elements.get(i).getValueAsString());
+                editTextViews.get(i).setPadding(padding, padding, padding, padding);
+                editTextViews.get(i).setEnabled(prop.getPermission() != Constants.PropertyPermissions.RO);
+                layout.addView(editTextViews.get(i));
+            }
 
-			for (int i = 0; i < elements.size(); i++) {
-				TextView textView = new TextView(getContext());
-				textView.setText(elements.get(i).getLabel());
-				textView.setTextSize(22);
+            ScrollView scrollView = new ScrollView(Application.getContext());
+            scrollView.addView(layout);
+            builder.setView(scrollView);
 
-				textView.setPadding(padding, padding, padding, 0);
-				layout.addView(textView);
+            builder.setTitle(prop.getLabel());
 
-				editTextViews.add(new EditText(getContext()));
-				editTextViews.get(i).setText(elements.get(i).getValueAsString());
-				editTextViews.get(i).setPadding(padding, padding, padding, padding);
-				editTextViews.get(i).setEnabled(prop.getPermission() != Constants.PropertyPermissions.RO);
-				layout.addView(editTextViews.get(i));
-			}
+            if (prop.getPermission() != Constants.PropertyPermissions.RO) {
+                builder.setPositiveButton(R.string.send_request, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        try {
+                            for (int i = 0; i < elements.size(); i++) {
+                                if (elements.get(i).checkCorrectValue(editTextViews.get(i).getText().toString())) {
+                                    elements.get(i).setDesiredValue(editTextViews.get(i).getText().toString());
+                                }
+                            }
+                            prop.sendChangesToDriver();
 
-			builder.setView(layout);
+                        } catch (INDIValueException | IOException | IllegalArgumentException e) {
+                            Toast toast = Toast.makeText(Application.getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG);
+                            toast.show();
+                        }
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel_request, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
 
-			builder.setTitle(prop.getLabel());
+                    }
+                });
 
-			if (prop.getPermission() != Constants.PropertyPermissions.RO) {
-				builder.setPositiveButton(R.string.send_request, new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						try {
-							for (int i = 0; i < elements.size(); i++) {
-								if(elements.get(i).checkCorrectValue(editTextViews.get(i).getText().toString())){
-									elements.get(i).setDesiredValue(editTextViews.get(i).getText().toString());
-								}
-							}
-							prop.sendChangesToDriver();
-						} catch (INDIValueException e) {
-							Toast toast = Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG);
-							toast.show();
-						} catch (IOException e) {
-							Toast toast = Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG);
-							toast.show();
-						} catch (IllegalArgumentException e){
-							Toast toast = Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG);
-							toast.show();
-						}
-					}
-				});
-				builder.setNegativeButton(R.string.cancel_request, new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
+            } else {
+                builder.setNegativeButton(R.string.back_request, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
 
-					}
-				});
-			} else {
-				builder.setNegativeButton(R.string.back_request, new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-
-					}
-				});
-			}
-			// Create the AlertDialog object and return it
-			return builder.create();
-		}
-	}
-
+                    }
+                });
+            }
+            // Create the AlertDialog object and return it
+            return builder.create();
+        }
+    }
 }
-
