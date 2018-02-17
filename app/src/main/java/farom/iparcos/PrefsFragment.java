@@ -74,18 +74,24 @@ public class PrefsFragment extends PreferenceFragmentCompat implements INDIDevic
     }
 
     @Override
-    public void newProperty(INDIDevice arg0, INDIProperty prop) {
-        String group = prop.getGroup();
-        PreferenceCategory prefGroup = groups.get(group);
-        if (prefGroup == null) {
-            prefGroup = new PreferenceCategory(getActivity());
-            groups.put(group, prefGroup);
-            prefGroup.setTitle(group);
-            prefScreen.addPreference(prefGroup);
-        }
-        PropPref pref = PropPref.create(getActivity(), prop);
-        map.put(prop, pref);
-        prefGroup.addPreference(pref);
+    public void newProperty(INDIDevice arg0, final INDIProperty prop) {
+        getActivity().runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                String group = prop.getGroup();
+                PreferenceCategory prefGroup = groups.get(group);
+                if (prefGroup == null) {
+                    prefGroup = new PreferenceCategory(getActivity());
+                    groups.put(group, prefGroup);
+                    prefGroup.setTitle(group);
+                    prefScreen.addPreference(prefGroup);
+                }
+                PropPref pref = PropPref.create(getActivity(), prop);
+                map.put(prop, pref);
+                prefGroup.addPreference(pref);
+            }
+        });
     }
 
     @Override

@@ -82,4 +82,6 @@
     <string name="slew_ok">Goto started</string>
     <string name="sync_ok">Sync …</string>
     <string name="empty_catalog">Empty catalog</string>
+    <string name="error">Error:</string>
+
 </resources>

@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -106,15 +107,17 @@ public class TextPropPref extends PropPref {
             if (prop.getPermission() != Constants.PropertyPermissions.RO) {
                 builder.setPositiveButton(R.string.send_request, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        try {
+                        try{
                             for (int i = 0; i < elements.size(); i++) {
                                 elements.get(i).setDesiredValue(editTextViews.get(i).getText().toString());
                             }
-                            prop.sendChangesToDriver();
 
-                        } catch (INDIValueException | IOException e) {
-                            e.printStackTrace();
+                        } catch (INDIValueException | IllegalArgumentException e) {
+                            Toast toast = Toast.makeText(Application.getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG);
+                            toast.show();
+                            Application.log(Application.getContext().getResources().getString(R.string.error)+e.getLocalizedMessage());
                         }
+                        sendChanges();
                     }
                 });
                 builder.setNegativeButton(R.string.cancel_request, new DialogInterface.OnClickListener() {

@@ -82,4 +82,6 @@
     <string name="slew_ok">Goto iniziato</string>
     <string name="sync_ok">Sincronizzazione...</string>
     <string name="empty_catalog">Catalogo vuoto</string>
+    <string name="error">Errore:</string>
+
 </resources>

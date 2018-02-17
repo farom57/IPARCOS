@@ -80,4 +80,8 @@
     <string name="slew_ok" >Pointage en cours</string>
     <string name="arcmin">arcmin</string>
     <string name="menu_connection">Connecter</string>
+    <string name="title_activity_search">Rechercher</string>
+    <string name="empty_catalog">Catalogue vide</string>
+    <string name="error">"Erreur : "</string>
+
 </resources>
