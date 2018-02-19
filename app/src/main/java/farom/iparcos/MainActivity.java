@@ -1,5 +1,6 @@
 package farom.iparcos;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,15 +8,24 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 
 /**
+ * The main activity of the application, that contains all the fragments.
+ *
  * @author SquareBoot
  */
 public class MainActivity extends AppCompatActivity {
 
+    /**
+     * Last open page.
+     */
     private Pages lastPage = Pages.CONNECTION;
     private Fragment[] fragments;
+    /**
+     * The activity's toolbar.
+     */
     private Toolbar toolbar;
 
     @Override
@@ -77,6 +87,22 @@ public class MainActivity extends AppCompatActivity {
                         .replace(R.id.content_frame, fragments[Pages.CONNECTION.getIndex()]).commit();
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.global, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_about:
+                startActivity(new Intent(this, AboutActivity.class));
+                return true;
+        }
+        return false;
     }
 
     /**

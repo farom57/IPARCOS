@@ -48,6 +48,10 @@ public class SearchFragment extends ListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Catalog>,
         INDIServerConnectionListener, INDIPropertyListener, INDIDeviceListener {
 
+    // ListView stuff
+    private static ArrayList<CatalogEntry> catalogEntries = new ArrayList<>();
+    private static ArrayAdapter<CatalogEntry> entriesAdapter;
+    private static Catalog catalog;
     // INDI properties
     private INDINumberProperty telescopeCoordP = null;
     private INDINumberElement telescopeCoordRA = null;
@@ -55,10 +59,6 @@ public class SearchFragment extends ListFragment
     private INDISwitchProperty telescopeOnCoordSetP = null;
     private INDISwitchElement telescopeOnCoordSetSync = null;
     private INDISwitchElement telescopeOnCoordSetSlew = null;
-    // ListView stuff
-    private static ArrayList<CatalogEntry> catalogEntries = new ArrayList<>();
-    private static ArrayAdapter<CatalogEntry> entriesAdapter;
-    private static Catalog catalog;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -150,7 +150,7 @@ public class SearchFragment extends ListFragment
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        final Context ctx = l.getContext(); //TODO(squareboot): why not getContext()? Maybe change it
+        final Context ctx = l.getContext();
         final Coordinates coord = catalogEntries.get(position).getCoordinates();
         AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
         builder.setMessage(catalogEntries.get(position).createDescription(getContext()))
@@ -246,7 +246,7 @@ public class SearchFragment extends ListFragment
      * @param loader the loader to unbind.
      */
     public void onLoaderReset(Loader<Catalog> loader) {
-        // TODO(squareboot): do something here?
+
     }
 
     @Override

@@ -80,6 +80,18 @@
     <string name="entry_short_PD">Difetto fotografico</string>
     <string name="sync_slew_error">Errore: impossibile richiedere sincronizzazione o vai a</string>
     <string name="slew_ok">Goto iniziato</string>
-    <string name="sync_ok">Sincronizzazione...</string>
+    <string name="sync_ok">Sincronizzazione…</string>
     <string name="empty_catalog">Catalogo vuoto</string>
+    <string name="menu_about">Informazioni</string>
+    <string name="app_description">IPARCOS (Indi Protocol Android Remote COntrol Software) è un client INDI per Android.
+        \nContiene un pannello di controllo e altri strumenti specifici per controllare i tuoi dispositivi.\n\n
+        La pagina principale del progetto è https://github.com/farom57/IPARCOS
+        \n\nSviluppato da\n
+        • Romain Fafet (farom57)\n
+        • Zerjillo\n
+        • SquareBoot
+        \n\nLibrerie Open Source:\n
+        • INDI for Java - http://www.indilib.org/develop/indiforjava.html
+    </string>
+    <string name="error_no_devices">Nessun dispositivo trovato!</string>
 </resources>

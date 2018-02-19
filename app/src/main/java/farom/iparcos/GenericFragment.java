@@ -24,13 +24,16 @@ import laazotea.indi.client.INDIServerConnectionListener;
 
 public class GenericFragment extends Fragment implements TabLayout.OnTabSelectedListener, INDIServerConnectionListener {
 
+    /**
+     * Manages the connection with the INDI server.
+     *
+     * @see ConnectionManager
+     */
     private ConnectionManager connectionManager;
-
     // Views
     private ViewPager viewPager;
     private ArrayPagerAdapter pagerAdapter;
     private TabLayout tabLayout;
-
     /**
      * Used to create an unique tag for each tab.
      */
@@ -63,10 +66,15 @@ public class GenericFragment extends Fragment implements TabLayout.OnTabSelected
 
         INDIServerConnection connection = connectionManager.getConnection();
         if (connection == null) {
+            pagerAdapter.add(new SimplePageDescriptor("NoDevices" + c, getString(R.string.error_no_devices)));
             return;
         }
         List<INDIDevice> list = connection.getDevicesAsList();
         if (list == null) {
+            return;
+        }
+        if (list.size() == 0) {
+            pagerAdapter.add(new SimplePageDescriptor("NoDevices" + c, getString(R.string.error_no_devices)));
             return;
         }
         // Create / recreate tabs
@@ -130,6 +138,17 @@ public class GenericFragment extends Fragment implements TabLayout.OnTabSelected
     }
 
     /**
+     * @author SquareBoot
+     */
+    public static class NoDevicesFragment extends Fragment {
+
+        @Override
+        public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.no_devices_fragment, container, false);
+        }
+    }
+
+    /**
      * Page adapter. Creates the {@link PrefsFragment} corresponding to the specified {@link PageDescriptor}.
      *
      * @author SquareBoot
@@ -142,9 +161,14 @@ public class GenericFragment extends Fragment implements TabLayout.OnTabSelected
 
         @Override
         protected Fragment createFragment(PageDescriptor desc) {
-            PrefsFragment fragment = new PrefsFragment();
-            fragment.setDevice(((DevicePageDescriptor) desc).getDevice());
-            return fragment;
+            if (desc instanceof DevicePageDescriptor) {
+                PrefsFragment fragment = new PrefsFragment();
+                fragment.setDevice(((DevicePageDescriptor) desc).getDevice());
+                return fragment;
+
+            } else {
+                return new NoDevicesFragment();
+            }
         }
     }
 

@@ -11,6 +11,8 @@ import laazotea.indi.client.INDIServerConnection;
 import laazotea.indi.client.INDIServerConnectionListener;
 
 /**
+ * Manages an {@link INDIServerConnection} object, listens to INDI messages and notifies listeners.
+ *
  * @author SquareBoot
  */
 public class ConnectionManager implements INDIServerConnectionListener, INDIDeviceListener {
@@ -22,13 +24,13 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
     /**
      * A list to re-add the listener when the connection is destroyed and recreated.
      */
-    private ArrayList<INDIServerConnectionListener> permanentConnectionListeners;
+    private ArrayList<INDIServerConnectionListener> listeners;
 
     /**
      * Class constructor.
      */
     public ConnectionManager() {
-        permanentConnectionListeners = new ArrayList<>();
+        listeners = new ArrayList<>();
     }
 
     /**
@@ -60,8 +62,8 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
             connection = new INDIServerConnection(host, port);
             // Listen to all
             connection.addINDIServerConnectionListener(this);
-            for (INDIServerConnectionListener permanentConnectionListener : permanentConnectionListeners) {
-                connection.addINDIServerConnectionListener(permanentConnectionListener);
+            for (INDIServerConnectionListener l : listeners) {
+                connection.addINDIServerConnectionListener(l);
             }
 
             new Thread(new Runnable() {
@@ -133,7 +135,7 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
      * @param arg the listener
      */
     public void registerPermanentConnectionListener(INDIServerConnectionListener arg) {
-        permanentConnectionListeners.add(arg);
+        listeners.add(arg);
         if (connection != null) {
             connection.addINDIServerConnectionListener(arg);
         }
@@ -145,7 +147,7 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
      * @param arg the listener
      */
     public void unRegisterPermanentConnectionListener(INDIServerConnectionListener arg) {
-        permanentConnectionListeners.remove(arg);
+        listeners.remove(arg);
         if (connection != null) {
             connection.removeINDIServerConnectionListener(arg);
         }

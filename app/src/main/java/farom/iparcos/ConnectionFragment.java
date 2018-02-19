@@ -1,6 +1,5 @@
 package farom.iparcos;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -31,14 +30,25 @@ import java.util.Set;
 import java.util.Vector;
 
 /**
- * The main activity of the application, which manages the connection.
+ * The main screen of the application, which manages the connection.
  *
  * @author Romain Fafet
+ * @author SquareBoot
  */
 public class ConnectionFragment extends Fragment {
 
+    /**
+     * All the logs.
+     */
     private final static ArrayList<LogItem> logs = new ArrayList<>();
+    /**
+     * The last text of the button (to restore the Fragment's state)
+     */
     private static String buttonText = null;
+    /**
+     * The last position of the spinner (to restore the Fragment's state)
+     */
+    private static int spinnerItem = -1;
 
     // Views
     private View rootView;
@@ -136,10 +146,12 @@ public class ConnectionFragment extends Fragment {
             }
         });
 
-        if (buttonText != null) {
+        if (spinnerItem != -1) {
+            serversSpinner.setSelection(spinnerItem);
             connectionButton.setText(buttonText);
 
         } else {
+            spinnerItem = serversSpinner.getSelectedItemPosition();
             buttonText = getResources().getString(R.string.connect);
         }
 
@@ -232,7 +244,6 @@ public class ConnectionFragment extends Fragment {
     /**
      * Asks the user to add a new server.
      */
-    @SuppressLint("InflateParams")
     protected void addServer() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.host_prompt_text);

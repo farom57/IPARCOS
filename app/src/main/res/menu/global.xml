@@ -1,18 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!---<item
+    <item
         android:id="@+id/menu_about"
-        android:icon="@drawable/icon_about"
-        android:onClick="openAboutActivity"
+        android:icon="@drawable/ic_info"
         android:orderInCategory="0"
         android:title="@string/menu_about"
-        app:showAsAction="never" />-->
-
-    <!--<item
-       android:id="@+id/menu_settings"
-       android:onClick="openSettingsActivity"
-       android:orderInCategory="1"
-       android:title="@string/menu_settings"
-       app:showAsAction="never" /> -->
+        app:showAsAction="ifRoom" />
 </menu>

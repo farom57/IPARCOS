@@ -82,4 +82,16 @@
     <string name="slew_ok">Goto started</string>
     <string name="sync_ok">Sync …</string>
     <string name="empty_catalog">Empty catalog</string>
+    <string name="menu_about">About this app</string>
+    <string name="app_description">IPARCOS (Indi Protocol Android Remote COntrol Software) is an INDI client for Android.
+        \nIt features a control panel and others specialized tools to easily control your devices.\n\n
+        The project main site is https://github.com/farom57/IPARCOS
+        \n\nDeveloped by\n
+        • Romain Fafet (farom57)\n
+        • Zerjillo\n
+        • SquareBoot
+        \n\nOpen Source libraries:\n
+        • INDI for Java - http://www.indilib.org/develop/indiforjava.html
+    </string>
+    <string name="error_no_devices">No devices found!</string>
 </resources>
