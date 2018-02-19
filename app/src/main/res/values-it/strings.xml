@@ -94,4 +94,5 @@
         • INDI for Java - http://www.indilib.org/develop/indiforjava.html
     </string>
     <string name="error_no_devices">Nessun dispositivo trovato!</string>
+    <string name="error">Errore:</string>
 </resources>

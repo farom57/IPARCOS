@@ -113,12 +113,14 @@ public class NumberPropPref extends PropPref {
                                     elements.get(i).setDesiredValue(editTextViews.get(i).getText().toString());
                                 }
                             }
-                            prop.sendChangesToDriver();
 
-                        } catch (INDIValueException | IOException | IllegalArgumentException e) {
+
+                        } catch (INDIValueException | IllegalArgumentException e) {
                             Toast toast = Toast.makeText(Application.getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG);
                             toast.show();
+                            Application.log(Application.getContext().getResources().getString(R.string.error)+e.getLocalizedMessage());
                         }
+                        sendChanges();
                     }
                 });
                 builder.setNegativeButton(R.string.cancel_request, new DialogInterface.OnClickListener() {
