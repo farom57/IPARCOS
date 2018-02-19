@@ -10,6 +10,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import farom.iparcos.prop.PropPref;
 import laazotea.indi.client.INDIDevice;
 import laazotea.indi.client.INDIDeviceListener;
 import laazotea.indi.client.INDIProperty;

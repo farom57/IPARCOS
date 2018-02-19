@@ -7,10 +7,10 @@
         <item name="searchViewStyle">@style/SearchViewStyle</item>
     </style>
     <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
-        <item name="closeIcon">@drawable/ic_close</item>
-        <item name="searchHintIcon">@drawable/ic_action_search</item>
+        <item name="closeIcon">@drawable/close</item>
+        <item name="searchHintIcon">@drawable/search</item>
     </style>
-    <style name="InfoActivityTheme" parent="Theme.AppCompat">
+    <style name="SimpleActivityTheme" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>

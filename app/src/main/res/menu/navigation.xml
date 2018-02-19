@@ -8,16 +8,16 @@
 
     <item
         android:id="@+id/menu_move"
-        android:icon="@drawable/icon_move"
+        android:icon="@drawable/move"
         android:title="@string/menu_motion"/>
 
     <item
         android:id="@+id/menu_generic"
-        android:icon="@drawable/icon_gen"
+        android:icon="@drawable/control_panel"
         android:title="@string/menu_generic" />
 
     <item
         android:id="@+id/menu_search"
-        android:icon="@drawable/ic_action_search"
+        android:icon="@drawable/search"
         android:title="@string/menu_search" />
 </menu>

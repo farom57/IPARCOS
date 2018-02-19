@@ -1,31 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">IPARCOS</string>
-    <string name="menu_settings">Impostazioni</string>
     <string name="indi_host">Seleziona un server INDI:</string>
     <string name="connect">Connessione</string>
     <string name="disconnect">Disconnetti</string>
     <string name="log">Log</string>
-    <string name="port">Porta</string>
-    <string name="action_settings">Impostazioni</string>
     <string name="hostprompt">Indirizzo server</string>
-    <string name="hostadd">Aggiungi server</string>
-    <string name="hostauto">Automatico</string>
+    <string name="host_add">Aggiungi server</string>
     <string name="host_prompt_text">Indirizzo IP del server:</string>
     <string name="connecting">Connessione…</string>
-    <string name="menu_motion_short">Muovi</string>
     <string name="menu_motion">Controllo movimento</string>
     <string name="menu_connection">Connessione</string>
     <string name="menu_generic">Pannello di controllo</string>
     <string name="menu_search">Cerca</string>
-    <string name="title_activity_generic">Pannello di controllo</string>
-    <string name="title_activity_motion">Movimento</string>
-    <string name="title_activity_connection">Connessione</string>
     <string name="default_speed">Non disponibile</string>
     <string name="send_request">Invia</string>
     <string name="cancel_request">Annulla</string>
     <string name="back_request">Indietro</string>
-    <string name="illegal_number_message">Numero non corretto</string>
     <string name="BLOB_not_supported">Non supportato</string>
     <string name="new_device">Nuovo dispositivo:</string>
     <string name="device_removed">Dispositivo rimosso:</string>
@@ -36,7 +27,6 @@
     <string name="connected">Connesso</string>
     <string name="connection_pb">Errore di connessione</string>
     <string name="search_hint">Cerca oggetto</string>
-    <string name="title_activity_search">Ricerca</string>
     <string name="GOTO">Vai a</string>
     <string name="sync">Sincronizza</string>
     <string name="entry_star">Stella</string>
@@ -95,4 +85,5 @@
     </string>
     <string name="error_no_devices">Nessun dispositivo trovato!</string>
     <string name="error">Errore:</string>
+    <string name="host_manage">Gestisci i server</string>
 </resources>

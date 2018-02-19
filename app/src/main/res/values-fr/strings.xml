@@ -1,30 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">IPARCOS</string>
-    <string name="menu_settings">Paramètres</string>
     <string name="indi_host">Hôte INDI</string>
     <string name="connect">Connecter</string>
     <string name="disconnect">Déconnecter</string>
     <string name="log">Log</string>
-    <string name="port">Port</string>
-    <string name="action_settings">Paramètres</string>
     <string name="hostprompt">Adresse de l\'hôte</string>
-    <string name="hostadd">Ajouter un serveur</string>
-    <string name="hostauto">Auto</string>
+    <string name="host_add">Ajouter un serveur</string>
     <string name="host_prompt_text">Adresse IP de l\'hôte :</string>
     <string name="connecting">Connexion…</string>
-    <string name="menu_motion_short">Mouvement</string>
     <string name="menu_motion">Contrôle du mouvement</string>
     <string name="menu_generic">Autres</string>
     <string name="menu_search">Search</string>
-    <string name="title_activity_motion">Mouvement</string>
-    <string name="title_activity_connection">Connexion</string>
-    <string name="title_activity_generic">Panneau de contrôle</string>
     <string name="default_speed">Non disponble</string>
     <string name="send_request">Envoyer</string>
     <string name="cancel_request">Annuler</string>
     <string name="back_request">Retour</string>
-    <string name="illegal_number_message">Nombre incorrect</string>
     <string name="BLOB_not_supported">Non supporté</string>
     <string name="new_device">Nouveau périphérique :\u0020</string>
     <string name="device_removed">Périphérique retiré :\u0020</string>
@@ -80,7 +71,6 @@
     <string name="slew_ok" >Pointage en cours</string>
     <string name="arcmin">arcmin</string>
     <string name="menu_connection">Connecter</string>
-    <string name="title_activity_search">Rechercher</string>
     <string name="empty_catalog">Catalogue vide</string>
     <string name="error">"Erreur : "</string>
 

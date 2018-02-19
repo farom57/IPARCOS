@@ -1,31 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">IPARCOS</string>
-    <string name="menu_settings">Settings</string>
     <string name="indi_host">Select the INDI Host:</string>
     <string name="connect">Connect</string>
     <string name="disconnect">Disconnect</string>
     <string name="log">Log</string>
-    <string name="port">Port</string>
-    <string name="action_settings">Settings</string>
     <string name="hostprompt">Host address</string>
-    <string name="hostadd">Add Server</string>
-    <string name="hostauto">Auto</string>
+    <string name="host_add">Add server</string>
+    <string name="host_manage">Manage servers</string>
     <string name="host_prompt_text">Host IP address:</string>
-    <string name="connecting">Connecting...</string>
-    <string name="menu_motion_short">Move</string>
+    <string name="connecting">Connecting…</string>
     <string name="menu_motion">Motion control</string>
     <string name="menu_connection">Connection</string>
     <string name="menu_generic">Control panel</string>
     <string name="menu_search">Search</string>
-    <string name="title_activity_generic">Control panel</string>
-    <string name="title_activity_motion">Motion</string>
-    <string name="title_activity_connection">Connection</string>
     <string name="default_speed">Unavailable</string>
     <string name="send_request">Send</string>
     <string name="cancel_request">Cancel</string>
     <string name="back_request">Back</string>
-    <string name="illegal_number_message">Incorrect number</string>
     <string name="BLOB_not_supported">Not supported</string>
     <string name="new_device">New device:\u0020</string>
     <string name="device_removed">Device removed:\u0020</string>
@@ -36,7 +28,6 @@
     <string name="connected">Connected</string>
     <string name="connection_pb">Connection error</string>
     <string name="search_hint">Search an object</string>
-    <string name="title_activity_search">Search activity</string>
     <string name="GOTO">Go to</string>
     <string name="sync">Sync</string>
     <string name="entry_star">Star</string>

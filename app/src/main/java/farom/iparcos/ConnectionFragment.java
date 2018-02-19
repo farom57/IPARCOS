@@ -1,7 +1,10 @@
 package farom.iparcos;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -12,6 +15,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -59,6 +63,67 @@ public class ConnectionFragment extends Fragment {
      */
     private int fabPosY;
 
+    /**
+     * Asks the user to add a new server.
+     */
+    protected static void addServer(final Activity activity, final Runnable onServerReload) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle(R.string.host_prompt_text);
+
+        final EditText input = new EditText(activity);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        input.setLayoutParams(lp);
+        builder.setView(input);
+
+        builder.setCancelable(false)
+                .setPositiveButton(activity.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        String server = input.getText().toString();
+                        if (!server.equals("")) {
+                            // Retrieve the list
+                            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
+                            Set<String> set = preferences.getStringSet("SERVER_SET", null);
+                            List<String> serverList;
+                            if (set != null) {
+                                serverList = new Vector<>(set);
+
+                            } else {
+                                serverList = new Vector<>();
+                            }
+                            serverList.add(0, server);
+
+                            // Save the list
+                            Set<String> newSet = new HashSet<>();
+                            newSet.addAll(serverList);
+                            SharedPreferences.Editor editor = preferences.edit();
+                            editor.putStringSet("SERVER_SET", newSet);
+                            editor.apply();
+
+                            // Update
+                            if (onServerReload != null) {
+                                onServerReload.run();
+                            }
+                        }
+                    }
+                })
+                .setNegativeButton(activity.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        Dialog dialog = builder.create();
+        try {
+            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+
+        } catch (NullPointerException ignored) {
+
+        }
+        dialog.show();
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_connection, container, false);
@@ -101,12 +166,17 @@ public class ConnectionFragment extends Fragment {
 
         connectionButton = rootView.findViewById(R.id.connectionButton);
 
+        final LoadServersRunnable loadServersRunnable = new LoadServersRunnable();
         serversSpinner = rootView.findViewById(R.id.spinnerHost);
         serversSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                if (parent.getItemAtPosition(pos).toString().equals(getResources().getString(R.string.hostadd))) {
-                    addServer();
+                String selected = parent.getItemAtPosition(pos).toString();
+                if (selected.equals(getResources().getString(R.string.host_add))) {
+                    addServer(getActivity(), loadServersRunnable);
+
+                } else if (selected.equals(getResources().getString(R.string.host_manage))) {
+                    startActivity(new Intent(getContext(), ServersActivity.class));
                 }
             }
 
@@ -115,7 +185,7 @@ public class ConnectionFragment extends Fragment {
 
             }
         });
-        loadServerList();
+        loadServersRunnable.run();
 
         connectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,8 +203,11 @@ public class ConnectionFragment extends Fragment {
 
                 // Connect or disconnect
                 if (connectionButton.getText().equals(getResources().getString(R.string.connect))) {
-                    if (host.equals(getResources().getString(R.string.hostadd))) {
-                        addServer();
+                    if (host.equals(getResources().getString(R.string.host_add))) {
+                        addServer(getActivity(), loadServersRunnable);
+
+                    } else if (host.equals(getResources().getString(R.string.host_manage))) {
+                        startActivity(new Intent(getContext(), ServersActivity.class));
 
                     } else {
                         Application.getConnectionManager().connect(host, port);
@@ -151,7 +224,7 @@ public class ConnectionFragment extends Fragment {
             connectionButton.setText(buttonText);
 
         } else {
-            spinnerItem = serversSpinner.getSelectedItemPosition();
+            spinnerItem = 0;
             buttonText = getResources().getString(R.string.connect);
         }
 
@@ -189,88 +262,33 @@ public class ConnectionFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         buttonText = connectionButton.getText().toString();
+        spinnerItem = serversSpinner.getSelectedItemPosition();
     }
 
     /**
-     * load and update the servers list.
+     * Loads and updates the servers list.
      */
-    protected void loadServerList() {
-        // Get the preferences
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        Set<String> set = preferences.getStringSet("SERVER_SET", null);
-        List<String> serverList;
-        if (set != null) {
-            serverList = new Vector<>(set);
+    protected class LoadServersRunnable implements Runnable {
 
-        } else {
-            serverList = new Vector<>();
+        @Override
+        public void run() {
+            // Get the preferences
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+            Set<String> set = preferences.getStringSet("SERVER_SET", null);
+            List<String> serversList;
+            if (set != null) {
+                serversList = new Vector<>(set);
+
+            } else {
+                serversList = new Vector<>();
+            }
+            // Update the display
+            serversList.add(getResources().getString(R.string.host_add));
+            serversList.add(getResources().getString(R.string.host_manage));
+            ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, serversList);
+            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            serversSpinner.setAdapter(dataAdapter);
         }
-        // Update the display
-        serverList.add(getResources().getString(R.string.hostadd));
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, serverList);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        serversSpinner.setAdapter(dataAdapter);
-    }
-
-    /**
-     * Adds the server address, saves the servers list and updates the spinner.
-     *
-     * @param ip the IP address of the new Server
-     */
-    protected void addServer(String ip) {
-        // Retrieve the list
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        Set<String> set = preferences.getStringSet("SERVER_SET", null);
-        List<String> serverList;
-        if (set != null) {
-            serverList = new Vector<>(set);
-
-        } else {
-            serverList = new Vector<>();
-        }
-        serverList.add(0, ip);
-
-        // Save the list
-        Set<String> newSet = new HashSet<>();
-        newSet.addAll(serverList);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putStringSet("SERVER_SET", newSet);
-        editor.apply();
-
-        // Update
-        loadServerList();
-    }
-
-    /**
-     * Asks the user to add a new server.
-     */
-    protected void addServer() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.host_prompt_text);
-
-        final EditText input = new EditText(getActivity());
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-        input.setLayoutParams(lp);
-        builder.setView(input);
-
-        builder.setCancelable(false)
-                .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        String server = input.getText().toString();
-                        if (!server.equals("")) {
-                            addServer(server);
-                        }
-                    }
-                })
-                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-
-        builder.create().show();
     }
 
     /**
@@ -278,7 +296,7 @@ public class ConnectionFragment extends Fragment {
      *
      * @author SquareBoot
      */
-    class LogAdapter extends ArrayAdapter<LogItem> {
+    private class LogAdapter extends ArrayAdapter<LogItem> {
 
         LayoutInflater inflater;
 
