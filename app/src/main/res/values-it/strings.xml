@@ -86,4 +86,7 @@
     <string name="error_no_devices">Nessun dispositivo trovato!</string>
     <string name="error">Errore:</string>
     <string name="host_manage">Gestisci i server</string>
+    <string name="remove_server">Rimuovere il server selezionato?</string>
+    <string name="sure">Sei sicuro?</string>
+    <string name="servers_list_toast">Tieni premuto per cancellare, trascina per riorganizzare</string>
 </resources>

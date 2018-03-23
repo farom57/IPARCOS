@@ -1,5 +1,6 @@
 package farom.iparcos;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +60,7 @@ public class ConnectionFragment extends Fragment {
     private View rootView;
     private Button connectionButton;
     private Spinner serversSpinner;
+    private LoadServersRunnable loadServersRunnable;
     /**
      * The original position of the floating action button.
      */
@@ -125,6 +128,14 @@ public class ConnectionFragment extends Fragment {
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            loadServersRunnable.run();
+        }
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_connection, container, false);
 
@@ -166,7 +177,7 @@ public class ConnectionFragment extends Fragment {
 
         connectionButton = rootView.findViewById(R.id.connectionButton);
 
-        final LoadServersRunnable loadServersRunnable = new LoadServersRunnable();
+        loadServersRunnable = new LoadServersRunnable();
         serversSpinner = rootView.findViewById(R.id.spinnerHost);
         serversSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
@@ -176,7 +187,7 @@ public class ConnectionFragment extends Fragment {
                     addServer(getActivity(), loadServersRunnable);
 
                 } else if (selected.equals(getResources().getString(R.string.host_manage))) {
-                    startActivity(new Intent(getContext(), ServersActivity.class));
+                    startActivityForResult(new Intent(getContext(), ServersActivity.class), 1);
                 }
             }
 
@@ -207,7 +218,7 @@ public class ConnectionFragment extends Fragment {
                         addServer(getActivity(), loadServersRunnable);
 
                     } else if (host.equals(getResources().getString(R.string.host_manage))) {
-                        startActivity(new Intent(getContext(), ServersActivity.class));
+                        startActivityForResult(new Intent(getContext(), ServersActivity.class), 1);
 
                     } else {
                         Application.getConnectionManager().connect(host, port);

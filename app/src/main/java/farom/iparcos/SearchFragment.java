@@ -114,7 +114,6 @@ public class SearchFragment extends ListFragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        System.out.println("Creating menu");
         MenuItem item = menu.add(R.string.menu_search);
         item.setIcon(R.drawable.search);
         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);

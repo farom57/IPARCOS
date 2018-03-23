@@ -44,9 +44,7 @@ public class GenericFragment extends Fragment implements TabLayout.OnTabSelected
         View rootView = inflater.inflate(R.layout.fragment_control_panel, container, false);
 
         connectionManager = Application.getConnectionManager();
-        System.out.println("Register");
         connectionManager.registerPermanentConnectionListener(this);
-        System.out.println("Done");
 
         tabLayout = rootView.findViewById(R.id.tab_layout);
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
@@ -66,14 +64,17 @@ public class GenericFragment extends Fragment implements TabLayout.OnTabSelected
 
         INDIServerConnection connection = connectionManager.getConnection();
         if (connection == null) {
+            removeAllTabs();
             pagerAdapter.add(new SimplePageDescriptor("NoDevices" + c, getString(R.string.error_no_devices)));
             return;
         }
         List<INDIDevice> list = connection.getDevicesAsList();
         if (list == null) {
+            removeAllTabs();
             return;
         }
         if (list.size() == 0) {
+            removeAllTabs();
             pagerAdapter.add(new SimplePageDescriptor("NoDevices" + c, getString(R.string.error_no_devices)));
             return;
         }
@@ -87,7 +88,10 @@ public class GenericFragment extends Fragment implements TabLayout.OnTabSelected
     @Override
     public void onStop() {
         super.onStop();
-        // Remove all the tabs
+        removeAllTabs();
+    }
+
+    private void removeAllTabs() {
         tabLayout.removeAllTabs();
         for (int i = 0; i < pagerAdapter.getCount(); i++) {
             pagerAdapter.remove(i);

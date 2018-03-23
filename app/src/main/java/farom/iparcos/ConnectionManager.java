@@ -58,7 +58,6 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
             Application.setState(Application.getContext().getResources().getString(R.string.connecting));
             Application.log(Application.getContext().getResources().getString(R.string.try_to_connect) + host + ":" + port);
 
-            System.out.println("Trying to connect to " + host + ":" + port);
             connection = new INDIServerConnection(host, port);
             // Listen to all
             connection.addINDIServerConnectionListener(this);

@@ -86,4 +86,7 @@
     </string>
     <string name="error_no_devices">No devices found!</string>
     <string name="error">Error:</string>
+    <string name="remove_server">Remove the selected server?</string>
+    <string name="sure">Are you sure?</string>
+    <string name="servers_list_toast">Long click to remove, drag to rearrange</string>
 </resources>
