@@ -89,4 +89,7 @@
     <string name="remove_server">Remove the selected server?</string>
     <string name="sure">Are you sure?</string>
     <string name="servers_list_toast">Long click to remove, drag to rearrange</string>
+    <string name="focus_in">Focus in</string>
+    <string name="focus_out">Focus out</string>
+    <string name="menu_focuser">Focuser</string>
 </resources>

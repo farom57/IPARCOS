@@ -12,6 +12,11 @@
         android:title="@string/menu_motion"/>
 
     <item
+        android:id="@+id/menu_focuser"
+        android:icon="@drawable/icon_focuser"
+        android:title="@string/menu_focuser"/>
+
+    <item
         android:id="@+id/menu_generic"
         android:icon="@drawable/control_panel"
         android:title="@string/menu_generic" />

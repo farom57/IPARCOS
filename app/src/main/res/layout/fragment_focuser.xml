@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="farom.iparcos.FocuserFragment">
+
+    <Button
+        android:id="@+id/focus_interval_less"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:text="-" />
+
+    <Button
+        android:id="@+id/focus_interval_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/focus_interval_less"
+        android:text="+" />
+
+    <Button
+        android:id="@+id/focus_in"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/focus_interval_more"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="42dp"
+        android:text="@string/focus_in" />
+
+    <Button
+        android:id="@+id/focus_out"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/focus_interval_less"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="42dp"
+        android:text="@string/focus_out" />
+
+    <EditText
+        android:id="@+id/focus_movement_increment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/focus_out"
+        android:layout_centerHorizontal="true"
+        android:ems="5"
+        android:editable="false"
+        android:inputType="none"
+        tools:ignore="Deprecated" />
+</RelativeLayout>

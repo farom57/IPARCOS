@@ -72,7 +72,8 @@ public class SwitchPropPref extends PropPref {
     }
 
     @SuppressLint("ValidFragment")
-    public class SwitchRequestFragment extends DialogFragment {
+    public /* static */ class SwitchRequestFragment extends DialogFragment {
+
         private INDISwitchProperty prop;
 
         public SwitchRequestFragment(INDISwitchProperty prop) {

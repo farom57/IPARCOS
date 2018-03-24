@@ -12,7 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 /**
- * The main activity of the application, that contains all the fragments.
+ * The main activity of the application, that manages all the fragments.
  *
  * @author SquareBoot
  */
@@ -39,38 +39,33 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.content_frame, new ConnectionFragment()).commit();
 
-        fragments = new Fragment[4];
+        fragments = new Fragment[5];
         fragments[Pages.CONNECTION.getIndex()] = new ConnectionFragment();
         fragments[Pages.MOTION.getIndex()] = new MotionFragment();
         fragments[Pages.GENERIC.getIndex()] = new GenericFragment();
         fragments[Pages.SEARCH.getIndex()] = new SearchFragment();
+        fragments[Pages.FOCUSER.getIndex()] = new FocuserFragment();
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
 
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                for (Pages p : Pages.values()) {
-                    int id = item.getItemId();
-                    if (p.getItemId() == id) {
-                        Pages current = Pages.fromId(id);
-                        if ((current == null) || (current.getIndex() == lastPage.getIndex())) {
-                            return false;
-                        }
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            if (p == Pages.GENERIC) {
-                                toolbar.setElevation(0);
+                Pages current = Pages.fromId(item.getItemId());
+                if ((current != null) && (current != lastPage)) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        if (current == Pages.GENERIC) {
+                            toolbar.setElevation(0);
 
-                            } else {
-                                toolbar.setElevation(4);
-                            }
+                        } else {
+                            toolbar.setElevation(4);
                         }
-                        getSupportFragmentManager().beginTransaction().setCustomAnimations(
-                                R.anim.fade_in, R.anim.fade_out, 0, 0)
-                                .replace(R.id.content_frame, fragments[p.getIndex()]).commit();
-                        lastPage = current;
-                        return true;
                     }
+                    getSupportFragmentManager().beginTransaction().setCustomAnimations(
+                            R.anim.fade_in, R.anim.fade_out, 0, 0)
+                            .replace(R.id.content_frame, fragments[current.getIndex()]).commit();
+                    lastPage = current;
+                    return true;
                 }
                 return false;
             }
@@ -83,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                     toolbar.setElevation(4);
                 }
                 getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.fade_in, R.anim.fade_out, 0, 0)
+                        /*.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, 0, 0)*/
                         .replace(R.id.content_frame, fragments[Pages.CONNECTION.getIndex()]).commit();
             }
         });
@@ -112,7 +107,8 @@ public class MainActivity extends AppCompatActivity {
         CONNECTION(0, R.id.menu_connection),
         MOTION(1, R.id.menu_move),
         GENERIC(2, R.id.menu_generic),
-        SEARCH(3, R.id.menu_search);
+        SEARCH(3, R.id.menu_search),
+        FOCUSER(4, R.id.menu_focuser);
 
         private final int index;
         private int itemId;

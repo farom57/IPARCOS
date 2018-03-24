@@ -72,6 +72,6 @@
     <string name="arcmin">arcmin</string>
     <string name="menu_connection">Connecter</string>
     <string name="empty_catalog">Catalogue vide</string>
-    <string name="error">"Erreur : "</string>
+    <string name="error">"Erreur: "</string>
 
 </resources>

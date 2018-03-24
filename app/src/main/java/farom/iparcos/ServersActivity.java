@@ -1,6 +1,5 @@
 package farom.iparcos;
 
-import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
