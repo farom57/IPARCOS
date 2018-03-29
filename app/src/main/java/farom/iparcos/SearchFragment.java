@@ -212,6 +212,7 @@ public class SearchFragment extends ListFragment
      * @return a catalog loader.
      * @see CatalogLoader
      */
+    @NonNull
     public Loader<Catalog> onCreateLoader(int id, Bundle args) {
         return new CatalogLoader(getContext());
     }
@@ -244,7 +245,7 @@ public class SearchFragment extends ListFragment
      *
      * @param loader the loader to unbind.
      */
-    public void onLoaderReset(Loader<Catalog> loader) {
+    public void onLoaderReset(@NonNull Loader<Catalog> loader) {
 
     }
 
@@ -272,7 +273,7 @@ public class SearchFragment extends ListFragment
             telescopeCoordRA = (INDINumberElement) property.getElement("RA");
             telescopeCoordDE = (INDINumberElement) property.getElement("DEC");
 
-            if (telescopeCoordDE != null && telescopeCoordRA != null) {
+            if (telescopeCoordDE != null && telescopeCoordRA != null && property instanceof INDINumberProperty) {
                 property.addINDIPropertyListener(this);
                 telescopeCoordP = (INDINumberProperty) property;
                 Log.i("SearchFragment", "New Property (" + property.getName() + ") added to device " + device.getName());

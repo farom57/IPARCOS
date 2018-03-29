@@ -1,6 +1,5 @@
 package farom.iparcos.prop;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -67,17 +66,19 @@ public class SwitchPropPref extends PropPref {
 
     @Override
     protected void onClick() {
-        DialogFragment newFragment = new SwitchRequestFragment((INDISwitchProperty) prop);
+        SwitchRequestFragment newFragment = new SwitchRequestFragment();
+        newFragment.setArguments((INDISwitchProperty) prop, this);
         newFragment.show(((Activity) getContext()).getFragmentManager(), "request");
     }
 
-    @SuppressLint("ValidFragment")
-    public /* static */ class SwitchRequestFragment extends DialogFragment {
+    public static class SwitchRequestFragment extends DialogFragment {
 
         private INDISwitchProperty prop;
+        private PropPref propPref;
 
-        public SwitchRequestFragment(INDISwitchProperty prop) {
+        public void setArguments(INDISwitchProperty prop, PropPref propPref) {
             this.prop = prop;
+            this.propPref = propPref;
         }
 
         @Override
@@ -116,7 +117,7 @@ public class SwitchPropPref extends PropPref {
                             toast.show();
                             Application.log(Application.getContext().getResources().getString(R.string.error) + e.getLocalizedMessage());
                         }
-                        sendChanges();
+                        propPref.sendChanges();
                     }
                 });
                 builder.setNegativeButton(R.string.cancel_request, new DialogInterface.OnClickListener() {
