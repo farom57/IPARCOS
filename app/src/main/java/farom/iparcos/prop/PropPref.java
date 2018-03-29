@@ -2,7 +2,6 @@ package farom.iparcos.prop;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceViewHolder;
 import android.text.Spannable;
@@ -10,8 +9,6 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
-
-import java.io.IOException;
 
 import farom.iparcos.Application;
 import farom.iparcos.R;
@@ -22,7 +19,6 @@ import laazotea.indi.client.INDIProperty;
 import laazotea.indi.client.INDIPropertyListener;
 import laazotea.indi.client.INDISwitchProperty;
 import laazotea.indi.client.INDITextProperty;
-import laazotea.indi.client.INDIValueException;
 
 public abstract class PropPref extends Preference implements INDIPropertyListener {
 
@@ -63,10 +59,7 @@ public abstract class PropPref extends Preference implements INDIPropertyListene
     @Override
     public void onBindViewHolder(PreferenceViewHolder holder) {
         super.onBindViewHolder(holder);
-        // INDIAdapter.getInstance().log(view.toString());
         title = holder.itemView;
-        // propertyChanged(prop);
-        // changed ++;
     }
 
     /**
@@ -135,26 +128,6 @@ public abstract class PropPref extends Preference implements INDIPropertyListene
      * Send updates to the server (async task)
      */
     protected void sendChanges() {
-        new SendChangesTask().execute(prop);
-    }
-
-    /**
-     * Async task to send updates to the server
-     */
-    private static class SendChangesTask extends AsyncTask<INDIProperty, Void, Void> {
-
-        @Override
-        protected Void doInBackground(INDIProperty... param) {
-            try {
-                if (param.length != 1) {
-                    return null;
-                }
-                param[0].sendChangesToDriver();
-
-            } catch (INDIValueException | IOException e) {
-                Application.log(Application.getContext().getResources().getString(R.string.error) + e.getLocalizedMessage());
-            }
-            return null;
-        }
+        new PropUpdater().execute(prop);
     }
 }

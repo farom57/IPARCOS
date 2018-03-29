@@ -29,6 +29,7 @@ import java.util.List;
 import farom.iparcos.catalog.Catalog;
 import farom.iparcos.catalog.CatalogEntry;
 import farom.iparcos.catalog.Coordinates;
+import farom.iparcos.prop.PropUpdater;
 import laazotea.indi.Constants;
 import laazotea.indi.client.INDIDevice;
 import laazotea.indi.client.INDIDeviceListener;
@@ -40,6 +41,7 @@ import laazotea.indi.client.INDIServerConnection;
 import laazotea.indi.client.INDIServerConnectionListener;
 import laazotea.indi.client.INDISwitchElement;
 import laazotea.indi.client.INDISwitchProperty;
+import laazotea.indi.client.INDIValueException;
 
 /**
  * Allows the user to look for an astronomical object and slew the telescope.
@@ -149,9 +151,9 @@ public class SearchFragment extends ListFragment
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        final Context ctx = l.getContext();
+        final Context context = l.getContext();
         final Coordinates coord = catalogEntries.get(position).getCoordinates();
-        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(catalogEntries.get(position).createDescription(getContext()))
                 .setTitle(catalogEntries.get(position).getName());
 
@@ -163,16 +165,14 @@ public class SearchFragment extends ListFragment
                     try {
                         telescopeOnCoordSetSlew.setDesiredValue(Constants.SwitchStatus.ON);
                         telescopeOnCoordSetSync.setDesiredValue(Constants.SwitchStatus.OFF);
-                        telescopeOnCoordSetP.sendChangesToDriver();
+                        new PropUpdater().execute(telescopeOnCoordSetP);
                         telescopeCoordRA.setDesiredValue(coord.getRaStr());
                         telescopeCoordDE.setDesiredValue(coord.getDeStr());
-                        telescopeCoordP.sendChangesToDriver();
-                        Toast toast = Toast.makeText(ctx, ctx.getString(R.string.slew_ok), Toast.LENGTH_LONG);
-                        toast.show();
+                        new PropUpdater().execute(telescopeCoordP);
+                        Toast.makeText(context, context.getString(R.string.slew_ok), Toast.LENGTH_LONG).show();
 
-                    } catch (Exception e) {
-                        Toast toast = Toast.makeText(ctx, ctx.getString(R.string.sync_slew_error), Toast.LENGTH_LONG);
-                        toast.show();
+                    } catch (INDIValueException e) {
+                        Toast.makeText(context, context.getString(R.string.sync_slew_error), Toast.LENGTH_LONG).show();
                     }
 
                 }
@@ -183,15 +183,15 @@ public class SearchFragment extends ListFragment
                     try {
                         telescopeOnCoordSetSync.setDesiredValue(Constants.SwitchStatus.ON);
                         telescopeOnCoordSetSlew.setDesiredValue(Constants.SwitchStatus.OFF);
-                        telescopeOnCoordSetP.sendChangesToDriver();
+                        new PropUpdater().execute(telescopeOnCoordSetP);
                         telescopeCoordRA.setDesiredValue(coord.getRaStr());
                         telescopeCoordDE.setDesiredValue(coord.getDeStr());
-                        telescopeCoordP.sendChangesToDriver();
-                        Toast toast = Toast.makeText(ctx, ctx.getString(R.string.sync_ok), Toast.LENGTH_LONG);
+                        new PropUpdater().execute(telescopeCoordP);
+                        Toast toast = Toast.makeText(context, context.getString(R.string.sync_ok), Toast.LENGTH_LONG);
                         toast.show();
 
-                    } catch (Exception e) {
-                        Toast toast = Toast.makeText(ctx, ctx.getString(R.string.sync_slew_error), Toast.LENGTH_LONG);
+                    } catch (INDIValueException e) {
+                        Toast toast = Toast.makeText(context, context.getString(R.string.sync_slew_error), Toast.LENGTH_LONG);
                         toast.show();
                     }
                 }
