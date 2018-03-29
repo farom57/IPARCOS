@@ -24,7 +24,7 @@
         android:layout_alignBottom="@+id/editTextPort"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:prompt="@string/hostprompt"
+        android:prompt="@string/host_prompt"
         android:layout_marginBottom="8dp"/>
 
     <EditText

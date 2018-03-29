@@ -147,7 +147,7 @@ public class ConnectionFragment extends Fragment {
             public void onClick(View v) {
                 logs.clear();
                 logAdapter.notifyDataSetChanged();
-                clearLogsButton.animate().translationY(150);
+                clearLogsButton.animate().translationY(250);
             }
         });
 
@@ -164,7 +164,7 @@ public class ConnectionFragment extends Fragment {
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if (firstVisibleItem >= visibleItemCount) {
                     clearLogsButton.animate().cancel();
-                    clearLogsButton.animate().translationYBy(150);
+                    clearLogsButton.animate().translationYBy(250);
 
                 } else {
                     clearLogsButton.animate().cancel();

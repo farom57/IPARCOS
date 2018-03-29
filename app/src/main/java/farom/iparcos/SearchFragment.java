@@ -96,7 +96,7 @@ public class SearchFragment extends ListFragment
 
         // Set up INDI connection
         ConnectionManager connectionManager = Application.getConnectionManager();
-        connectionManager.registerPermanentConnectionListener(this);
+        connectionManager.addListener(this);
 
         // Enumerate existing properties
         INDIServerConnection connection = connectionManager.getConnection();

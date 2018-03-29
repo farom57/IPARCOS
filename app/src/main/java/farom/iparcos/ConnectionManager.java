@@ -15,6 +15,7 @@ import laazotea.indi.client.INDIServerConnectionListener;
  *
  * @author SquareBoot
  */
+@SuppressWarnings("WeakerAccess")
 public class ConnectionManager implements INDIServerConnectionListener, INDIDeviceListener {
 
     /**
@@ -133,7 +134,7 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
      *
      * @param arg the listener
      */
-    public void registerPermanentConnectionListener(INDIServerConnectionListener arg) {
+    public void addListener(INDIServerConnectionListener arg) {
         listeners.add(arg);
         if (connection != null) {
             connection.addINDIServerConnectionListener(arg);
@@ -145,7 +146,7 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
      *
      * @param arg the listener
      */
-    public void unRegisterPermanentConnectionListener(INDIServerConnectionListener arg) {
+    public void removeListener(INDIServerConnectionListener arg) {
         listeners.remove(arg);
         if (connection != null) {
             connection.removeINDIServerConnectionListener(arg);

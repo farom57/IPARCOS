@@ -139,7 +139,7 @@ public class DSOEntry extends CatalogEntry {
                 return R.string.entry_Pl;
 
             case "C+N":
-                return R.string.entry_CplusN;
+                return R.string.entry_cluster_nebulosity;
 
             case "Ast":
                 return R.string.entry_Ast;
@@ -196,7 +196,7 @@ public class DSOEntry extends CatalogEntry {
                 return R.string.entry_short_Pl;
 
             case "C+N":
-                return R.string.entry_short_CplusN;
+                return R.string.entry_short_cluster_nebula;
 
             case "Ast":
                 return R.string.entry_short_Ast;

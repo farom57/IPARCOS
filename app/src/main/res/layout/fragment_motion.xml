@@ -57,7 +57,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:enabled="false"
-            android:text="Stop" />
+            android:text="@string/stop_motion" />
 
         <Button
             android:id="@+id/buttonE"

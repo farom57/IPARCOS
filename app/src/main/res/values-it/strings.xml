@@ -5,7 +5,7 @@
     <string name="connect">Connessione</string>
     <string name="disconnect">Disconnetti</string>
     <string name="log">Log</string>
-    <string name="hostprompt">Indirizzo server</string>
+    <string name="host_prompt">Indirizzo server</string>
     <string name="host_add">Aggiungi server</string>
     <string name="host_prompt_text">Indirizzo IP del server:</string>
     <string name="connecting">Connessione…</string>
@@ -44,7 +44,7 @@
     <string name="entry_Gb">Ammasso globulare</string>
     <string name="entry_Nb">Nebulosa a emissione o riflessione</string>
     <string name="entry_Pl">Nebulosa planetaria</string>
-    <string name="entry_CplusN">Ammasso associato a nebulosità</string>
+    <string name="entry_cluster_nebulosity">Ammasso associato a nebulosità</string>
     <string name="entry_Ast">Asterismo o gruppo di stelle</string>
     <string name="entry_triStar">Stella tripla</string>
     <string name="entry_doubleStar">Stella doppia</string>
@@ -56,7 +56,7 @@
     <string name="entry_short_Gb">Ammasso globulare</string>
     <string name="entry_short_Nb">Nebulosa</string>
     <string name="entry_short_Pl">Nebulosa planetaria</string>
-    <string name="entry_short_CplusN">Ammasso con nebulosa</string>
+    <string name="entry_short_cluster_nebula">Ammasso con nebulosa</string>
     <string name="entry_short_Ast">Asterismo</string>
     <string name="entry_short_Kt">Nodi cometari</string>
     <string name="entry_Kt">Nodi cometari o regione nebulosa in una galassia esterna</string>
@@ -90,4 +90,5 @@
     <string name="sure">Sei sicuro?</string>
     <string name="servers_list_toast">Tieni premuto per cancellare, trascina per riorganizzare</string>
     <string name="menu_focuser">Focheggiatore</string>
+    <string name="stop_motion">Ferma</string>
 </resources>

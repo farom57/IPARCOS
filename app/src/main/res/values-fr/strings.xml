@@ -5,7 +5,7 @@
     <string name="connect">Connecter</string>
     <string name="disconnect">Déconnecter</string>
     <string name="log">Log</string>
-    <string name="hostprompt">Adresse de l\'hôte</string>
+    <string name="host_prompt">Adresse de l\'hôte</string>
     <string name="host_add">Ajouter un serveur</string>
     <string name="host_prompt_text">Adresse IP de l\'hôte :</string>
     <string name="connecting">Connexion…</string>
@@ -38,7 +38,7 @@
     <string name="entry_mag">mag</string>
     <string name="entry_size">Taille</string>
     <string name="entry_Ast">Astérisme</string>
-    <string name="entry_CplusN">Amas associé à une nébuleuse</string>
+    <string name="entry_cluster_nebulosity">Amas associé à une nébuleuse</string>
     <string name="entry_Gb">Amas d\'étoiles globulaire</string>
     <string name="entry_Gx">Galaxie</string>
     <string name="entry_Kt">Nœud</string>
@@ -50,7 +50,7 @@
     <string name="entry_doubleStar">Étoile double</string>
     <string name="entry_minus">Objet donné inexistant dans le RNGC</string>
     <string name="entry_short_Ast">Astérisme</string>
-    <string name="entry_short_CplusN">Amas et nébuleuse</string>
+    <string name="entry_short_cluster_nebula">Amas et nébuleuse</string>
     <string name="entry_short_Gb">Amas globulaire</string>
     <string name="entry_short_Gx">Galaxie</string>
     <string name="entry_short_Kt">Nœud</string>

@@ -6,7 +6,7 @@
     tools:context="farom.iparcos.FocuserFragment">
 
     <Button
-        android:id="@+id/focus_interval_less"
+        android:id="@+id/focuser_slower"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -15,40 +15,48 @@
         android:text="-" />
 
     <Button
-        android:id="@+id/focus_interval_more"
+        android:id="@+id/focuser_faster"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/focus_interval_less"
+        android:layout_alignTop="@+id/focuser_slower"
         android:text="+" />
 
     <Button
         android:id="@+id/focus_in"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/focus_interval_more"
+        android:layout_above="@+id/focuser_faster"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="42dp"
+        android:layout_marginBottom="64dp"
         android:text="@string/focus_in" />
 
     <Button
         android:id="@+id/focus_out"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/focus_interval_less"
+        android:layout_below="@+id/stop_focuser"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="42dp"
+        android:layout_marginTop="64dp"
         android:text="@string/focus_out" />
 
     <EditText
         android:id="@+id/focus_movement_increment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/focus_out"
+        android:layout_alignBottom="@+id/focuser_faster"
         android:layout_centerHorizontal="true"
-        android:ems="5"
-        android:editable="false"
-        android:inputType="none"
-        tools:ignore="Deprecated" />
+        android:ems="4"
+        android:inputType="number"
+        android:maxEms="8"
+        tools:ignore="RelativeOverlap" />
+
+    <Button
+        android:id="@+id/stop_focuser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/focus_movement_increment"
+        android:layout_centerHorizontal="true"
+        android:text="@string/stop_motion" />
 </RelativeLayout>

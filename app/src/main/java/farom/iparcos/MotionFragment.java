@@ -24,6 +24,7 @@ import laazotea.indi.Constants.SwitchStatus;
 import laazotea.indi.client.INDIDevice;
 import laazotea.indi.client.INDIDeviceListener;
 import laazotea.indi.client.INDIElement;
+import laazotea.indi.client.INDINumberElement;
 import laazotea.indi.client.INDINumberProperty;
 import laazotea.indi.client.INDIProperty;
 import laazotea.indi.client.INDIPropertyListener;
@@ -104,7 +105,7 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
 
         // Set up INDI connection
         connectionManager = Application.getConnectionManager();
-        connectionManager.registerPermanentConnectionListener(this);
+        connectionManager.addListener(this);
 
         // Enumerate existing properties
         INDIServerConnection connection = connectionManager.getConnection();
@@ -175,11 +176,10 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
             case "TELESCOPE_MOTION_NS": {
                 if (((telescopeMotionNE = (INDISwitchElement) property.getElement("MOTION_NORTH")) != null)
                         && ((telescopeMotionSE = (INDISwitchElement) property.getElement("MOTION_SOUTH")) != null)) {
-                    property.addINDIPropertyListener(this);
                     telescopeMotionNSP = (INDISwitchProperty) property;
-                    Log.i("MotionFragment",
-                            "--New Property (" + property.getName() + ") added to device " + device.getName());
-                    updateBtnState();
+
+                } else {
+                    return;
                 }
                 break;
             }
@@ -187,53 +187,48 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
             case "TELESCOPE_MOTION_WE": {
                 if (((telescopeMotionEE = (INDISwitchElement) property.getElement("MOTION_EAST")) != null)
                         && ((telescopeMotionWE = (INDISwitchElement) property.getElement("MOTION_WEST")) != null)) {
-                    property.addINDIPropertyListener(this);
                     telescopeMotionWEP = (INDISwitchProperty) property;
-                    Log.i("MotionFragment",
-                            "--New Property (" + property.getName() + ") added to device " + device.getName());
-                    updateBtnState();
+
+                } else {
+                    return;
                 }
                 break;
             }
 
             case "TELESCOPE_ABORT_MOTION": {
                 if ((telescopeMotionAbortE = (INDISwitchElement) property.getElement("ABORT_MOTION")) != null) {
-                    property.addINDIPropertyListener(this);
                     telescopeMotionAbort = (INDISwitchProperty) property;
-                    Log.i("MotionFragment",
-                            "--New Property (" + property.getName() + ") added to device " + device.getName());
-                    updateBtnState();
+
+                } else {
+                    return;
                 }
                 break;
             }
 
             case "TELESCOPE_MOTION_RATE": {
-                property.addINDIPropertyListener(this);
                 telescopeMotionRate = (INDINumberProperty) property;
-                Log.i("MotionFragment", "--New Property (" + property.getName() + ") added to device " + device.getName());
-                updateBtnState();
                 updateSpeedText();
                 break;
             }
 
             case "Slew Rate": {
-                property.addINDIPropertyListener(this);
                 telescopeMotionRateLX200 = (INDISwitchProperty) property;
-                Log.i("MotionFragment", "--New Property (" + property.getName() + ") added to device " + device.getName());
-                updateBtnState();
                 updateSpeedText();
                 break;
             }
 
             case "SLEWMODE": {
-                property.addINDIPropertyListener(this);
                 telescopeMotionRateEQMod = (INDISwitchProperty) property;
-                Log.i("MotionFragment", "--New Property (" + property.getName() + ") added to device " + device.getName());
-                updateBtnState();
                 updateSpeedText();
                 break;
             }
+
+            default: {
+                return;
+            }
         }
+        property.addINDIPropertyListener(this);
+        updateBtnState();
         Log.d("MotionFragment", "New Property (" + property.getName() + ") added to device " + device.getName());
     }
 
@@ -273,6 +268,10 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
             case "SLEWMODE": {
                 telescopeMotionRateEQMod = null;
                 break;
+            }
+
+            default: {
+                return;
             }
         }
         updateBtnState();
@@ -466,14 +465,12 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        SwitchStatus status, negStatus;
+        final SwitchStatus status, offStatus = SwitchStatus.OFF;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             status = SwitchStatus.ON;
-            negStatus = SwitchStatus.OFF;
 
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
             status = SwitchStatus.OFF;
-            negStatus = SwitchStatus.OFF;
 
         } else {
             return true;
@@ -483,7 +480,7 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
             case R.id.buttonE: {
                 try {
                     telescopeMotionEE.setDesiredValue(status);
-                    telescopeMotionWE.setDesiredValue(negStatus);
+                    telescopeMotionWE.setDesiredValue(offStatus);
                     new PropUpdater().execute(telescopeMotionWEP);
 
                 } catch (INDIValueException e) {
@@ -496,7 +493,7 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
             case R.id.buttonW: {
                 try {
                     telescopeMotionWE.setDesiredValue(status);
-                    telescopeMotionEE.setDesiredValue(negStatus);
+                    telescopeMotionEE.setDesiredValue(offStatus);
                     new PropUpdater().execute(telescopeMotionWEP);
 
                 } catch (INDIValueException e) {
@@ -508,7 +505,7 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
             case R.id.buttonN: {
                 try {
                     telescopeMotionNE.setDesiredValue(status);
-                    telescopeMotionSE.setDesiredValue(negStatus);
+                    telescopeMotionSE.setDesiredValue(offStatus);
                     new PropUpdater().execute(telescopeMotionNSP);
 
                 } catch (INDIValueException e) {
@@ -520,7 +517,7 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
             case R.id.buttonS: {
                 try {
                     telescopeMotionSE.setDesiredValue(status);
-                    telescopeMotionNE.setDesiredValue(negStatus);
+                    telescopeMotionNE.setDesiredValue(offStatus);
                     new PropUpdater().execute(telescopeMotionNSP);
 
                 } catch (INDIValueException e) {
@@ -532,10 +529,10 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
             case R.id.buttonNE: {
                 try {
                     telescopeMotionEE.setDesiredValue(status);
-                    telescopeMotionWE.setDesiredValue(negStatus);
+                    telescopeMotionWE.setDesiredValue(offStatus);
                     new PropUpdater().execute(telescopeMotionWEP);
                     telescopeMotionNE.setDesiredValue(status);
-                    telescopeMotionSE.setDesiredValue(negStatus);
+                    telescopeMotionSE.setDesiredValue(offStatus);
                     new PropUpdater().execute(telescopeMotionNSP);
 
                 } catch (INDIValueException e) {
@@ -547,10 +544,10 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
             case R.id.buttonNW: {
                 try {
                     telescopeMotionWE.setDesiredValue(status);
-                    telescopeMotionEE.setDesiredValue(negStatus);
+                    telescopeMotionEE.setDesiredValue(offStatus);
                     new PropUpdater().execute(telescopeMotionWEP);
                     telescopeMotionNE.setDesiredValue(status);
-                    telescopeMotionSE.setDesiredValue(negStatus);
+                    telescopeMotionSE.setDesiredValue(offStatus);
                     new PropUpdater().execute(telescopeMotionNSP);
 
                 } catch (INDIValueException e) {
@@ -562,10 +559,10 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
             case R.id.buttonSE: {
                 try {
                     telescopeMotionEE.setDesiredValue(status);
-                    telescopeMotionWE.setDesiredValue(negStatus);
+                    telescopeMotionWE.setDesiredValue(offStatus);
                     new PropUpdater().execute(telescopeMotionWEP);
                     telescopeMotionSE.setDesiredValue(status);
-                    telescopeMotionNE.setDesiredValue(negStatus);
+                    telescopeMotionNE.setDesiredValue(offStatus);
                     new PropUpdater().execute(telescopeMotionNSP);
 
                 } catch (INDIValueException e) {
@@ -577,20 +574,16 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
             case R.id.buttonSW: {
                 try {
                     telescopeMotionWE.setDesiredValue(status);
-                    telescopeMotionEE.setDesiredValue(negStatus);
+                    telescopeMotionEE.setDesiredValue(offStatus);
                     new PropUpdater().execute(telescopeMotionWEP);
                     telescopeMotionSE.setDesiredValue(status);
-                    telescopeMotionNE.setDesiredValue(negStatus);
+                    telescopeMotionNE.setDesiredValue(offStatus);
                     new PropUpdater().execute(telescopeMotionNSP);
 
                 } catch (INDIValueException e) {
                     Log.e("MotionFragment", e.getLocalizedMessage());
                 }
                 return true;
-            }
-
-            default: {
-                Log.e("MotionFragment", "Unknown view");
             }
         }
         return false;
@@ -629,10 +622,10 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
             case R.id.buttonSpeedUp: {
                 if (telescopeMotionRate != null) {
                     try {
-                        double speed = telescopeMotionRate.getElement("MOTION_RATE").getValue();
-                        double maxSpeed = telescopeMotionRate.getElement("MOTION_RATE").getMax();
-                        speed = Math.min(maxSpeed, speed * 2);
-                        telescopeMotionRate.getElement("MOTION_RATE").setDesiredValue(speed);
+                        INDINumberElement motionRate = telescopeMotionRate.getElement("MOTION_RATE");
+                        motionRate.setDesiredValue(
+                                Math.min(telescopeMotionRate.getElement("MOTION_RATE").getMax(),
+                                        motionRate.getValue() * 2));
                         new PropUpdater().execute(telescopeMotionRate);
 
                     } catch (INDIValueException e) {
@@ -677,10 +670,9 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
             case R.id.buttonSpeedDown: {
                 if (telescopeMotionRate != null) {
                     try {
-                        double speed = telescopeMotionRate.getElement("MOTION_RATE").getValue();
-                        double minSpeed = telescopeMotionRate.getElement("MOTION_RATE").getMin();
-                        speed = Math.max(minSpeed, speed * 0.5);
-                        telescopeMotionRate.getElement("MOTION_RATE").setDesiredValue(speed);
+                        INDINumberElement motionRate = telescopeMotionRate.getElement("MOTION_RATE");
+                        motionRate.setDesiredValue(Math.max(telescopeMotionRate.getElement("MOTION_RATE").getMin(),
+                                motionRate.getValue() * 0.5));
                         new PropUpdater().execute(telescopeMotionRate);
 
                     } catch (INDIValueException e) {
@@ -721,17 +713,12 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
                 }
                 break;
             }
-
-            default: {
-                Log.e("MotionFragment", "unknown view");
-            }
         }
-
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        connectionManager.unRegisterPermanentConnectionListener(this);
+        connectionManager.removeListener(this);
     }
 }

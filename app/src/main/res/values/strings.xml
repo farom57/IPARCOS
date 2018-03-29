@@ -5,7 +5,7 @@
     <string name="connect">Connect</string>
     <string name="disconnect">Disconnect</string>
     <string name="log">Log</string>
-    <string name="hostprompt">Host address</string>
+    <string name="host_prompt">Host address</string>
     <string name="host_add">Add server</string>
     <string name="host_manage">Manage servers</string>
     <string name="host_prompt_text">Host IP address:</string>
@@ -45,13 +45,14 @@
     <string name="entry_Gb">Globular star cluster</string>
     <string name="entry_Nb">Bright emission or reflection nebula</string>
     <string name="entry_Pl">Planetary nebula</string>
-    <string name="entry_CplusN">Cluster associated with nebulosity</string>
+    <string name="entry_cluster_nebulosity">Cluster associated with nebulosity</string>
     <string name="entry_Ast">Asterism or group of a few stars</string>
     <string name="entry_Kt">Knot or nebulous region in an external galaxy</string>
     <string name="entry_triStar">Triple star</string>
     <string name="entry_doubleStar">Double star</string>
     <string name="entry_uncertain">Uncertain type or may not exist</string>
     <string name="entry_blank">Unidentified at the place given, or type unknown</string>
+    <!-- TODO: what does it mean exactly? -->
     <string name="entry_minus">Object called nonexistent in the RNGC</string>
     <string name="entry_PD">Photographic plate defect</string>
     <string name="entry_short_Gx">Galaxy</string>
@@ -59,7 +60,7 @@
     <string name="entry_short_Gb">Globular cluster</string>
     <string name="entry_short_Nb">Nebula</string>
     <string name="entry_short_Pl">Planetary nebula</string>
-    <string name="entry_short_CplusN">Cluster and nebula</string>
+    <string name="entry_short_cluster_nebula">Cluster and nebula</string>
     <string name="entry_short_Ast">Asterism</string>
     <string name="entry_short_Kt">Knot</string>
     <string name="entry_short_triStar">Triple star</string>
@@ -92,4 +93,5 @@
     <string name="focus_in">Focus in</string>
     <string name="focus_out">Focus out</string>
     <string name="menu_focuser">Focuser</string>
+    <string name="stop_motion">Abort</string>
 </resources>

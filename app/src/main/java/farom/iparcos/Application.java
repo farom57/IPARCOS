@@ -60,7 +60,7 @@ public class Application extends android.app.Application {
     /**
      * Add the given message to the logs.
      *
-     * @param message
+     * @param message a new log.
      */
     public static void log(String message) {
         Log.i("GLOBALLOG", message);

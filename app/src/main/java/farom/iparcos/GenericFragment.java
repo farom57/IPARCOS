@@ -44,7 +44,7 @@ public class GenericFragment extends Fragment implements TabLayout.OnTabSelected
         View rootView = inflater.inflate(R.layout.fragment_control_panel, container, false);
 
         connectionManager = Application.getConnectionManager();
-        connectionManager.registerPermanentConnectionListener(this);
+        connectionManager.addListener(this);
 
         tabLayout = rootView.findViewById(R.id.tab_layout);
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
@@ -101,7 +101,7 @@ public class GenericFragment extends Fragment implements TabLayout.OnTabSelected
     @Override
     public void onDestroy() {
         super.onDestroy();
-        connectionManager.unRegisterPermanentConnectionListener(this);
+        connectionManager.removeListener(this);
     }
 
     @Override
