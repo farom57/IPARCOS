@@ -41,22 +41,22 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
     private static final double INCREMENT_VALUE = 500.0;
 
     // Properties and elements associated to the buttons
-    private INDISwitchProperty focuserDirection = null;
-    private INDISwitchElement inwardDirectionElement = null;
-    private INDISwitchElement outwardDirectionElement = null;
-    private INDINumberProperty focuserRelativePosition = null;
-    private INDINumberElement focuserRelPosElement = null;
+    private INDISwitchProperty directionProp = null;
+    private INDISwitchElement inwardDirElem = null;
+    private INDISwitchElement outwardDirElem = null;
+    private INDINumberProperty relPosProp = null;
+    private INDINumberElement relPosElem = null;
     private int speed = 0;
     private INDISwitchProperty abortProp = null;
-    private INDISwitchElement abortElement = null;
+    private INDISwitchElement abortElem = null;
     private ConnectionManager connectionManager;
 
     // Views
-    private Button focusIn = null;
-    private Button focusOut = null;
-    private Button btnSpeedUp = null;
-    private Button btnSpeedDown = null;
-    private Button stopFocuserButton = null;
+    private Button inButton = null;
+    private Button outButton = null;
+    private Button speedUpButton = null;
+    private Button speedDownButton = null;
+    private Button abortButton = null;
     private TextView speedText = null;
 
     @Override
@@ -64,24 +64,26 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
         View rootView = inflater.inflate(R.layout.fragment_focuser, container, false);
 
         // Set up the UI
-        focusIn = rootView.findViewById(R.id.focus_in);
-        focusOut = rootView.findViewById(R.id.focus_out);
-        btnSpeedUp = rootView.findViewById(R.id.focuser_faster);
-        btnSpeedDown = rootView.findViewById(R.id.focuser_slower);
-        speedText = rootView.findViewById(R.id.focus_movement_increment);
-        stopFocuserButton = rootView.findViewById(R.id.stop_focuser);
-        focusIn.setOnClickListener(this);
-        focusOut.setOnClickListener(this);
-        btnSpeedUp.setOnClickListener(this);
-        btnSpeedDown.setOnClickListener(this);
-        stopFocuserButton.setOnClickListener(this);
+        inButton = rootView.findViewById(R.id.focus_in);
+        outButton = rootView.findViewById(R.id.focus_out);
+        speedUpButton = rootView.findViewById(R.id.focuser_faster);
+        speedDownButton = rootView.findViewById(R.id.focuser_slower);
+        speedText = rootView.findViewById(R.id.focuser_steps_box);
+        abortButton = rootView.findViewById(R.id.focuser_abort);
+        inButton.setOnClickListener(this);
+        outButton.setOnClickListener(this);
+        speedUpButton.setOnClickListener(this);
+        speedDownButton.setOnClickListener(this);
+        abortButton.setOnClickListener(this);
         speedText.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
+
             }
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
             }
 
             @Override
@@ -125,11 +127,11 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
 
     @Override
     public void connectionLost(INDIServerConnection arg0) {
-        focuserDirection = null;
-        focuserRelativePosition = null;
-        focuserRelPosElement = null;
-        outwardDirectionElement = null;
-        inwardDirectionElement = null;
+        directionProp = null;
+        relPosProp = null;
+        relPosElem = null;
+        outwardDirElem = null;
+        inwardDirElem = null;
         updateBtnState();
         updateSpeedText();
         // Move to the connection tab
@@ -138,14 +140,12 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
 
     @Override
     public void newDevice(INDIServerConnection connection, INDIDevice device) {
-        // We just simply listen to this Device
         Log.i("FocusFragment", "New device: " + device.getName());
         device.addINDIDeviceListener(this);
     }
 
     @Override
     public void removeDevice(INDIServerConnection connection, INDIDevice device) {
-        // We just remove ourselves as a listener of the removed device
         Log.i("FocusFragment", "Device removed: " + device.getName());
         device.removeINDIDeviceListener(this);
     }
@@ -160,9 +160,9 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
         // Look for certain properties
         switch (property.getName()) {
             case "REL_FOCUS_POSITION": {
-                if ((focuserRelPosElement =
+                if ((relPosElem =
                         (INDINumberElement) property.getElement("FOCUS_RELATIVE_POSITION")) != null) {
-                    focuserRelativePosition = (INDINumberProperty) property;
+                    relPosProp = (INDINumberProperty) property;
 
                 } else {
                     return;
@@ -171,9 +171,9 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
             }
 
             case "FOCUS_MOTION": {
-                if (((inwardDirectionElement = (INDISwitchElement) property.getElement("FOCUS_INWARD")) != null)
-                        && ((outwardDirectionElement = (INDISwitchElement) property.getElement("FOCUS_OUTWARD")) != null)) {
-                    focuserDirection = (INDISwitchProperty) property;
+                if (((inwardDirElem = (INDISwitchElement) property.getElement("FOCUS_INWARD")) != null)
+                        && ((outwardDirElem = (INDISwitchElement) property.getElement("FOCUS_OUTWARD")) != null)) {
+                    directionProp = (INDISwitchProperty) property;
 
                 } else {
                     return;
@@ -182,7 +182,7 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
             }
 
             case "FOCUS_ABORT_MOTION": {
-                if ((abortElement = (INDISwitchElement) property.getElement("ABORT")) != null) {
+                if ((abortElem = (INDISwitchElement) property.getElement("ABORT")) != null) {
                     abortProp = (INDISwitchProperty) property;
                 }
                 break;
@@ -201,16 +201,21 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
     public void removeProperty(INDIDevice device, INDIProperty property) {
         switch (property.getName()) {
             case "REL_FOCUS_POSITION": {
-                focuserRelPosElement = null;
-                focuserRelativePosition = null;
+                relPosElem = null;
+                relPosProp = null;
                 break;
             }
 
             case "FOCUS_MOTION": {
-                inwardDirectionElement = null;
-                outwardDirectionElement = null;
-                focuserDirection = null;
+                inwardDirElem = null;
+                outwardDirElem = null;
+                directionProp = null;
                 break;
+            }
+
+            case "FOCUS_ABORT_MOTION": {
+                abortElem = null;
+                abortProp = null;
             }
 
             default: {
@@ -228,17 +233,17 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
                 "Changed property (" + property.getName() + "), new value" + property.getValuesAsString());
         switch (property.getName()) {
             case "FOCUS_MOTION": {
-                if (focusIn != null) {
-                    focusIn.post(new Runnable() {
+                if (inButton != null) {
+                    inButton.post(new Runnable() {
                         public void run() {
-                            focusIn.setPressed(inwardDirectionElement.getValue() == Constants.SwitchStatus.ON);
+                            inButton.setPressed(inwardDirElem.getValue() == Constants.SwitchStatus.ON);
                         }
                     });
                 }
-                if (focusOut != null) {
-                    focusOut.post(new Runnable() {
+                if (outButton != null) {
+                    outButton.post(new Runnable() {
                         public void run() {
-                            focusOut.setPressed(outwardDirectionElement.getValue() == Constants.SwitchStatus.ON);
+                            outButton.setPressed(outwardDirElem.getValue() == Constants.SwitchStatus.ON);
                         }
                     });
                 }
@@ -246,11 +251,11 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
             }
 
             case "FOCUS_ABORT_MOTION": {
-                if (stopFocuserButton != null) {
-                    stopFocuserButton.post(new Runnable() {
+                if (abortButton != null) {
+                    abortButton.post(new Runnable() {
                         public void run() {
-                            stopFocuserButton.setPressed(
-                                    outwardDirectionElement.getValue() == Constants.SwitchStatus.ON);
+                            abortButton.setPressed(
+                                    outwardDirElem.getValue() == Constants.SwitchStatus.ON);
                         }
                     });
                 }
@@ -274,31 +279,38 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
      * Enables the buttons if the corresponding property was found
      */
     public void updateBtnState() {
-        if (focusIn != null) {
-            focusIn.post(new Runnable() {
+        if (inButton != null) {
+            inButton.post(new Runnable() {
                 public void run() {
-                    focusIn.setEnabled(inwardDirectionElement != null);
+                    inButton.setEnabled(inwardDirElem != null);
                 }
             });
         }
-        if (focusOut != null) {
-            focusOut.post(new Runnable() {
+        if (outButton != null) {
+            outButton.post(new Runnable() {
                 public void run() {
-                    focusOut.setEnabled(outwardDirectionElement != null);
+                    outButton.setEnabled(outwardDirElem != null);
                 }
             });
         }
-        if (btnSpeedUp != null) {
-            btnSpeedUp.post(new Runnable() {
+        if (speedUpButton != null) {
+            speedUpButton.post(new Runnable() {
                 public void run() {
-                    btnSpeedUp.setEnabled(focuserRelPosElement != null);
+                    speedUpButton.setEnabled(relPosElem != null);
                 }
             });
         }
-        if (btnSpeedDown != null) {
-            btnSpeedDown.post(new Runnable() {
+        if (speedDownButton != null) {
+            speedDownButton.post(new Runnable() {
                 public void run() {
-                    btnSpeedDown.setEnabled(focuserRelPosElement != null);
+                    speedDownButton.setEnabled(relPosElem != null);
+                }
+            });
+        }
+        if (abortButton != null) {
+            abortButton.post(new Runnable() {
+                public void run() {
+                    abortButton.setEnabled(abortElem != null);
                 }
             });
         }
@@ -312,8 +324,8 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
             speedText.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (focuserRelPosElement != null) {
-                        speed = (int) (double) focuserRelPosElement.getValue();
+                    if (relPosElem != null) {
+                        speed = (int) (double) relPosElem.getValue();
                         speedText.setText(String.valueOf(speed));
 
                     } else {
@@ -334,12 +346,12 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
         switch (v.getId()) {
             case R.id.focus_in: {
                 try {
-                    inwardDirectionElement.setDesiredValue(Constants.SwitchStatus.ON);
-                    outwardDirectionElement.setDesiredValue(Constants.SwitchStatus.OFF);
-                    new PropUpdater().execute(focuserDirection);
-                    focuserRelPosElement.setDesiredValue((double) speed);
+                    inwardDirElem.setDesiredValue(Constants.SwitchStatus.ON);
+                    outwardDirElem.setDesiredValue(Constants.SwitchStatus.OFF);
+                    new PropUpdater().execute(directionProp);
+                    relPosElem.setDesiredValue((double) speed);
                     Log.d("FocusFragment", String.valueOf(speed));
-                    new PropUpdater().execute(focuserRelativePosition);
+                    new PropUpdater().execute(relPosProp);
 
                 } catch (INDIValueException e) {
                     Log.e("FocusFragment", e.getLocalizedMessage());
@@ -349,12 +361,12 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
 
             case R.id.focus_out: {
                 try {
-                    outwardDirectionElement.setDesiredValue(Constants.SwitchStatus.ON);
-                    inwardDirectionElement.setDesiredValue(Constants.SwitchStatus.OFF);
-                    new PropUpdater().execute(focuserDirection);
-                    focuserRelPosElement.setDesiredValue((double) speed);
+                    outwardDirElem.setDesiredValue(Constants.SwitchStatus.ON);
+                    inwardDirElem.setDesiredValue(Constants.SwitchStatus.OFF);
+                    new PropUpdater().execute(directionProp);
+                    relPosElem.setDesiredValue((double) speed);
                     Log.d("FocusFragment", String.valueOf(speed));
-                    new PropUpdater().execute(focuserRelativePosition);
+                    new PropUpdater().execute(relPosProp);
 
                 } catch (INDIValueException e) {
                     Log.e("FocusFragment", e.getLocalizedMessage());
@@ -362,10 +374,10 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
                 break;
             }
 
-            case R.id.stop_focuser: {
+            case R.id.focuser_abort: {
                 try {
-                    if (abortElement != null) {
-                        abortElement.setDesiredValue(Constants.SwitchStatus.ON);
+                    if (abortElem != null) {
+                        abortElem.setDesiredValue(Constants.SwitchStatus.ON);
                         new PropUpdater().execute(abortProp);
                     }
 
@@ -376,17 +388,15 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
             }
 
             case R.id.focuser_faster: {
-                if (focuserRelPosElement != null) {
-                    speedText.setText(String.valueOf(
-                            speed = (int) Math.min(focuserRelPosElement.getMax(), speed + INCREMENT_VALUE)));
+                if (relPosElem != null) {
+                    speedText.setText(String.valueOf(speed = (int) Math.min(relPosElem.getMax(), speed + INCREMENT_VALUE)));
                 }
                 break;
             }
 
             case R.id.focuser_slower: {
-                if (focuserRelPosElement != null) {
-                    speedText.setText(String.valueOf(
-                            speed = (int) Math.max(focuserRelPosElement.getMin(), speed - INCREMENT_VALUE)));
+                if (relPosElem != null) {
+                    speedText.setText(String.valueOf(speed = (int) Math.max(relPosElem.getMin(), speed - INCREMENT_VALUE)));
                 }
                 break;
             }
