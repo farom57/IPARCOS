@@ -1,24 +1,21 @@
 <img align="left" width="100" height="100" src="docs/logo.png">
 
 # IPARCOS
-
 IPARCOS (Indi Protocol Android Remote COntrol Software) is an INDI client for Android. It features a generic control panel and others specialized tools to easily control your devices.
-
 The project main site is https://github.com/farom57/IPARCOS/
 
-# Features
+## Features
 
 + Generic control panel compatible with every devices (BLOB not yet supported)
 + Control of the telescope motion by means of a directional pad and speed buttons
 + Languages: English, French, Italian
 
-# Screenshots
-
+## Screenshots
 <img align="left" width="250" src="docs/connection.png">
 <img align="center" width="250" src="docs/motion.png">
 <img align="right" width="250" src="docs/control-panel.png">
 
-# Download and install
+## Download and install
 * ~~From Google Play:~~
   * Not yet available
 * From the .apk file:
@@ -26,8 +23,7 @@ The project main site is https://github.com/farom57/IPARCOS/
   * Allow app installs from unknown sources in Android settings (Settings → Security → Unknown sources)
   * Enjoy!
 
-# Usage
-
+## Usage
 1. Prerequisite
   * Minimum Android version: 4.0.3
   * An INDI server must be running on the remote computer.
@@ -49,8 +45,7 @@ The project main site is https://github.com/farom57/IPARCOS/
     * The + and - buttons are enabled if one device provide the standard property to control the speed (TELESCOPE_MOTION_RATE) or the LX200 style property (Slew Rate) or the EQMod style property (SLEWMODE)
     * If the device is not connected, the properties may not appears and the buttons will be disabled
 
-
-# Developed by
+### Developed by
 * **Romain Fafet** (farom57)
 * **Zerjillo**
   * INDI for Java http://www.indilib.org/develop/indiforjava.html
