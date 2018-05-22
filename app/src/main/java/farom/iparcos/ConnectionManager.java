@@ -105,13 +105,13 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
     @Override
     public void newDevice(INDIServerConnection connection, INDIDevice device) {
         device.addINDIDeviceListener(this);
-        Application.log(Application.getContext().getResources().getString(R.string.new_device) + device.getName());
+        Application.log("New device: " + device.getName());
     }
 
     @Override
     public void removeDevice(INDIServerConnection connection, INDIDevice device) {
         device.removeINDIDeviceListener(this);
-        Application.log(Application.getContext().getResources().getString(R.string.device_removed) + device.getName());
+        Application.log("Device removed: " + device.getName());
     }
 
     @Override

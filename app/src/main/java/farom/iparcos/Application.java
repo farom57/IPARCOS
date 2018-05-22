@@ -63,7 +63,7 @@ public class Application extends android.app.Application {
      * @param message a new log.
      */
     public static void log(String message) {
-        Log.i("GLOBALLOG", message);
+        Log.i("GlobalLog", message);
         if (uiUpdater != null) {
             Date now = new Date();
             uiUpdater.appendLog(message, DateFormat.getDateFormat(context).format(now) + " " +

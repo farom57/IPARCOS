@@ -263,8 +263,10 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
                 holder = (ViewHolder) convertView.getTag();
             }
             LogItem item = getItem(position);
-            holder.log.setText(item.getLog());
-            holder.timestamp.setText(item.getTimestamp());
+            if (item != null) {
+                holder.log.setText(item.getLog());
+                holder.timestamp.setText(item.getTimestamp());
+            }
             return convertView;
         }
     }
@@ -291,7 +293,7 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
         /**
          * Class constructor.
          */
-        LogItem(String log, String timestamp) {
+        LogItem(@NonNull String log, @NonNull String timestamp) {
             this.log = log;
             this.timestamp = timestamp;
         }

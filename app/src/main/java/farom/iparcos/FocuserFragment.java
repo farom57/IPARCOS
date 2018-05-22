@@ -139,14 +139,14 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
     @Override
     public void newDevice(INDIServerConnection connection, INDIDevice device) {
         // We just simply listen to this Device
-        Log.i("FocusFragment", getString(R.string.new_device) + device.getName());
+        Log.i("FocusFragment", "New device: " + device.getName());
         device.addINDIDeviceListener(this);
     }
 
     @Override
     public void removeDevice(INDIServerConnection connection, INDIDevice device) {
         // We just remove ourselves as a listener of the removed device
-        Log.i("FocusFragment", getString(R.string.device_removed) + device.getName());
+        Log.i("FocusFragment", "Device removed: " + device.getName());
         device.removeINDIDeviceListener(this);
     }
 

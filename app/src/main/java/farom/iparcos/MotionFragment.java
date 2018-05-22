@@ -153,14 +153,14 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
     @Override
     public void newDevice(INDIServerConnection connection, INDIDevice device) {
         // We just simply listen to this Device
-        Log.i("MotionFragment", getString(R.string.new_device) + device.getName());
+        Log.i("MotionFragment", "New device: " + device.getName());
         device.addINDIDeviceListener(this);
     }
 
     @Override
     public void removeDevice(INDIServerConnection connection, INDIDevice device) {
         // We just remove ourselves as a listener of the removed device
-        Log.i("MotionFragment", getString(R.string.device_removed) + device.getName());
+        Log.i("MotionFragment", "Device removed: " + device.getName());
         device.removeINDIDeviceListener(this);
     }
 

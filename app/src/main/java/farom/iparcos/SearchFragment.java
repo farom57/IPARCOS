@@ -65,14 +65,16 @@ public class SearchFragment extends ListFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         setEmptyText(getString(R.string.empty_catalog));
-
         setHasOptionsMenu(true);
+        Context context = getContext();
+        if (context == null) {
+            return;
+        }
 
         if ((catalog == null) || (!catalog.isReady())) {
             catalogEntries = new ArrayList<>();
-            entriesAdapter = new ArrayAdapter<CatalogEntry>(getContext(),
+            entriesAdapter = new ArrayAdapter<CatalogEntry>(context,
                     android.R.layout.simple_list_item_2, android.R.id.text1, catalogEntries) {
                 @NonNull
                 @Override
@@ -97,7 +99,6 @@ public class SearchFragment extends ListFragment
         // Set up INDI connection
         ConnectionManager connectionManager = Application.getConnectionManager();
         connectionManager.addListener(this);
-
         // Enumerate existing properties
         INDIServerConnection connection = connectionManager.getConnection();
         if (connection != null) {
@@ -116,12 +117,15 @@ public class SearchFragment extends ListFragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        MenuItem item = menu.add(R.string.menu_search);
-        item.setIcon(R.drawable.search);
-        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        SearchView searchView = new SearchView(getActivity());
-        searchView.setOnQueryTextListener(this);
-        item.setActionView(searchView);
+        Context context = getContext();
+        if (context != null) {
+            MenuItem item = menu.add(R.string.menu_search);
+            item.setIcon(R.drawable.search);
+            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            SearchView searchView = new SearchView(context);
+            searchView.setOnQueryTextListener(this);
+            item.setActionView(searchView);
+        }
     }
 
     /**
@@ -214,7 +218,14 @@ public class SearchFragment extends ListFragment
      */
     @NonNull
     public Loader<Catalog> onCreateLoader(int id, Bundle args) {
-        return new CatalogLoader(getContext());
+        Context context = getContext();
+        if (context == null) {
+            // TODO: null context
+            // Although onCreateLoader isn't called if context is null
+            // (see onCreate: if context == null → return) this is not a good way to stop the loader.
+            throw new NullPointerException();
+        }
+        return new CatalogLoader(context);
     }
 
     /**
@@ -223,7 +234,7 @@ public class SearchFragment extends ListFragment
      * @param loader the loader. Ignored.
      * @param data   the new catalog.
      */
-    public void onLoadFinished(Loader<Catalog> loader, Catalog data) {
+    public void onLoadFinished(@NonNull Loader<Catalog> loader, Catalog data) {
         Log.i("CatalogManager", "Catalog loaded. Binding data...");
         catalog = data;
         if (catalogEntries.size() != 0) {
@@ -237,7 +248,7 @@ public class SearchFragment extends ListFragment
         } else {
             setListShownNoAnimation(true);
         }
-        Log.i("CatalogManager", "Catalog binded.");
+        Log.i("CatalogManager", "Catalog bound.");
     }
 
     /**
@@ -311,15 +322,13 @@ public class SearchFragment extends ListFragment
 
     @Override
     public void newDevice(INDIServerConnection connection, INDIDevice device) {
-        // We just simply listen to this Device
-        Log.i("SearchFragment", getString(R.string.new_device) + device.getName());
+        Log.i("SearchFragment", "New device: " + device.getName());
         device.addINDIDeviceListener(this);
     }
 
     @Override
     public void removeDevice(INDIServerConnection connection, INDIDevice device) {
-        // We just remove ourselves as a listener of the removed device
-        Log.i("SearchFragment", getString(R.string.device_removed) + device.getName());
+        Log.i("SearchFragment", "Device removed: " + device.getName());
         device.removeINDIDeviceListener(this);
     }
 
