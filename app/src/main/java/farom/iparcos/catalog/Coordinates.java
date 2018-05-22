@@ -46,7 +46,7 @@ public class Coordinates {
      * @return the right ascension converted in decimal degrees.
      */
     private static double convertRa(String string) throws NumberFormatException {
-        Pattern p = Pattern.compile("([0-9]{1,2})[h:\\s]([0-9]{1,2})([m:'\\s]([0-9]{1,2})([,\\.]([0-9]*))?[s\"]?)?[m:'\\s]?");
+        Pattern p = Pattern.compile("([0-9]{1,2})[h:\\s]([0-9]{1,2})([m:'\\s]([0-9]{1,2})([,.]([0-9]*))?[s\"]?)?[m:'\\s]?");
         Matcher m = p.matcher(string);
 
         double value = 0;
@@ -88,7 +88,7 @@ public class Coordinates {
      * @return the declination converted in decimal degrees.
      */
     private static double convertDec(String string) throws NumberFormatException {
-        Pattern p = Pattern.compile("([\\+\\-]?)([0-9]{1,2})[°:\\s]([0-9]{1,2})([m:'\\s]([0-9]{1,2})([,\\.]([0-9]*))?[s\"]?)?[m:'\\s]?");
+        Pattern p = Pattern.compile("([+\\-]?)([0-9]{1,2})[°:\\s]([0-9]{1,2})([m:'\\s]([0-9]{1,2})([,.]([0-9]*))?[s\"]?)?[m:'\\s]?");
         Matcher m = p.matcher(string);
 
         double value = 0;

@@ -61,16 +61,19 @@ public class SearchFragment extends ListFragment
     private INDISwitchProperty telescopeOnCoordSetP = null;
     private INDISwitchElement telescopeOnCoordSetSync = null;
     private INDISwitchElement telescopeOnCoordSetSlew = null;
+    private Context context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setEmptyText(getString(R.string.empty_catalog));
         setHasOptionsMenu(true);
-        Context context = getContext();
-        if (context == null) {
-            return;
-        }
 
         if ((catalog == null) || (!catalog.isReady())) {
             catalogEntries = new ArrayList<>();
@@ -83,7 +86,7 @@ public class SearchFragment extends ListFragment
                     ((TextView) view.findViewById(android.R.id.text1))
                             .setText(catalogEntries.get(position).getName());
                     ((TextView) view.findViewById(android.R.id.text2))
-                            .setText(catalogEntries.get(position).createSummary(getContext()));
+                            .setText(catalogEntries.get(position).createSummary(context));
                     return view;
                 }
             };
@@ -117,15 +120,12 @@ public class SearchFragment extends ListFragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Context context = getContext();
-        if (context != null) {
-            MenuItem item = menu.add(R.string.menu_search);
-            item.setIcon(R.drawable.search);
-            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-            SearchView searchView = new SearchView(context);
-            searchView.setOnQueryTextListener(this);
-            item.setActionView(searchView);
-        }
+        MenuItem item = menu.add(R.string.menu_search);
+        item.setIcon(R.drawable.search);
+        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        SearchView searchView = new SearchView(context);
+        searchView.setOnQueryTextListener(this);
+        item.setActionView(searchView);
     }
 
     /**
@@ -158,7 +158,7 @@ public class SearchFragment extends ListFragment
         final Context context = l.getContext();
         final Coordinates coord = catalogEntries.get(position).getCoordinates();
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage(catalogEntries.get(position).createDescription(getContext()))
+        builder.setMessage(catalogEntries.get(position).createDescription(context))
                 .setTitle(catalogEntries.get(position).getName());
 
         // Only display buttons if the telescope is ready
@@ -218,13 +218,6 @@ public class SearchFragment extends ListFragment
      */
     @NonNull
     public Loader<Catalog> onCreateLoader(int id, Bundle args) {
-        Context context = getContext();
-        if (context == null) {
-            // TODO: null context
-            // Although onCreateLoader isn't called if context is null
-            // (see onCreate: if context == null → return) this is not a good way to stop the loader.
-            throw new NullPointerException();
-        }
         return new CatalogLoader(context);
     }
 

@@ -48,7 +48,7 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
      * The last position of the spinner (to restore the Fragment's state)
      */
     private static int spinnerItem = -1;
-
+    private Context context;
     // Views
     private View rootView;
     private Button connectionButton;
@@ -57,6 +57,12 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
      * The original position of the floating action button.
      */
     private int fabPosY;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -71,7 +77,7 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
         rootView = inflater.inflate(R.layout.fragment_connection, container, false);
 
         final ListView logsList = rootView.findViewById(R.id.logsList);
-        final LogAdapter logAdapter = new LogAdapter(getContext(), logs);
+        final LogAdapter logAdapter = new LogAdapter(context, logs);
         logsList.setAdapter(logAdapter);
 
         final FloatingActionButton clearLogsButton = rootView.findViewById(R.id.clearLogsButton);
@@ -114,10 +120,10 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 String selected = parent.getItemAtPosition(pos).toString();
                 if (selected.equals(getResources().getString(R.string.host_add))) {
-                    ServersActivity.addServer(getContext(), ConnectionFragment.this);
+                    ServersActivity.addServer(context, ConnectionFragment.this);
 
                 } else if (selected.equals(getResources().getString(R.string.host_manage))) {
-                    startActivityForResult(new Intent(getContext(), ServersActivity.class), 1);
+                    startActivityForResult(new Intent(context, ServersActivity.class), 1);
                 }
             }
 
@@ -145,10 +151,10 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
                 // Connect or disconnect
                 if (connectionButton.getText().equals(getResources().getString(R.string.connect))) {
                     if (host.equals(getResources().getString(R.string.host_add))) {
-                        ServersActivity.addServer(getContext(), ConnectionFragment.this);
+                        ServersActivity.addServer(context, ConnectionFragment.this);
 
                     } else if (host.equals(getResources().getString(R.string.host_manage))) {
-                        startActivityForResult(new Intent(getContext(), ServersActivity.class), 1);
+                        startActivityForResult(new Intent(context, ServersActivity.class), 1);
 
                     } else {
                         Application.getConnectionManager().connect(host, port);
@@ -208,10 +214,6 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
 
     @Override
     public void loadServers() {
-        Context context = getContext();
-        if (context == null) {
-            return;
-        }
         Set<String> set = PreferenceManager.getDefaultSharedPreferences(context)
                 .getStringSet(PREFERENCES_TAG, null);
         List<String> serversList = new ArrayList<>();
@@ -245,7 +247,7 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
 
         LogAdapter(Context context, List<LogItem> objects) {
             super(context, android.R.layout.simple_list_item_2, objects);
-            inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
         @NonNull

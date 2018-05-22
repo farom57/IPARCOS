@@ -57,7 +57,7 @@ public class StarEntry extends CatalogEntry {
      *
      * @param buf formatted line
      */
-    public StarEntry(char[] buf) {
+    private StarEntry(char[] buf) {
         String data = String.valueOf(buf);
 
         int i = 0;
@@ -97,6 +97,7 @@ public class StarEntry extends CatalogEntry {
             while (reader.read(buf, 0, ENTRY_LENGTH) > 0) {
                 entries.add(new StarEntry(buf));
                 // Skip new line "\n"
+                //noinspection ResultOfMethodCallIgnored
                 reader.skip(1);
             }
 

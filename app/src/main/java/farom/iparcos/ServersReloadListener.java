@@ -3,7 +3,7 @@ package farom.iparcos;
 /**
  * @author SquareBoot
  */
-public interface ServersReloadListener {
+interface ServersReloadListener {
 
     void loadServers();
 }

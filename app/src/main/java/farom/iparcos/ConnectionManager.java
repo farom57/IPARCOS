@@ -19,13 +19,13 @@ import laazotea.indi.client.INDIServerConnectionListener;
 public class ConnectionManager implements INDIServerConnectionListener, INDIDeviceListener {
 
     /**
+     * A list to re-add the listener when the connection is destroyed and recreated.
+     */
+    private final ArrayList<INDIServerConnectionListener> listeners;
+    /**
      * The connection to the INDI server.
      */
     private INDIServerConnection connection;
-    /**
-     * A list to re-add the listener when the connection is destroyed and recreated.
-     */
-    private ArrayList<INDIServerConnectionListener> listeners;
 
     /**
      * Class constructor.

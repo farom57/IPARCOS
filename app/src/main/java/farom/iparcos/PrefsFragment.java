@@ -1,7 +1,10 @@
 package farom.iparcos;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceScreen;
@@ -24,6 +27,13 @@ public class PrefsFragment extends PreferenceFragmentCompat implements INDIDevic
     private PreferenceScreen prefScreen;
     private HashMap<INDIProperty, PropPref> map;
     private HashMap<String, PreferenceCategory> groups;
+    private Context context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -31,19 +41,30 @@ public class PrefsFragment extends PreferenceFragmentCompat implements INDIDevic
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @NonNull Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         prefScreen = getPreferenceScreen();
         if (device != null) {
             for (String group : device.getGroupNames()) {
-                addPrefGroup(group);
+                ArrayList<INDIProperty> props = device.getPropertiesOfGroup(group);
+                if (props.size() > 0) {
+                    PreferenceCategory prefGroup = new PreferenceCategory(context);
+                    groups.put(group, prefGroup);
+                    prefGroup.setTitle(group);
+                    prefScreen.addPreference(prefGroup);
+                    for (INDIProperty prop : props) {
+                        PropPref pref = PropPref.create(getActivity(), prop);
+                        map.put(prop, pref);
+                        prefGroup.addPreference(pref);
+                    }
+                }
             }
         }
     }
 
-    public void setDevice(INDIDevice dev) {
-        device = dev;
-        device.addINDIDeviceListener(this);
+    public void setDevice(INDIDevice device) {
+        this.device = device;
+        this.device.addINDIDeviceListener(this);
         map = new HashMap<>();
         groups = new HashMap<>();
     }
@@ -54,59 +75,44 @@ public class PrefsFragment extends PreferenceFragmentCompat implements INDIDevic
         device.removeINDIDeviceListener(this);
     }
 
-    private void addPrefGroup(String group) {
-        ArrayList<INDIProperty> props = device.getPropertiesOfGroup(group);
-        if (props.size() > 0) {
-            PreferenceCategory prefGroup = new PreferenceCategory(getActivity());
-            groups.put(group, prefGroup);
-            prefGroup.setTitle(group);
-            prefScreen.addPreference(prefGroup);
-            for (INDIProperty prop : props) {
-                PropPref pref = PropPref.create(getActivity(), prop);
-                map.put(prop, pref);
-                prefGroup.addPreference(pref);
-            }
-        }
-    }
-
     @Override
-    public void messageChanged(INDIDevice arg0) {
+    public void messageChanged(INDIDevice device) {
 
     }
 
     @Override
-    public void newProperty(INDIDevice arg0, final INDIProperty prop) {
-        getActivity().runOnUiThread(new Runnable() {
+    public void newProperty(INDIDevice device, final INDIProperty property) {
+        ((Activity) context).runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
-                String group = prop.getGroup();
+                String group = property.getGroup();
                 PreferenceCategory prefGroup = groups.get(group);
                 if (prefGroup == null) {
-                    prefGroup = new PreferenceCategory(getActivity());
+                    prefGroup = new PreferenceCategory(context);
                     groups.put(group, prefGroup);
                     prefGroup.setTitle(group);
                     prefScreen.addPreference(prefGroup);
                 }
-                PropPref pref = PropPref.create(getActivity(), prop);
-                map.put(prop, pref);
+                PropPref pref = PropPref.create(getActivity(), property);
+                map.put(property, pref);
                 prefGroup.addPreference(pref);
             }
         });
     }
 
     @Override
-    public void removeProperty(INDIDevice arg0, INDIProperty prop) {
-        PropPref pref = map.get(prop);
+    public void removeProperty(INDIDevice device, INDIProperty property) {
+        PropPref pref = map.get(property);
         if (pref != null) {
-            String group = prop.getGroup();
+            String group = property.getGroup();
             PreferenceCategory prefGroup = groups.get(group);
             prefGroup.removePreference(pref);
             if (prefGroup.getPreferenceCount() == 0) {
                 prefScreen.removePreference(prefGroup);
                 groups.remove(group);
             }
-            map.remove(prop);
+            map.remove(property);
         }
     }
 }

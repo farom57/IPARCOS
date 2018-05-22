@@ -1,5 +1,6 @@
 package farom.iparcos;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -14,6 +15,7 @@ public class Application extends android.app.Application {
     /**
      * The context of the whole app.
      */
+    @SuppressLint("StaticFieldLeak")
     private static Context context;
     /**
      * UI updater

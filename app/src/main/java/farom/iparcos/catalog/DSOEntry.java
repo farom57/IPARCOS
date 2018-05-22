@@ -62,7 +62,7 @@ public class DSOEntry extends CatalogEntry {
      *
      * @param buf formatted line
      */
-    public DSOEntry(char[] buf) {
+    private DSOEntry(char[] buf) {
         String data = String.valueOf(buf);
 
         int i = 0;
@@ -105,6 +105,7 @@ public class DSOEntry extends CatalogEntry {
             while (reader.read(buf, 0, ENTRY_LENGTH) > 0) {
                 entries.add(new DSOEntry(buf));
                 // Skip new line "\n"
+                //noinspection ResultOfMethodCallIgnored
                 reader.skip(1);
             }
 

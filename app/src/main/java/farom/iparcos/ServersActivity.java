@@ -44,7 +44,7 @@ public class ServersActivity extends AppCompatActivity implements ServersReloadL
     /**
      * Asks the user to add a new server.
      */
-    protected static void addServer(final Context context, final ServersReloadListener onServersReload) {
+    static void addServer(final Context context, final ServersReloadListener onServersReload) {
         final EditText input = new EditText(context);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
