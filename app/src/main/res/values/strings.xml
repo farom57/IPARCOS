@@ -94,4 +94,6 @@
     <string name="focus_out">Focus out</string>
     <string name="menu_focuser">Focuser</string>
     <string name="stop_motion">Abort</string>
+    <string name="absolute_position">Absolute position:</string>
+    <string name="set">Set</string>
 </resources>

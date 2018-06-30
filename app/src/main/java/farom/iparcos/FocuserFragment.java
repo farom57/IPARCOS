@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -35,10 +36,9 @@ import laazotea.indi.client.INDIValueException;
  *
  * @author SquareBoot
  */
-public class FocuserFragment extends Fragment implements INDIServerConnectionListener, INDIPropertyListener,
-        INDIDeviceListener, View.OnClickListener {
+public class FocuserFragment extends Fragment implements INDIServerConnectionListener, INDIPropertyListener, INDIDeviceListener, View.OnClickListener, CounterHandler.CounterListener {
 
-    private static final double INCREMENT_VALUE = 500.0;
+    private static final int INCREMENT_VALUE = 10;
 
     // Properties and elements associated to the buttons
     private INDISwitchProperty directionProp = null;
@@ -46,23 +46,60 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
     private INDISwitchElement outwardDirElem = null;
     private INDINumberProperty relPosProp = null;
     private INDINumberElement relPosElem = null;
+    private INDINumberProperty absPosProp = null;
+    private INDINumberElement absPosElem = null;
     private int speed = 0;
     private INDISwitchProperty abortProp = null;
     private INDISwitchElement abortElem = null;
     private ConnectionManager connectionManager;
-
     // Views
     private Button inButton = null;
     private Button outButton = null;
     private Button speedUpButton = null;
     private Button speedDownButton = null;
     private Button abortButton = null;
+    private Button setAbsPosButton = null;
     private TextView speedText = null;
+    private TextView absPosText = null;
+    private CounterHandler speedHandler;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (connectionManager.isConnected()) {
+            List<INDIDevice> list = connectionManager.getConnection().getDevicesAsList();
+            if (list != null) {
+                for (INDIDevice device : list) {
+                    device.addINDIDeviceListener(this);
+                    List<INDIProperty> properties = device.getPropertiesAsList();
+                    for (INDIProperty property : properties) {
+                        newProperty(device, property);
+                    }
+                }
+            }
+
+        } else {
+            clearVars();
+        }
+        // Update UI
+        updateBtnState();
+        updateSpeedText();
+        updateAbsPosText();
+    }
+
+    private void clearVars() {
+        relPosProp = null;
+        relPosElem = null;
+        absPosProp = null;
+        absPosElem = null;
+        directionProp = null;
+        outwardDirElem = null;
+        inwardDirElem = null;
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_focuser, container, false);
-
         // Set up the UI
         inButton = rootView.findViewById(R.id.focus_in);
         outButton = rootView.findViewById(R.id.focus_out);
@@ -70,11 +107,13 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
         speedDownButton = rootView.findViewById(R.id.focuser_slower);
         speedText = rootView.findViewById(R.id.focuser_steps_box);
         abortButton = rootView.findViewById(R.id.focuser_abort);
-        inButton.setOnClickListener(this);
-        outButton.setOnClickListener(this);
-        speedUpButton.setOnClickListener(this);
-        speedDownButton.setOnClickListener(this);
+        setAbsPosButton = rootView.findViewById(R.id.abs_pos_button);
+        absPosText = rootView.findViewById(R.id.abs_pos_field);
+        new CounterHandler(outButton, inButton, -1, -1, 0, 1, 150, false, this, false);
+        speedHandler = new CounterHandler(speedUpButton, speedDownButton, 0, 10, 0,
+                INCREMENT_VALUE, 100, false, this);
         abortButton.setOnClickListener(this);
+        setAbsPosButton.setOnClickListener(this);
         speedText.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
@@ -101,39 +140,17 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
         connectionManager = Application.getConnectionManager();
         connectionManager.addListener(this);
 
-        // Enumerate existing properties
-        INDIServerConnection connection = connectionManager.getConnection();
-        if (connection != null) {
-            List<INDIDevice> list = connection.getDevicesAsList();
-            if (list != null) {
-                for (INDIDevice device : list) {
-                    device.addINDIDeviceListener(this);
-                    List<INDIProperty> properties = device.getPropertiesAsList();
-                    for (INDIProperty property : properties) {
-                        this.newProperty(device, property);
-                    }
-                }
-            }
-        }
-
-        // Update UI
-        updateBtnState();
-        updateSpeedText();
-
         return rootView;
     }
 
     // ------ Listener functions from INDI ------
 
     @Override
-    public void connectionLost(INDIServerConnection arg0) {
-        directionProp = null;
-        relPosProp = null;
-        relPosElem = null;
-        outwardDirElem = null;
-        inwardDirElem = null;
+    public void connectionLost(INDIServerConnection connection) {
+        clearVars();
         updateBtnState();
         updateSpeedText();
+        updateAbsPosText();
         // Move to the connection tab
         Application.goToConnectionTab();
     }
@@ -151,7 +168,7 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
     }
 
     @Override
-    public void newMessage(INDIServerConnection arg0, Date arg1, String arg2) {
+    public void newMessage(INDIServerConnection connection, Date timestamp, String message) {
 
     }
 
@@ -159,13 +176,18 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
     public void newProperty(INDIDevice device, INDIProperty property) {
         // Look for certain properties
         switch (property.getName()) {
-            case "REL_FOCUS_POSITION": {
-                if ((relPosElem =
-                        (INDINumberElement) property.getElement("FOCUS_RELATIVE_POSITION")) != null) {
-                    relPosProp = (INDINumberProperty) property;
+            case "ABS_FOCUS_POSITION": {
+                if ((absPosElem = (INDINumberElement) property.getElement("FOCUS_ABSOLUTE_POSITION")) != null) {
+                    absPosProp = (INDINumberProperty) property;
+                }
+                break;
+            }
 
-                } else {
-                    return;
+            case "REL_FOCUS_POSITION": {
+                if ((relPosElem = (INDINumberElement) property.getElement("FOCUS_RELATIVE_POSITION")) != null) {
+                    relPosProp = (INDINumberProperty) property;
+                    speedHandler.setMaxValue((int) relPosElem.getMax());
+                    speedHandler.setMinValue((int) relPosElem.getMin());
                 }
                 break;
             }
@@ -174,9 +196,6 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
                 if (((inwardDirElem = (INDISwitchElement) property.getElement("FOCUS_INWARD")) != null)
                         && ((outwardDirElem = (INDISwitchElement) property.getElement("FOCUS_OUTWARD")) != null)) {
                     directionProp = (INDISwitchProperty) property;
-
-                } else {
-                    return;
                 }
                 break;
             }
@@ -194,7 +213,8 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
         }
         property.addINDIPropertyListener(this);
         updateBtnState();
-        Log.d("FocusFragment", "New Property (" + property.getName() + ") added to device " + device.getName());
+        Log.d("FocusFragment", "New Property (" + property.getName() + ") added to device " + device.getName()
+                + ", elements: " + Arrays.toString(property.getElementNames()));
     }
 
     @Override
@@ -216,6 +236,13 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
             case "FOCUS_ABORT_MOTION": {
                 abortElem = null;
                 abortProp = null;
+                break;
+            }
+
+            case "ABS_FOCUS_POSITION": {
+                absPosProp = null;
+                absPosElem = null;
+                break;
             }
 
             default: {
@@ -224,6 +251,7 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
         }
         updateBtnState();
         updateSpeedText();
+        updateAbsPosText();
         Log.d("MotionFragment", "Removed property (" + property.getName() + ") to device " + device.getName());
     }
 
@@ -232,21 +260,8 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
         Log.d("FocusFragment",
                 "Changed property (" + property.getName() + "), new value" + property.getValuesAsString());
         switch (property.getName()) {
-            case "FOCUS_MOTION": {
-                if (inButton != null) {
-                    inButton.post(new Runnable() {
-                        public void run() {
-                            inButton.setPressed(inwardDirElem.getValue() == Constants.SwitchStatus.ON);
-                        }
-                    });
-                }
-                if (outButton != null) {
-                    outButton.post(new Runnable() {
-                        public void run() {
-                            outButton.setPressed(outwardDirElem.getValue() == Constants.SwitchStatus.ON);
-                        }
-                    });
-                }
+            case "ABS_FOCUS_POSITION": {
+                updateAbsPosText();
                 break;
             }
 
@@ -254,11 +269,11 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
                 if (abortButton != null) {
                     abortButton.post(new Runnable() {
                         public void run() {
-                            abortButton.setPressed(
-                                    outwardDirElem.getValue() == Constants.SwitchStatus.ON);
+                            abortButton.setPressed(outwardDirElem.getValue() == Constants.SwitchStatus.ON);
                         }
                     });
                 }
+                break;
             }
 
             case "REL_FOCUS_POSITION": {
@@ -307,10 +322,34 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
                 }
             });
         }
+        if (speedText != null) {
+            speedText.post(new Runnable() {
+                @Override
+                public void run() {
+                    speedText.setFocusableInTouchMode(relPosElem != null);
+                }
+            });
+        }
         if (abortButton != null) {
             abortButton.post(new Runnable() {
                 public void run() {
                     abortButton.setEnabled(abortElem != null);
+                }
+            });
+        }
+        if (setAbsPosButton != null) {
+            setAbsPosButton.post(new Runnable() {
+                @Override
+                public void run() {
+                    setAbsPosButton.setEnabled(absPosElem != null);
+                }
+            });
+        }
+        if (absPosText != null) {
+            absPosText.post(new Runnable() {
+                @Override
+                public void run() {
+                    absPosText.setFocusableInTouchMode(absPosElem != null);
                 }
             });
         }
@@ -330,50 +369,37 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
 
                     } else {
                         speedText.setText(R.string.default_speed);
-                        speed = 0;
                     }
                 }
             });
         }
     }
 
-    /**
-     * Called when one of the stop, speed up and speed down buttons is clicked.
-     * Sends the corresponding order to the driver.
-     */
+    public void updateAbsPosText() {
+        if (absPosText != null) {
+            absPosText.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (absPosElem != null) {
+                        absPosText.setText(String.valueOf((int) (double) absPosElem.getValue()));
+
+                    } else {
+                        absPosText.setText(R.string.default_speed);
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        connectionManager.removeListener(this);
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.focus_in: {
-                try {
-                    inwardDirElem.setDesiredValue(Constants.SwitchStatus.ON);
-                    outwardDirElem.setDesiredValue(Constants.SwitchStatus.OFF);
-                    new PropUpdater().execute(directionProp);
-                    relPosElem.setDesiredValue((double) speed);
-                    Log.d("FocusFragment", String.valueOf(speed));
-                    new PropUpdater().execute(relPosProp);
-
-                } catch (INDIValueException e) {
-                    Log.e("FocusFragment", e.getLocalizedMessage());
-                }
-                break;
-            }
-
-            case R.id.focus_out: {
-                try {
-                    outwardDirElem.setDesiredValue(Constants.SwitchStatus.ON);
-                    inwardDirElem.setDesiredValue(Constants.SwitchStatus.OFF);
-                    new PropUpdater().execute(directionProp);
-                    relPosElem.setDesiredValue((double) speed);
-                    Log.d("FocusFragment", String.valueOf(speed));
-                    new PropUpdater().execute(relPosProp);
-
-                } catch (INDIValueException e) {
-                    Log.e("FocusFragment", e.getLocalizedMessage());
-                }
-                break;
-            }
-
             case R.id.focuser_abort: {
                 try {
                     if (abortElem != null) {
@@ -387,16 +413,15 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
                 break;
             }
 
-            case R.id.focuser_faster: {
-                if (relPosElem != null) {
-                    speedText.setText(String.valueOf(speed = (int) Math.min(relPosElem.getMax(), speed + INCREMENT_VALUE)));
-                }
-                break;
-            }
+            case R.id.abs_pos_button: {
+                try {
+                    if (absPosElem != null && absPosText != null) {
+                        absPosElem.setDesiredValue(Double.parseDouble(absPosText.getText().toString()));
+                        new PropUpdater().execute(absPosProp);
+                    }
 
-            case R.id.focuser_slower: {
-                if (relPosElem != null) {
-                    speedText.setText(String.valueOf(speed = (int) Math.max(relPosElem.getMin(), speed - INCREMENT_VALUE)));
+                } catch (INDIValueException e) {
+                    Log.e("FocusFragment", e.getLocalizedMessage());
                 }
                 break;
             }
@@ -404,8 +429,56 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        connectionManager.removeListener(this);
+    public void onIncrement(View view, int number) {
+        switch (view.getId()) {
+            case R.id.focuser_faster: {
+                speed = number;
+                speedText.setText(String.valueOf(speed));
+                break;
+            }
+
+            case R.id.focus_out: {
+                if (outwardDirElem != null && inwardDirElem != null && relPosElem != null) {
+                    try {
+                        outwardDirElem.setDesiredValue(Constants.SwitchStatus.ON);
+                        inwardDirElem.setDesiredValue(Constants.SwitchStatus.OFF);
+                        new PropUpdater().execute(directionProp);
+                        relPosElem.setDesiredValue((double) speed);
+                        new PropUpdater().execute(relPosProp);
+
+                    } catch (INDIValueException e) {
+                        Log.e("FocusFragment", e.getLocalizedMessage());
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onDecrement(View view, int number) {
+        switch (view.getId()) {
+            case R.id.focuser_slower: {
+                speed = number;
+                speedText.setText(String.valueOf(speed));
+                break;
+            }
+
+            case R.id.focus_in: {
+                if (inwardDirElem != null && outwardDirElem != null && relPosElem != null) {
+                    try {
+                        inwardDirElem.setDesiredValue(Constants.SwitchStatus.ON);
+                        outwardDirElem.setDesiredValue(Constants.SwitchStatus.OFF);
+                        new PropUpdater().execute(directionProp);
+                        relPosElem.setDesiredValue((double) speed);
+                        new PropUpdater().execute(relPosProp);
+
+                    } catch (INDIValueException e) {
+                        Log.e("FocusFragment", e.getLocalizedMessage());
+                    }
+                }
+                break;
+            }
+        }
     }
 }

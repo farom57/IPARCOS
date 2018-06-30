@@ -91,4 +91,6 @@
     <string name="servers_list_toast">Tieni premuto per cancellare, trascina per riorganizzare</string>
     <string name="menu_focuser">Focheggiatore</string>
     <string name="stop_motion">Ferma</string>
+    <string name="absolute_position">Posizione assoluta:</string>
+    <string name="set">Imposta</string>
 </resources>

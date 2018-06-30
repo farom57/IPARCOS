@@ -75,9 +75,45 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
     private TextView speedText = null;
 
     @Override
+    public void onStart() {
+        super.onStart();
+        if (connectionManager.isConnected()) {
+            List<INDIDevice> list = connectionManager.getConnection().getDevicesAsList();
+            if (list != null) {
+                for (INDIDevice device : list) {
+                    device.addINDIDeviceListener(this);
+                    List<INDIProperty> properties = device.getPropertiesAsList();
+                    for (INDIProperty property : properties) {
+                        this.newProperty(device, property);
+                    }
+                }
+            }
+
+        } else {
+            clearVars();
+        }
+        // Update UI
+        updateBtnState();
+        updateSpeedText();
+    }
+
+    private void clearVars() {
+        telescopeMotionNSP = null;
+        telescopeMotionNE = null;
+        telescopeMotionSE = null;
+        telescopeMotionWEP = null;
+        telescopeMotionWE = null;
+        telescopeMotionEE = null;
+        telescopeMotionAbort = null;
+        telescopeMotionAbortE = null;
+        telescopeMotionRate = null;
+        telescopeMotionRateEQMod = null;
+        telescopeMotionRateLX200 = null;
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_motion, container, false);
-
         // Set up the UI
         btnMoveN = rootView.findViewById(R.id.buttonN);
         btnMoveNE = rootView.findViewById(R.id.buttonNE);
@@ -107,25 +143,6 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
         connectionManager = Application.getConnectionManager();
         connectionManager.addListener(this);
 
-        // Enumerate existing properties
-        INDIServerConnection connection = connectionManager.getConnection();
-        if (connection != null) {
-            List<INDIDevice> list = connection.getDevicesAsList();
-            if (list != null) {
-                for (INDIDevice device : list) {
-                    device.addINDIDeviceListener(this);
-                    List<INDIProperty> properties = device.getPropertiesAsList();
-                    for (INDIProperty property : properties) {
-                        this.newProperty(device, property);
-                    }
-                }
-            }
-        }
-
-        // Update UI
-        updateBtnState();
-        updateSpeedText();
-
         return rootView;
     }
 
@@ -133,17 +150,7 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
 
     @Override
     public void connectionLost(INDIServerConnection arg0) {
-        telescopeMotionNSP = null;
-        telescopeMotionNE = null;
-        telescopeMotionSE = null;
-        telescopeMotionWEP = null;
-        telescopeMotionWE = null;
-        telescopeMotionEE = null;
-        telescopeMotionAbort = null;
-        telescopeMotionAbortE = null;
-        telescopeMotionRate = null;
-        telescopeMotionRateEQMod = null;
-        telescopeMotionRateLX200 = null;
+        clearVars();
         updateBtnState();
         updateSpeedText();
         // Move to the connection tab

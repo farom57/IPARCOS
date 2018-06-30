@@ -53,9 +53,8 @@ public class MainActivity extends AppCompatActivity {
                             toolbar.setElevation(4);
                         }
                     }
-                    getSupportFragmentManager().beginTransaction()
-                            .setCustomAnimations(R.anim.fade_in, R.anim.fade_out, 0, 0)
-                            .replace(R.id.content_frame, Pages.values()[newPage.index].instance).commit();
+                    getSupportFragmentManager().beginTransaction().setCustomAnimations(R.animator.fade_in, R.animator.fade_out,
+                            R.animator.fade_in, R.animator.fade_out).replace(R.id.content_frame, Pages.values()[newPage.index].instance).commit();
                     currentPage = newPage;
                     return true;
                 }
@@ -70,9 +69,8 @@ public class MainActivity extends AppCompatActivity {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     toolbar.setElevation(4);
                 }
-                getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.fade_in, R.anim.fade_out, 0, 0)
-                        .replace(R.id.content_frame, Pages.CONNECTION.instance).commit();
+                getSupportFragmentManager().beginTransaction().setCustomAnimations(R.animator.fade_in, R.animator.fade_out,
+                        R.animator.fade_in, R.animator.fade_out).replace(R.id.content_frame, Pages.CONNECTION.instance).commit();
                 navigation.setSelectedItemId(currentPage.itemId);
             }
         });

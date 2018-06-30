@@ -95,7 +95,6 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
     public void disconnect() {
         if (isConnected()) {
             connection.disconnect();
-            Application.setState(Application.getContext().getResources().getString(R.string.connect));
 
         } else {
             Application.log("Not connected!");
@@ -118,7 +117,7 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
     public void connectionLost(INDIServerConnection connection) {
         Application.log(Application.getContext().getResources().getString(R.string.connection_lost));
         Application.setState(Application.getContext().getResources().getString(R.string.connect));
-
+        connection = null;
         // Move to the connection tab
         Application.goToConnectionTab();
     }
@@ -135,8 +134,8 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
      * @param arg the listener
      */
     public void addListener(INDIServerConnectionListener arg) {
-        listeners.add(arg);
         if (connection != null) {
+            listeners.add(arg);
             connection.addINDIServerConnectionListener(arg);
         }
     }
@@ -147,8 +146,8 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
      * @param arg the listener
      */
     public void removeListener(INDIServerConnectionListener arg) {
-        listeners.remove(arg);
         if (connection != null) {
+            listeners.remove(arg);
             connection.removeINDIServerConnectionListener(arg);
         }
     }

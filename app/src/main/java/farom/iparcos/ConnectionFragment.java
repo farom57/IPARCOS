@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -220,7 +219,6 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
         if (set != null) {
             ArrayList<Pair<Long, String>> pairsList = new ArrayList<>();
             for (String s : set) {
-                Log.d("ServersList", "Loading server: " + s);
                 int index = s.indexOf('#');
                 pairsList.add(new Pair<>(Long.valueOf(s.substring(0, index)), s.substring(index + 1)));
             }

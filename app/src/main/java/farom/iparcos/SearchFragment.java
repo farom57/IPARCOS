@@ -54,6 +54,7 @@ public class SearchFragment extends ListFragment
     private static ArrayList<CatalogEntry> catalogEntries = new ArrayList<>();
     private static ArrayAdapter<CatalogEntry> entriesAdapter;
     private static Catalog catalog;
+    private ConnectionManager connectionManager;
     // INDI properties
     private INDINumberProperty telescopeCoordP = null;
     private INDINumberElement telescopeCoordRA = null;
@@ -67,6 +68,35 @@ public class SearchFragment extends ListFragment
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Enumerate existing properties
+        if (connectionManager.isConnected()) {
+            List<INDIDevice> list = connectionManager.getConnection().getDevicesAsList();
+            if (list != null) {
+                for (INDIDevice device : list) {
+                    device.addINDIDeviceListener(this);
+                    for (INDIProperty property : device.getPropertiesAsList()) {
+                        newProperty(device, property);
+                    }
+                }
+            }
+
+        } else {
+            clearVars();
+        }
+    }
+
+    private void clearVars() {
+        telescopeCoordP = null;
+        telescopeCoordRA = null;
+        telescopeCoordDE = null;
+        telescopeOnCoordSetP = null;
+        telescopeOnCoordSetSlew = null;
+        telescopeOnCoordSetSync = null;
     }
 
     @Override
@@ -100,22 +130,8 @@ public class SearchFragment extends ListFragment
         }
 
         // Set up INDI connection
-        ConnectionManager connectionManager = Application.getConnectionManager();
+        connectionManager = Application.getConnectionManager();
         connectionManager.addListener(this);
-        // Enumerate existing properties
-        INDIServerConnection connection = connectionManager.getConnection();
-        if (connection != null) {
-            List<INDIDevice> list = connection.getDevicesAsList();
-            if (list != null) {
-                for (INDIDevice device : list) {
-                    device.addINDIDeviceListener(this);
-                    List<INDIProperty> properties = device.getPropertiesAsList();
-                    for (INDIProperty property : properties) {
-                        this.newProperty(device, property);
-                    }
-                }
-            }
-        }
     }
 
     @Override
@@ -158,9 +174,7 @@ public class SearchFragment extends ListFragment
         final Context context = l.getContext();
         final Coordinates coord = catalogEntries.get(position).getCoordinates();
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage(catalogEntries.get(position).createDescription(context))
-                .setTitle(catalogEntries.get(position).getName());
-
+        builder.setMessage(catalogEntries.get(position).createDescription(context)).setTitle(catalogEntries.get(position).getName());
         // Only display buttons if the telescope is ready
         if (telescopeCoordP != null && telescopeOnCoordSetP != null) {
             builder.setPositiveButton(R.string.GOTO, new DialogInterface.OnClickListener() {
@@ -178,7 +192,6 @@ public class SearchFragment extends ListFragment
                     } catch (INDIValueException e) {
                         Toast.makeText(context, context.getString(R.string.sync_slew_error), Toast.LENGTH_LONG).show();
                     }
-
                 }
             });
             builder.setNeutralButton(R.string.sync, new DialogInterface.OnClickListener() {
@@ -201,15 +214,13 @@ public class SearchFragment extends ListFragment
                 }
             });
         }
-
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
             }
         });
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        builder.create().show();
     }
 
     /**
@@ -327,12 +338,7 @@ public class SearchFragment extends ListFragment
 
     @Override
     public void connectionLost(INDIServerConnection connection) {
-        telescopeCoordP = null;
-        telescopeCoordRA = null;
-        telescopeCoordDE = null;
-        telescopeOnCoordSetP = null;
-        telescopeOnCoordSetSlew = null;
-        telescopeOnCoordSetSync = null;
+        clearVars();
     }
 
     @Override

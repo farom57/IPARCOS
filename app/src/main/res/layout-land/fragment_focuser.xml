@@ -12,62 +12,58 @@
     <Button
         android:id="@+id/focuser_slower"
         android:layout_width="wrap_content"
-        android:layout_height="80dp"
-        android:layout_alignBaseline="@+id/focuser_steps_box"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
-        android:layout_toLeftOf="@+id/focuser_steps_box"
-        android:layout_toStartOf="@+id/focuser_steps_box"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/focus_in"
+        android:layout_marginRight="64dp"
+        android:layout_toLeftOf="@+id/focus_in"
+        android:layout_toStartOf="@+id/focus_in"
         android:text="-" />
 
     <Button
         android:id="@+id/focuser_faster"
         android:layout_width="wrap_content"
-        android:layout_height="80dp"
-        android:layout_alignBaseline="@id/focuser_steps_box"
-        android:layout_marginLeft="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_toEndOf="@+id/focuser_steps_box"
-        android:layout_toRightOf="@+id/focuser_steps_box"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/focus_out"
+        android:layout_marginRight="64dp"
+        android:layout_toLeftOf="@+id/focus_out"
+        android:layout_toStartOf="@+id/focus_out"
         android:text="+" />
 
     <Button
         android:id="@+id/focus_in"
-        android:layout_width="wrap_content"
+        android:layout_width="110dp"
         android:layout_height="90dp"
-        android:layout_alignBottom="@+id/focuser_abort"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
-        android:layout_toLeftOf="@+id/focuser_abort"
-        android:layout_toStartOf="@+id/focuser_abort"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:text="@string/focus_in" />
 
     <Button
         android:id="@+id/focus_out"
-        android:layout_width="wrap_content"
+        android:layout_width="110dp"
         android:layout_height="90dp"
-        android:layout_alignBottom="@+id/focuser_abort"
-        android:layout_marginLeft="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_toEndOf="@+id/focuser_abort"
-        android:layout_toRightOf="@+id/focuser_abort"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
         android:text="@string/focus_out" />
 
     <EditText
         android:id="@+id/focuser_steps_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
+        android:layout_alignEnd="@+id/focuser_slower"
+        android:layout_alignRight="@+id/focuser_slower"
+        android:layout_centerVertical="true"
         android:ems="5"
         android:inputType="number"
         android:maxEms="8" />
 
     <Button
         android:id="@+id/focuser_abort"
-        android:layout_width="wrap_content"
+        android:layout_width="110dp"
         android:layout_height="90dp"
-        android:layout_centerHorizontal="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:text="@string/stop_motion" />
 
@@ -75,10 +71,9 @@
         android:id="@+id/abs_pos_field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/abs_pos_label"
-        android:layout_alignStart="@+id/abs_pos_label"
-        android:layout_below="@+id/abs_pos_label"
-        android:layout_marginTop="8dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
         android:ems="10"
         android:inputType="number" />
 
@@ -86,17 +81,19 @@
         android:id="@+id/abs_pos_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
+        android:layout_above="@+id/focuser_steps_box"
+        android:layout_alignLeft="@+id/abs_pos_field"
+        android:layout_alignStart="@+id/abs_pos_field"
+        android:layout_marginBottom="8dp"
         android:text="@string/absolute_position" />
 
     <Button
         android:id="@+id/abs_pos_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/abs_pos_field"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignLeft="@+id/abs_pos_field"
+        android:layout_alignStart="@+id/abs_pos_field"
+        android:layout_below="@+id/focuser_steps_box"
+        android:layout_marginTop="8dp"
         android:text="@string/set" />
 </RelativeLayout>

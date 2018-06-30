@@ -20,8 +20,8 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleInstance"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden">
+            android:screenOrientation="fullUser"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,6 +31,7 @@
         <activity
             android:name=".AboutActivity"
             android:label="@string/menu_about"
+            android:screenOrientation="fullUser"
             android:theme="@style/SimpleActivityTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -39,6 +40,7 @@
         <activity
             android:name=".ServersActivity"
             android:label="@string/host_manage"
+            android:screenOrientation="fullUser"
             android:theme="@style/SimpleActivityTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -46,7 +48,8 @@
         </activity>
         <activity
             android:name=".SearchActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>

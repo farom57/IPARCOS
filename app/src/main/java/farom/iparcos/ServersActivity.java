@@ -12,7 +12,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -142,7 +141,6 @@ public class ServersActivity extends AppCompatActivity implements ServersReloadL
         for (int i = 0; i < list.size(); i++) {
             String s = list.get(i).second;
             set.add(i + "#" + s);
-            Log.d("ServersList", "Saving server: " + i + "#" + s);
         }
         PreferenceManager.getDefaultSharedPreferences(this).edit().putStringSet(PREFERENCES_TAG, set).apply();
     }
@@ -154,7 +152,6 @@ public class ServersActivity extends AppCompatActivity implements ServersReloadL
         ArrayList<Pair<Long, String>> serversList = new ArrayList<>();
         if (set != null) {
             for (String s : set) {
-                Log.d("ServersList", "Loading server: " + s);
                 int index = s.indexOf('#');
                 serversList.add(new Pair<>(Long.valueOf(s.substring(0, index)), s.substring(index + 1)));
             }

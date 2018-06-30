@@ -61,19 +61,13 @@ public class GenericFragment extends Fragment implements TabLayout.OnTabSelected
     @Override
     public void onStart() {
         super.onStart();
-
-        INDIServerConnection connection = connectionManager.getConnection();
-        if (connection == null) {
+        if (!connectionManager.isConnected()) {
             removeAllTabs();
             pagerAdapter.add(new SimplePageDescriptor("NoDevices" + c, getString(R.string.error_no_devices)));
             return;
         }
-        List<INDIDevice> list = connection.getDevicesAsList();
-        if (list == null) {
-            removeAllTabs();
-            return;
-        }
-        if (list.size() == 0) {
+        List<INDIDevice> list = connectionManager.getConnection().getDevicesAsList();
+        if ((list == null) || (list.size() == 0)) {
             removeAllTabs();
             pagerAdapter.add(new SimplePageDescriptor("NoDevices" + c, getString(R.string.error_no_devices)));
             return;
@@ -96,6 +90,8 @@ public class GenericFragment extends Fragment implements TabLayout.OnTabSelected
         for (int i = 0; i < pagerAdapter.getCount(); i++) {
             pagerAdapter.remove(i);
         }
+        pagerAdapter = new DevicesPagerAdapter(getChildFragmentManager(), new ArrayList<PageDescriptor>());
+        viewPager.setAdapter(pagerAdapter);
     }
 
     @Override
