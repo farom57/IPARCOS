@@ -1,5 +1,6 @@
 package farom.iparcos;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -161,6 +163,18 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
 
                 } else if (connectionButton.getText().equals(getResources().getString(R.string.disconnect))) {
                     Application.getConnectionManager().disconnect();
+                }
+
+                Activity activity = getActivity();
+                if (activity != null) {
+                    View view = activity.getCurrentFocus();
+                    if (view == null) {
+                        view = new View(activity);
+                    }
+                    InputMethodManager manager = ((InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE));
+                    if (manager != null) {
+                        manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
                 }
             }
         });

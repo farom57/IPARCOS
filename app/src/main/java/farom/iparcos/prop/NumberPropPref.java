@@ -1,6 +1,5 @@
 package farom.iparcos.prop;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -8,6 +7,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.widget.EditText;
@@ -26,6 +26,7 @@ import laazotea.indi.client.INDINumberProperty;
 import laazotea.indi.client.INDIProperty;
 import laazotea.indi.client.INDIValueException;
 
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class NumberPropPref extends PropPref {
 
     public NumberPropPref(Context context, INDIProperty prop) {
@@ -41,89 +42,92 @@ public class NumberPropPref extends PropPref {
     protected Spannable createSummary() {
         ArrayList<INDIElement> elements = prop.getElementsAsList();
         if (elements.size() > 0) {
-            StringBuilder temp = new StringBuilder();
-
+            StringBuilder stringBuilder = new StringBuilder();
             int i;
-            temp.append(elements.get(0).getLabel()).append(": ");
+            stringBuilder.append(elements.get(0).getLabel()).append(": ");
             for (i = 0; i < elements.size() - 1; i++) {
-                temp.append(elements.get(i).getValueAsString());
-                temp.append(", ");
-                temp.append(elements.get(i + 1).getLabel()).append(": ");
+                stringBuilder.append(elements.get(i).getValueAsString()).append(", ")
+                        .append(elements.get(i + 1).getLabel()).append(": ");
             }
-            temp.append(elements.get(i).getValueAsString());
-
-            return new SpannableString(temp.toString());
+            stringBuilder.append(elements.get(i).getValueAsString());
+            return new SpannableString(stringBuilder.toString());
 
         } else {
-            return new SpannableString("");
+            return new SpannableString(getContext().getString(R.string.no_indi_elements));
         }
     }
 
     @Override
     protected void onClick() {
-        DialogFragment newFragment = new NumberRequestFragment((INDINumberProperty) prop);
-        newFragment.show(((Activity) getContext()).getFragmentManager(), "request");
+        if (!getSummary().toString().equals(getContext().getString(R.string.no_indi_elements))) {
+            NumberRequestFragment requestFragment = new NumberRequestFragment();
+            requestFragment.setArguments((INDINumberProperty) prop, this);
+            requestFragment.show(((Activity) getContext()).getFragmentManager(), "request");
+        }
     }
 
-    @SuppressLint("ValidFragment")
-    public class NumberRequestFragment extends DialogFragment {
-        private INDINumberProperty prop;
+    public static class NumberRequestFragment extends DialogFragment {
 
-        public NumberRequestFragment(INDINumberProperty prop) {
+        private INDINumberProperty prop;
+        private PropPref propPref;
+
+        public void setArguments(INDINumberProperty prop, PropPref propPref) {
             this.prop = prop;
+            this.propPref = propPref;
         }
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the Builder class for convenient dialog construction
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            final Context context = getActivity();
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
             final ArrayList<INDIElement> elements = prop.getElementsAsList();
             final ArrayList<EditText> editTextViews = new ArrayList<>(elements.size());
 
-            LinearLayout layout = new LinearLayout(Application.getContext());
+            LinearLayout layout = new LinearLayout(context);
             layout.setOrientation(LinearLayout.VERTICAL);
-            int padding = Application.getContext().getResources().getDimensionPixelSize(R.dimen.padding_medium);
+            int padding = context.getResources().getDimensionPixelSize(R.dimen.padding_medium);
 
             for (int i = 0; i < elements.size(); i++) {
-                TextView textView = new TextView(Application.getContext());
+                TextView textView = new TextView(context);
                 textView.setText(elements.get(i).getLabel());
-
                 textView.setPadding(padding, padding, padding, 0);
                 layout.addView(textView);
-
-                editTextViews.add(new EditText(Application.getContext()));
-                editTextViews.get(i).setText(elements.get(i).getValueAsString());
-                editTextViews.get(i).setPadding(padding, padding, padding, padding);
-                editTextViews.get(i).setEnabled(prop.getPermission() != Constants.PropertyPermissions.RO);
-                layout.addView(editTextViews.get(i));
+                editTextViews.add(new EditText(context));
+                EditText editText = editTextViews.get(i);
+                editText.setText(elements.get(i).getValueAsString());
+                editText.setPadding(padding, padding, padding, padding);
+                editText.setEnabled(prop.getPermission() != Constants.PropertyPermissions.RO);
+                editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                layout.addView(editText);
             }
-
-            ScrollView scrollView = new ScrollView(Application.getContext());
+            ScrollView scrollView = new ScrollView(context);
             scrollView.addView(layout);
             builder.setView(scrollView);
-
             builder.setTitle(prop.getLabel());
 
             if (prop.getPermission() != Constants.PropertyPermissions.RO) {
                 builder.setPositiveButton(R.string.send_request, new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int id) {
                         try {
                             for (int i = 0; i < elements.size(); i++) {
-                                if (elements.get(i).checkCorrectValue(editTextViews.get(i).getText().toString())) {
-                                    elements.get(i).setDesiredValue(editTextViews.get(i).getText().toString());
+                                INDIElement element = elements.get(i);
+                                String s = editTextViews.get(i).getText().toString();
+                                if (element.checkCorrectValue(s)) {
+                                    element.setDesiredValue(s);
                                 }
                             }
 
                         } catch (INDIValueException | IllegalArgumentException e) {
-                            Toast toast = Toast.makeText(Application.getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG);
-                            toast.show();
-                            Application.log(Application.getContext().getResources().getString(R.string.error) + e.getLocalizedMessage());
+                            Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                            Application.log(context.getResources().getString(R.string.error) + e.getLocalizedMessage());
                         }
-                        sendChanges();
+                        propPref.sendChanges();
                     }
                 });
                 builder.setNegativeButton(R.string.cancel_request, new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int id) {
 
                     }
@@ -131,12 +135,13 @@ public class NumberPropPref extends PropPref {
 
             } else {
                 builder.setNegativeButton(R.string.back_request, new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int id) {
 
                     }
                 });
             }
-            // Create the AlertDialog object and return it
+
             return builder.create();
         }
     }

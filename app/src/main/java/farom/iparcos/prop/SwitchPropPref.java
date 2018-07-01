@@ -25,6 +25,7 @@ import laazotea.indi.client.INDISwitchElement;
 import laazotea.indi.client.INDISwitchProperty;
 import laazotea.indi.client.INDIValueException;
 
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class SwitchPropPref extends PropPref {
 
     public SwitchPropPref(Context context, INDIProperty prop) {
@@ -38,37 +39,38 @@ public class SwitchPropPref extends PropPref {
      */
     @Override
     protected Spannable createSummary() {
-        StringBuilder temp = new StringBuilder();
         ArrayList<INDIElement> elements = prop.getElementsAsList();
-
-        int[] starts = new int[elements.size()];
-        int[] ends = new int[elements.size()];
-        starts[0] = 0;
-
-        for (int i = 0; i < elements.size(); i++) {
-            starts[i] = temp.length();
-            temp.append(elements.get(i).getLabel()).append(" ");
-            ends[i] = temp.length();
-        }
-
-        Spannable summaryText = new SpannableString(temp.toString());
-
-        StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
-
-        for (int i = 0; i < elements.size(); i++) {
-            if (((INDISwitchElement) (elements.get(i))).getValue() == SwitchStatus.ON) {
-                summaryText.setSpan(boldSpan, starts[i], ends[i], 0);
+        if (elements.size() > 0) {
+            StringBuilder stringBuilder = new StringBuilder();
+            int[] starts = new int[elements.size()];
+            int[] ends = new int[elements.size()];
+            starts[0] = 0;
+            for (int i = 0; i < elements.size(); i++) {
+                starts[i] = stringBuilder.length();
+                stringBuilder.append(elements.get(i).getLabel()).append(" ");
+                ends[i] = stringBuilder.length();
             }
-        }
+            Spannable summaryText = new SpannableString(stringBuilder.toString());
+            StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
+            for (int i = 0; i < elements.size(); i++) {
+                if (((INDISwitchElement) (elements.get(i))).getValue() == SwitchStatus.ON) {
+                    summaryText.setSpan(boldSpan, starts[i], ends[i], 0);
+                }
+            }
+            return summaryText;
 
-        return summaryText;
+        } else {
+            return new SpannableString(getContext().getString(R.string.no_indi_elements));
+        }
     }
 
     @Override
     protected void onClick() {
-        SwitchRequestFragment newFragment = new SwitchRequestFragment();
-        newFragment.setArguments((INDISwitchProperty) prop, this);
-        newFragment.show(((Activity) getContext()).getFragmentManager(), "request");
+        if (!getSummary().toString().equals(getContext().getString(R.string.no_indi_elements))) {
+            SwitchRequestFragment requestFragment = new SwitchRequestFragment();
+            requestFragment.setArguments((INDISwitchProperty) prop, this);
+            requestFragment.show(((Activity) getContext()).getFragmentManager(), "request");
+        }
     }
 
     public static class SwitchRequestFragment extends DialogFragment {
@@ -83,15 +85,16 @@ public class SwitchPropPref extends PropPref {
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the Builder class for convenient dialog construction
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            final Context context = getActivity();
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
             final ArrayList<INDIElement> elements = prop.getElementsAsList();
             String[] elementsString = new String[elements.size()];
             final boolean[] elementsChecked = new boolean[elements.size()];
             for (int i = 0; i < elements.size(); i++) {
-                elementsString[i] = elements.get(i).getLabel();
-                elementsChecked[i] = ((INDISwitchElement) (elements.get(i))).getValue() == SwitchStatus.ON;
+                INDISwitchElement switchElement = (INDISwitchElement) (elements.get(i));
+                elementsString[i] = switchElement.getLabel();
+                elementsChecked[i] = switchElement.getValue() == SwitchStatus.ON;
             }
 
             builder.setMultiChoiceItems(elementsString, elementsChecked,
@@ -106,6 +109,7 @@ public class SwitchPropPref extends PropPref {
 
             if (prop.getPermission() != Constants.PropertyPermissions.RO) {
                 builder.setPositiveButton(R.string.send_request, new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int id) {
                         try {
                             for (int i = 0; i < elements.size(); i++) {
@@ -113,14 +117,14 @@ public class SwitchPropPref extends PropPref {
                             }
 
                         } catch (INDIValueException | IllegalArgumentException e) {
-                            Toast toast = Toast.makeText(Application.getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG);
-                            toast.show();
-                            Application.log(Application.getContext().getResources().getString(R.string.error) + e.getLocalizedMessage());
+                            Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                            Application.log(context.getResources().getString(R.string.error) + e.getLocalizedMessage());
                         }
                         propPref.sendChanges();
                     }
                 });
                 builder.setNegativeButton(R.string.cancel_request, new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int id) {
 
                     }
@@ -128,12 +132,13 @@ public class SwitchPropPref extends PropPref {
 
             } else {
                 builder.setNegativeButton(R.string.back_request, new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int id) {
 
                     }
                 });
             }
-            // Create the AlertDialog object and return it
+
             return builder.create();
         }
     }

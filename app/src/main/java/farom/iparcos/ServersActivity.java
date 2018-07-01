@@ -1,6 +1,5 @@
 package farom.iparcos;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -132,7 +131,6 @@ public class ServersActivity extends AppCompatActivity implements ServersReloadL
         save();
     }
 
-    @SuppressLint("ApplySharedPref")
     @SuppressWarnings("unchecked")
     private void save() {
         // Save the new list

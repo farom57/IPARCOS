@@ -20,6 +20,7 @@ import laazotea.indi.client.INDIPropertyListener;
 import laazotea.indi.client.INDISwitchProperty;
 import laazotea.indi.client.INDITextProperty;
 
+@SuppressWarnings({"unused", "WeakerAccess"})
 public abstract class PropPref extends Preference implements INDIPropertyListener {
 
     protected INDIProperty prop;

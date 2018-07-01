@@ -7,6 +7,7 @@ import android.text.SpannableString;
 import farom.iparcos.R;
 import laazotea.indi.client.INDIProperty;
 
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class BLOBPropPref extends PropPref {
 
     public BLOBPropPref(Context context, INDIProperty prop) {

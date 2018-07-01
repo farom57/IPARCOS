@@ -96,4 +96,5 @@
     <string name="stop_motion">Abort</string>
     <string name="absolute_position">Absolute position:</string>
     <string name="set">Set</string>
+    <string name="no_indi_elements">Empty property</string>
 </resources>
