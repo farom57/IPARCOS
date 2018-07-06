@@ -123,6 +123,17 @@ public class CounterHandler {
         }
     }
 
+    public void stop() {
+        listener = null;
+        autoDecrement = autoIncrement = false;
+        incrementalView.setOnClickListener(null);
+        incrementalView.setOnLongClickListener(null);
+        incrementalView.setOnTouchListener(null);
+        decrementalView.setOnClickListener(null);
+        decrementalView.setOnLongClickListener(null);
+        decrementalView.setOnTouchListener(null);
+    }
+
     public int getValue() {
         return currentValue;
     }

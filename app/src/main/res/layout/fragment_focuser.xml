@@ -12,7 +12,7 @@
     <Button
         android:id="@+id/focuser_slower"
         android:layout_width="wrap_content"
-        android:layout_height="80dp"
+        android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/focuser_steps_box"
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
@@ -23,11 +23,11 @@
     <Button
         android:id="@+id/focuser_faster"
         android:layout_width="wrap_content"
-        android:layout_height="80dp"
-        android:layout_alignBaseline="@id/focuser_steps_box"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/focuser_slower"
         android:layout_marginLeft="32dp"
-        android:layout_marginStart="32dp"
         android:layout_toEndOf="@+id/focuser_steps_box"
+        android:layout_marginStart="32dp"
         android:layout_toRightOf="@+id/focuser_steps_box"
         android:text="+" />
 
@@ -59,6 +59,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:hint="100"
         android:ems="5"
         android:inputType="number"
         android:maxEms="8" />
@@ -79,6 +80,7 @@
         android:layout_alignStart="@+id/abs_pos_label"
         android:layout_below="@+id/abs_pos_label"
         android:layout_marginTop="8dp"
+        android:hint="5000"
         android:ems="10"
         android:inputType="number" />
 

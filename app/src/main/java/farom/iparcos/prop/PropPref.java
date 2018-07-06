@@ -71,7 +71,7 @@ public abstract class PropPref extends Preference implements INDIPropertyListene
      */
     protected Spannable createTitle() {
         Spannable titleText = new SpannableString(prop.getLabel());
-        int color = 0;
+        int color;
         switch (prop.getState()) {
             case ALERT: {
                 color = Application.getContext().getResources().getColor(R.color.light_red);
@@ -83,13 +83,13 @@ public abstract class PropPref extends Preference implements INDIPropertyListene
                 break;
             }
 
-            case IDLE: {
-                color = Color.WHITE;
+            case OK: {
+                color = Application.getContext().getResources().getColor(R.color.light_green);
                 break;
             }
 
-            case OK: {
-                color = Application.getContext().getResources().getColor(R.color.light_green);
+            default: {
+                color = Color.WHITE;
                 break;
             }
         }
@@ -105,24 +105,22 @@ public abstract class PropPref extends Preference implements INDIPropertyListene
     protected abstract Spannable createSummary();
 
     @Override
-    public void propertyChanged(INDIProperty arg0) {
-        if (arg0 != prop) {
+    public void propertyChanged(INDIProperty property) {
+        if (property != prop) {
             Log.w("PropPref", "wrong property");
             return;
         }
+        if (title != null) {
+            title.post(new Runnable() {
+                public void run() {
+                    PropPref.this.setSummary(createSummary());
+                    PropPref.this.setTitle(createTitle());
+                }
+            });
 
-        if (title == null) {
+        } else {
             Log.w("PropPref", "null title, prop = " + prop.getLabel());
-            return;
         }
-
-        final PropPref thisPref = this;
-        title.post(new Runnable() {
-            public void run() {
-                thisPref.setSummary(createSummary());
-                thisPref.setTitle(createTitle());
-            }
-        });
     }
 
     /**

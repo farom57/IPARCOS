@@ -58,14 +58,12 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
         if (!isConnected()) {
             Application.setState(Application.getContext().getResources().getString(R.string.connecting));
             Application.log(Application.getContext().getResources().getString(R.string.try_to_connect) + host + ":" + port);
-
             connection = new INDIServerConnection(host, port);
             // Listen to all
             connection.addINDIServerConnectionListener(this);
             for (INDIServerConnectionListener l : listeners) {
                 connection.addINDIServerConnectionListener(l);
             }
-
             new Thread(new Runnable() {
                 public void run() {
                     try {
@@ -117,7 +115,6 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
     public void connectionLost(INDIServerConnection connection) {
         Application.log(Application.getContext().getResources().getString(R.string.connection_lost));
         Application.setState(Application.getContext().getResources().getString(R.string.connect));
-        connection = null;
         // Move to the connection tab
         Application.goToConnectionTab();
     }

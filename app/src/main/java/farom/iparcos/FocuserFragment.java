@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -416,8 +417,14 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
             case R.id.abs_pos_button: {
                 try {
                     if (absPosElem != null && absPosText != null) {
-                        absPosElem.setDesiredValue(Double.parseDouble(absPosText.getText().toString()));
-                        new PropUpdater().execute(absPosProp);
+                        try {
+                            absPosElem.setDesiredValue(Double.parseDouble(absPosText.getText().toString()));
+                            new PropUpdater().execute(absPosProp);
+
+                        } catch (NumberFormatException e) {
+                            Toast.makeText(getActivity(), "Invalid absolute position!", Toast.LENGTH_SHORT).show();
+                            updateAbsPosText();
+                        }
                     }
 
                 } catch (INDIValueException e) {
