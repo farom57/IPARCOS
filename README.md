@@ -1,14 +1,14 @@
 <img align="left" width="100" height="100" src="docs/logo.png">
 
 # IPARCOS
-IPARCOS (Indi Protocol Android Remote COntrol Software) is an INDI client for Android. It features a generic control panel and others specialized tools to easily control your devices.
-The project main site is https://github.com/farom57/IPARCOS/
+IPARCOS (Indi Protocol Android Remote COntrol Software) is an INDI client for Android.
+It features a generic control panel, a mount joystick-like screen, a focuser controller and a database of objects to point the telescope.
 
 ## Features
-
-+ Generic control panel compatible with every devices (BLOB not yet supported)
-+ Control of the telescope motion by means of a directional pad and speed buttons
-+ Languages: English, French, Italian
+* Mount and focuser controller with directional pads and speed buttons
+* Database full of objects to which you can point the telescope directly from the app
+* Generic control panel compatible with every device (BLOB properties not yet supported)
+* Languages: English, French, Italian
 
 ## Screenshots
 <img align="left" width="250" src="docs/connection.png">
@@ -41,9 +41,9 @@ The project main site is https://github.com/farom57/IPARCOS/
 4. Control the telescope motion
   * Click on the icon with four arrows in the action bar to display the telescope motion control panel
   * The buttons will be enabled (red) or disabled (grey) depending on the devices features.
-    * The arrows are enabled if one device provide the TELESCOPE_ABORT_MOTION, TELESCOPE_MOTION_NS and/or TELESCOPE_MOTION_WE properties
-    * The + and - buttons are enabled if one device provide the standard property to control the speed (TELESCOPE_MOTION_RATE) or the LX200 style property (Slew Rate) or the EQMod style property (SLEWMODE)
-    * If the device is not connected, the properties may not appears and the buttons will be disabled
+    * The arrows are enabled if one device provides the TELESCOPE_ABORT_MOTION, TELESCOPE_MOTION_NS and/or TELESCOPE_MOTION_WE properties
+    * The + and - buttons are enabled if one device provides the standard property to control the speed (TELESCOPE_MOTION_RATE) or the LX200 style property (Slew Rate) or the EQMod style property (SLEWMODE)
+    * If the device is not connected, the properties may not appear and the buttons will be disabled
 
 ### Developed by
 * **Romain Fafet** (farom57)
