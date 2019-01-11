@@ -35,7 +35,7 @@ import laazotea.indi.client.INDIValueException;
  * This fragment shows directional buttons to move a focuser. It also provides
  * buttons to change speed.
  *
- * @author SquareBoot
+ * @author marcocipriani01
  */
 public class FocuserFragment extends Fragment implements INDIServerConnectionListener, INDIPropertyListener, INDIDeviceListener, View.OnClickListener, CounterHandler.CounterListener {
 

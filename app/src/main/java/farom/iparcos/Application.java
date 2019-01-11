@@ -8,7 +8,7 @@ import android.util.Log;
 import java.util.Date;
 
 /**
- * @author SquareBoot
+ * @author marcocipriani01
  */
 public class Application extends android.app.Application {
 
@@ -104,7 +104,7 @@ public class Application extends android.app.Application {
      * This class offers a safe way to update the UI statically instead of keeping in memory Android Widgets,
      * which implement the class {@link Context}.
      *
-     * @author SquareBoot
+     * @author marcocipriani01
      */
     public interface UIUpdater {
         /**

@@ -138,7 +138,7 @@ public class GenericFragment extends Fragment implements TabLayout.OnTabSelected
     }
 
     /**
-     * @author SquareBoot
+     * @author marcocipriani01
      */
     public static class NoDevicesFragment extends Fragment {
 
@@ -151,7 +151,7 @@ public class GenericFragment extends Fragment implements TabLayout.OnTabSelected
     /**
      * Page adapter. Creates the {@link PrefsFragment} corresponding to the specified {@link PageDescriptor}.
      *
-     * @author SquareBoot
+     * @author marcocipriani01
      */
     private class DevicesPagerAdapter extends ArrayPagerAdapter<Fragment> {
 
@@ -175,7 +175,7 @@ public class GenericFragment extends Fragment implements TabLayout.OnTabSelected
     /**
      * A descriptor for each tab. It also retains the association between the tab and the correspondent device.
      *
-     * @author SquareBoot
+     * @author marcocipriani01
      */
     private class DevicePageDescriptor extends SimplePageDescriptor {
 

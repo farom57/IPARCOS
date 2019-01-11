@@ -13,7 +13,7 @@ import laazotea.indi.client.INDIServerConnectionListener;
 /**
  * Manages an {@link INDIServerConnection} object, listens to INDI messages and notifies listeners.
  *
- * @author SquareBoot
+ * @author marcocipriani01
  */
 @SuppressWarnings("WeakerAccess")
 public class ConnectionManager implements INDIServerConnectionListener, INDIDeviceListener {

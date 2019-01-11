@@ -6,7 +6,7 @@ import android.view.View;
 
 /**
  * @author Noman Rafique
- * @author SquareBoot
+ * @author marcocipriani01
  * @see <a href="https://stackoverflow.com/a/41466381">Continuously increase integer value as the button is pressed</a>
  */
 @SuppressWarnings({"unused", "WeakerAccess"})

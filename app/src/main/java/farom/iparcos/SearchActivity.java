@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 /**
  * Needed by the Android Manifest.
  *
- * @author SquareBoot
+ * @author marcocipriani01
  */
 public class SearchActivity extends AppCompatActivity {
 

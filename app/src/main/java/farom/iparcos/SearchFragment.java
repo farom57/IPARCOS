@@ -349,7 +349,7 @@ public class SearchFragment extends ListFragment
     /**
      * Catalog loader.
      *
-     * @author SquareBoot
+     * @author marcocipriani01
      */
     private static class CatalogLoader extends AsyncTaskLoader<Catalog> {
 

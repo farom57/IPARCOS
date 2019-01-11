@@ -1,7 +1,7 @@
 package farom.iparcos;
 
 /**
- * @author SquareBoot
+ * @author marcocipriani01
  */
 interface ServersReloadListener {
 

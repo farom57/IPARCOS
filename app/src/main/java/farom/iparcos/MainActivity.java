@@ -14,7 +14,7 @@ import android.view.MenuItem;
 /**
  * The main activity of the application, that manages all the fragments.
  *
- * @author SquareBoot
+ * @author marcocipriani01
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * @author SquareBoot
+     * @author marcocipriani01
      */
     private enum Pages {
         CONNECTION(0, R.id.menu_connection, new ConnectionFragment()),

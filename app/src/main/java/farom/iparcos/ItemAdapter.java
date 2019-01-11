@@ -12,7 +12,7 @@ import com.woxthebox.draglistview.DragItemAdapter;
 import java.util.ArrayList;
 
 /**
- * @author SquareBoot
+ * @author marcocipriani01
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public abstract class ItemAdapter extends DragItemAdapter<Pair<Long, String>, ItemAdapter.ViewHolder> {

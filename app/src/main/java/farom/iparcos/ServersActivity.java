@@ -32,7 +32,7 @@ import java.util.Set;
 /**
  * Activity to manage the list of servers.
  *
- * @author SquareBoot
+ * @author marcocipriani01
  */
 public class ServersActivity extends AppCompatActivity implements ServersReloadListener {
 

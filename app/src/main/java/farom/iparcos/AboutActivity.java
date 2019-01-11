@@ -5,7 +5,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
 /**
- * @author SquareBoot
+ * @author marcocipriani01
  */
 public class AboutActivity extends AppCompatActivity {
 

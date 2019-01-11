@@ -49,4 +49,4 @@ The project main site is https://github.com/farom57/IPARCOS/
 * **Romain Fafet** (farom57)
 * **Zerjillo**
   * INDI for Java http://www.indilib.org/develop/indiforjava.html
-* **SquareBoot**
+* **marcocipriani01**

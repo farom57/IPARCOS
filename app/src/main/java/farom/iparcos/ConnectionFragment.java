@@ -33,7 +33,7 @@ import static farom.iparcos.ServersActivity.PREFERENCES_TAG;
  * The main screen of the application, which manages the connection.
  *
  * @author Romain Fafet
- * @author SquareBoot
+ * @author marcocipriani01
  */
 public class ConnectionFragment extends Fragment implements ServersReloadListener {
 
@@ -251,7 +251,7 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
     /**
      * {@code ArrayAdapter} for logs.
      *
-     * @author SquareBoot
+     * @author marcocipriani01
      */
     private class LogAdapter extends ArrayAdapter<LogItem> {
 
@@ -288,7 +288,7 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
     /**
      * {@code ViewHolder} for the {@code ListView} that stores logs.
      *
-     * @author SquareBoot
+     * @author marcocipriani01
      */
     private class ViewHolder {
         TextView log, timestamp;
@@ -297,7 +297,7 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
     /**
      * Represents a single log with its timestamp.
      *
-     * @author SquareBoot
+     * @author marcocipriani01
      */
     private class LogItem {
 
