@@ -2,13 +2,14 @@ package farom.iparcos.prop;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceViewHolder;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
+
+import androidx.preference.Preference;
+import androidx.preference.PreferenceViewHolder;
 
 import farom.iparcos.Application;
 import farom.iparcos.R;

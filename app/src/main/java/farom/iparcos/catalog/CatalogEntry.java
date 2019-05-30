@@ -1,8 +1,9 @@
 package farom.iparcos.catalog;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.text.Spannable;
+
+import androidx.annotation.NonNull;
 
 /**
  * An abstract astronomical object.

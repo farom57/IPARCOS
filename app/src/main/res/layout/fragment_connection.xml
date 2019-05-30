@@ -68,7 +68,7 @@
         android:layout_marginTop="8dp"
         android:layout_below="@+id/LogSection" />
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/clearLogsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
