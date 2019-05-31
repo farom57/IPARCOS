@@ -70,10 +70,9 @@ public class ServersActivity extends AppCompatActivity implements ServersReloadL
                             } else {
                                 serversList = new ArrayList<>();
                             }
-                            serversList.add((max + 1) + "#" + server);
+                            serversList.add(0, (max + 1) + "#" + server);
                             // Save the list
-                            Set<String> newSet = new HashSet<>();
-                            newSet.addAll(serversList);
+                            Set<String> newSet = new HashSet<>(serversList);
                             preferences.edit().putStringSet(PREFERENCES_TAG, newSet).apply();
                             // Update
                             onServersReload.loadServers();

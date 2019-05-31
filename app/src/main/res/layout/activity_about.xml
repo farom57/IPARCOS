@@ -40,6 +40,7 @@
             android:layout_height="wrap_content"
             android:autoLink="web"
             android:linksClickable="true"
+            android:layout_gravity="center_vertical|end"
             android:text="@string/app_description" />
     </ScrollView>
 </RelativeLayout>
