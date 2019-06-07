@@ -24,7 +24,6 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.preference:preference:1.0.0'
     implementation 'com.commonsware.cwac:pager:0.2.6'
