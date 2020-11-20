@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context="farom.iparcos.GenericFragment">
+    tools:context="marcocipriani01.iparcos.GenericFragment">
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"

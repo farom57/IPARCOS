@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="farom.iparcos">
+    package="marcocipriani01.iparcos">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -9,14 +9,14 @@
 
 
     <application
-        android:name=".Application"
+        android:name="marcocipriani01.iparcos.Application"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:allowBackup="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="marcocipriani01.iparcos.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleInstance"
             android:screenOrientation="userPortrait"
@@ -29,25 +29,25 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AboutActivity"
+            android:name="marcocipriani01.iparcos.AboutActivity"
             android:label="@string/menu_about"
             android:screenOrientation="fullUser"
             android:theme="@style/SimpleActivityTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="farom.iparcos.MainActivity" />
+                android:value="marcocipriani01.iparcos.MainActivity" />
         </activity>
         <activity
-            android:name=".ServersActivity"
+            android:name="marcocipriani01.iparcos.ServersActivity"
             android:label="@string/host_manage"
             android:screenOrientation="fullUser"
             android:theme="@style/SimpleActivityTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="farom.iparcos.MainActivity" />
+                android:value="marcocipriani01.iparcos.MainActivity" />
         </activity>
         <activity
-            android:name=".SearchActivity"
+            android:name="marcocipriani01.iparcos.SearchActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
             <intent-filter>

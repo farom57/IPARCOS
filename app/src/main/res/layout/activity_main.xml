@@ -5,7 +5,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="farom.iparcos.MainActivity">
+    tools:context="marcocipriani01.iparcos.MainActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/app_toolbar"

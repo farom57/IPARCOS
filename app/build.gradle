@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion = '28.0.3'
+    compileSdkVersion 30
+    buildToolsVersion = '30.0.2'
 
     defaultConfig {
         applicationId "farom.iparcos"
         minSdkVersion 15
-        targetSdkVersion 28
+        targetSdkVersion 30
         versionCode 4
         versionName "1.2.0"
         multiDexEnabled true
@@ -23,9 +23,9 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.preference:preference:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.preference:preference:1.1.1'
     implementation 'com.commonsware.cwac:pager:0.2.6'
-    implementation 'com.github.woxthebox:draglistview:1.6.4'
+    implementation 'com.github.woxthebox:draglistview:1.7.2'
 }
