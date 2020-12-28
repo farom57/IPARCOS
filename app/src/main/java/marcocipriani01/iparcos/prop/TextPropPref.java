@@ -29,7 +29,6 @@ import java.util.List;
 import marcocipriani01.iparcos.IPARCOSApp;
 import marcocipriani01.iparcos.R;
 
-@SuppressWarnings({"WeakerAccess"})
 public class TextPropPref extends PropPref<INDITextElement> {
 
     public TextPropPref(Context context, INDIProperty<INDITextElement> prop) {
@@ -109,37 +108,27 @@ public class TextPropPref extends PropPref<INDITextElement> {
             builder.setTitle(prop.getLabel());
 
             if (prop.getPermission() != Constants.PropertyPermissions.RO) {
-                builder.setPositiveButton(R.string.send_request, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        try {
-                            for (int i = 0; i < elements.size(); i++) {
-                                elements.get(i).setDesiredValue(editTextViews.get(i).getText().toString());
-                            }
-
-                        } catch (INDIValueException | IllegalArgumentException e) {
-                            Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                            IPARCOSApp.log(context.getResources().getString(R.string.error) + e.getLocalizedMessage());
+                builder.setPositiveButton(R.string.send_request, (dialog, id) -> {
+                    try {
+                        for (int i = 0; i < elements.size(); i++) {
+                            elements.get(i).setDesiredValue(editTextViews.get(i).getText().toString());
                         }
-                        propPref.sendChanges();
-                    }
-                });
-                builder.setNegativeButton(R.string.cancel_request, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
 
+                    } catch (INDIValueException | IllegalArgumentException e) {
+                        Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                        IPARCOSApp.log(context.getResources().getString(R.string.error) + e.getLocalizedMessage());
                     }
+                    propPref.sendChanges();
+                });
+                builder.setNegativeButton(R.string.cancel_request, (dialog, id) -> {
+
                 });
 
             } else {
-                builder.setNegativeButton(R.string.back_request, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
+                builder.setNegativeButton(R.string.back_request, (dialog, id) -> {
 
-                    }
                 });
             }
-
             return builder.create();
         }
     }

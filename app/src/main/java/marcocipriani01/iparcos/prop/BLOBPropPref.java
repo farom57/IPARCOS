@@ -9,7 +9,6 @@ import org.indilib.i4j.client.INDIProperty;
 
 import marcocipriani01.iparcos.R;
 
-@SuppressWarnings({"WeakerAccess"})
 public class BLOBPropPref extends PropPref<INDIBLOBElement> {
 
     public BLOBPropPref(Context context, INDIProperty<INDIBLOBElement> prop) {

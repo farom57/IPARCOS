@@ -15,7 +15,6 @@ import java.util.List;
 import marcocipriani01.iparcos.IPARCOSApp;
 import marcocipriani01.iparcos.R;
 
-@SuppressWarnings({"WeakerAccess"})
 public class LightPropPref extends PropPref<INDILightElement> {
 
     public LightPropPref(Context context, INDIProperty<INDILightElement> prop) {

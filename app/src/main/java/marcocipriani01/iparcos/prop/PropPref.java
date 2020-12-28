@@ -23,7 +23,6 @@ import org.indilib.i4j.client.INDITextProperty;
 import marcocipriani01.iparcos.IPARCOSApp;
 import marcocipriani01.iparcos.R;
 
-@SuppressWarnings({"WeakerAccess"})
 public abstract class PropPref<Element extends INDIElement> extends Preference implements INDIPropertyListener {
 
     protected INDIProperty<Element> prop;
@@ -108,13 +107,10 @@ public abstract class PropPref<Element extends INDIElement> extends Preference i
             return;
         }
         if (title != null) {
-            title.post(new Runnable() {
-                public void run() {
-                    PropPref.this.setSummary(createSummary());
-                    PropPref.this.setTitle(createTitle());
-                }
+            title.post(() -> {
+                PropPref.this.setSummary(createSummary());
+                PropPref.this.setTitle(createTitle());
             });
-
         } else {
             Log.w("PropPref", "null title, prop = " + prop.getLabel());
         }
