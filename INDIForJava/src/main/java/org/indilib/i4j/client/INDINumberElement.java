@@ -130,7 +130,7 @@ public class INDINumberElement extends INDIElement {
             sFormatter = new INDISexagesimalFormatter(newNumberFormat);
         }
 
-        if (newNumberFormat.equals("%0.f")) {
+        if (newNumberFormat.equals("%0.f") || newNumberFormat.equals("%.f")) {
             newNumberFormat = "%.0f";
         }
 
@@ -206,7 +206,7 @@ public class INDINumberElement extends INDIElement {
     /**
      * Gets the value of this Number Element formated as a String according to
      * the number format.
-     * 
+     *
      * @return The value of this Number Element formatted as a String.
      */
     @Override
