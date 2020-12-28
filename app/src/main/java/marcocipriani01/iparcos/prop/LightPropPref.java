@@ -7,18 +7,18 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 
-import java.util.ArrayList;
+import org.indilib.i4j.client.INDILightElement;
+import org.indilib.i4j.client.INDIProperty;
 
-import marcocipriani01.iparcos.Application;
+import java.util.List;
+
+import marcocipriani01.iparcos.IPARCOSApp;
 import marcocipriani01.iparcos.R;
-import laazotea.indi.client.INDIElement;
-import laazotea.indi.client.INDILightElement;
-import laazotea.indi.client.INDIProperty;
 
 @SuppressWarnings({"WeakerAccess"})
-public class LightPropPref extends PropPref {
+public class LightPropPref extends PropPref<INDILightElement> {
 
-    public LightPropPref(Context context, INDIProperty prop) {
+    public LightPropPref(Context context, INDIProperty<INDILightElement> prop) {
         super(context, prop);
     }
 
@@ -29,7 +29,7 @@ public class LightPropPref extends PropPref {
      */
     @Override
     protected Spannable createSummary() {
-        ArrayList<INDIElement> elements = prop.getElementsAsList();
+        List<INDILightElement> elements = prop.getElementsAsList();
         if (elements.size() > 0) {
             StringBuilder stringBuilder = new StringBuilder();
             int[] starts = new int[elements.size()];
@@ -41,9 +41,9 @@ public class LightPropPref extends PropPref {
                 ends[i] = stringBuilder.length();
             }
             Spannable summaryText = new SpannableString(stringBuilder.toString());
-            Resources resources = Application.getContext().getResources();
+            Resources resources = IPARCOSApp.getContext().getResources();
             for (int i = 0; i < elements.size(); i++) {
-                int color = Color.WHITE;
+                int color;
                 switch (((INDILightElement) (elements.get(i))).getValue()) {
                     case ALERT: {
                         color = resources.getColor(R.color.light_red);
@@ -55,13 +55,14 @@ public class LightPropPref extends PropPref {
                         break;
                     }
 
-                    case IDLE: {
-                        color = Color.WHITE;
+                    case OK: {
+                        color = resources.getColor(R.color.light_green);
                         break;
                     }
 
-                    case OK: {
-                        color = resources.getColor(R.color.light_green);
+                    default:
+                    case IDLE: {
+                        color = Color.WHITE;
                         break;
                     }
                 }

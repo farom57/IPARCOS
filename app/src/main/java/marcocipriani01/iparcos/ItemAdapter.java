@@ -15,7 +15,7 @@ import java.util.ArrayList;
 /**
  * @author marcocipriani01
  */
-@SuppressWarnings({"unused", "WeakerAccess"})
+@SuppressWarnings({"WeakerAccess"})
 public abstract class ItemAdapter extends DragItemAdapter<Pair<Long, String>, ItemAdapter.ViewHolder> {
 
     private final int layoutId;

@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Application.setGoToConnectionTab(new Runnable() {
+        IPARCOSApp.setGoToConnectionTab(new Runnable() {
             @Override
             public void run() {
                 currentPage = Pages.CONNECTION;
@@ -86,10 +86,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_about:
-                startActivity(new Intent(this, AboutActivity.class));
-                return true;
+        if (item.getItemId() == R.id.menu_about) {
+            startActivity(new Intent(this, AboutActivity.class));
+            return true;
         }
         return false;
     }

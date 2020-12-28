@@ -1,9 +1,7 @@
 package marcocipriani01.iparcos.prop;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -16,20 +14,27 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
 
-import marcocipriani01.iparcos.Application;
+import org.indilib.i4j.Constants;
+import org.indilib.i4j.client.INDIElement;
+import org.indilib.i4j.client.INDINumberElement;
+import org.indilib.i4j.client.INDINumberProperty;
+import org.indilib.i4j.client.INDIProperty;
+import org.indilib.i4j.client.INDIValueException;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import marcocipriani01.iparcos.IPARCOSApp;
 import marcocipriani01.iparcos.R;
-import laazotea.indi.Constants;
-import laazotea.indi.client.INDIElement;
-import laazotea.indi.client.INDINumberProperty;
-import laazotea.indi.client.INDIProperty;
-import laazotea.indi.client.INDIValueException;
 
 @SuppressWarnings({"WeakerAccess"})
-public class NumberPropPref extends PropPref {
+public class NumberPropPref extends PropPref<INDINumberElement> {
 
-    public NumberPropPref(Context context, INDIProperty prop) {
+    public NumberPropPref(Context context, INDIProperty<INDINumberElement> prop) {
         super(context, prop);
     }
 
@@ -40,7 +45,7 @@ public class NumberPropPref extends PropPref {
      */
     @Override
     protected Spannable createSummary() {
-        ArrayList<INDIElement> elements = prop.getElementsAsList();
+        List<INDINumberElement> elements = prop.getElementsAsList();
         if (elements.size() > 0) {
             StringBuilder stringBuilder = new StringBuilder();
             int i;
@@ -62,26 +67,27 @@ public class NumberPropPref extends PropPref {
         if (!getSummary().toString().equals(getContext().getString(R.string.no_indi_elements))) {
             NumberRequestFragment requestFragment = new NumberRequestFragment();
             requestFragment.setArguments((INDINumberProperty) prop, this);
-            requestFragment.show(((Activity) getContext()).getFragmentManager(), "request");
+            requestFragment.show(((FragmentActivity) getContext()).getSupportFragmentManager(), "request");
         }
     }
 
     public static class NumberRequestFragment extends DialogFragment {
 
         private INDINumberProperty prop;
-        private PropPref propPref;
+        private PropPref<INDINumberElement> propPref;
 
-        public void setArguments(INDINumberProperty prop, PropPref propPref) {
+        public void setArguments(INDINumberProperty prop, PropPref<INDINumberElement> propPref) {
             this.prop = prop;
             this.propPref = propPref;
         }
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final Context context = getActivity();
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
-            final ArrayList<INDIElement> elements = prop.getElementsAsList();
+            final List<INDINumberElement> elements = prop.getElementsAsList();
             final ArrayList<EditText> editTextViews = new ArrayList<>(elements.size());
 
             LinearLayout layout = new LinearLayout(context);
@@ -121,7 +127,7 @@ public class NumberPropPref extends PropPref {
 
                         } catch (INDIValueException | IllegalArgumentException e) {
                             Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                            Application.log(context.getResources().getString(R.string.error) + e.getLocalizedMessage());
+                            IPARCOSApp.log(context.getResources().getString(R.string.error) + e.getLocalizedMessage());
                         }
                         propPref.sendChanges();
                     }

@@ -4,13 +4,15 @@ import android.content.Context;
 import android.text.Spannable;
 import android.text.SpannableString;
 
+import org.indilib.i4j.client.INDIBLOBElement;
+import org.indilib.i4j.client.INDIProperty;
+
 import marcocipriani01.iparcos.R;
-import laazotea.indi.client.INDIProperty;
 
 @SuppressWarnings({"WeakerAccess"})
-public class BLOBPropPref extends PropPref {
+public class BLOBPropPref extends PropPref<INDIBLOBElement> {
 
-    public BLOBPropPref(Context context, INDIProperty prop) {
+    public BLOBPropPref(Context context, INDIProperty<INDIBLOBElement> prop) {
         super(context, prop);
     }
 

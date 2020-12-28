@@ -23,6 +23,19 @@ import androidx.loader.app.LoaderManager;
 import androidx.loader.content.AsyncTaskLoader;
 import androidx.loader.content.Loader;
 
+import org.indilib.i4j.Constants;
+import org.indilib.i4j.client.INDIDevice;
+import org.indilib.i4j.client.INDIDeviceListener;
+import org.indilib.i4j.client.INDINumberElement;
+import org.indilib.i4j.client.INDINumberProperty;
+import org.indilib.i4j.client.INDIProperty;
+import org.indilib.i4j.client.INDIPropertyListener;
+import org.indilib.i4j.client.INDIServerConnection;
+import org.indilib.i4j.client.INDIServerConnectionListener;
+import org.indilib.i4j.client.INDISwitchElement;
+import org.indilib.i4j.client.INDISwitchProperty;
+import org.indilib.i4j.client.INDIValueException;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,18 +44,6 @@ import marcocipriani01.iparcos.catalog.Catalog;
 import marcocipriani01.iparcos.catalog.CatalogEntry;
 import marcocipriani01.iparcos.catalog.Coordinates;
 import marcocipriani01.iparcos.prop.PropUpdater;
-import laazotea.indi.Constants;
-import laazotea.indi.client.INDIDevice;
-import laazotea.indi.client.INDIDeviceListener;
-import laazotea.indi.client.INDINumberElement;
-import laazotea.indi.client.INDINumberProperty;
-import laazotea.indi.client.INDIProperty;
-import laazotea.indi.client.INDIPropertyListener;
-import laazotea.indi.client.INDIServerConnection;
-import laazotea.indi.client.INDIServerConnectionListener;
-import laazotea.indi.client.INDISwitchElement;
-import laazotea.indi.client.INDISwitchProperty;
-import laazotea.indi.client.INDIValueException;
 
 /**
  * Allows the user to look for an astronomical object and slew the telescope.
@@ -66,7 +67,7 @@ public class SearchFragment extends ListFragment
     private Context context;
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context;
     }
@@ -80,7 +81,7 @@ public class SearchFragment extends ListFragment
             if (list != null) {
                 for (INDIDevice device : list) {
                     device.addINDIDeviceListener(this);
-                    for (INDIProperty property : device.getPropertiesAsList()) {
+                    for (INDIProperty<?> property : device.getPropertiesAsList()) {
                         newProperty(device, property);
                     }
                 }
@@ -106,7 +107,7 @@ public class SearchFragment extends ListFragment
         setEmptyText(getString(R.string.empty_catalog));
         setHasOptionsMenu(true);
 
-        if ((catalog == null) || (!catalog.isReady())) {
+        if (catalog == null) {
             catalogEntries = new ArrayList<>();
             entriesAdapter = new ArrayAdapter<CatalogEntry>(context,
                     android.R.layout.simple_list_item_2, android.R.id.text1, catalogEntries) {
@@ -124,19 +125,19 @@ public class SearchFragment extends ListFragment
             setListAdapter(entriesAdapter);
             // List loading
             setListShown(false);
-            getLoaderManager().initLoader(0, null, this).forceLoad();
+            LoaderManager.getInstance(this).initLoader(0, null, this).forceLoad();
 
         } else {
             setListAdapter(entriesAdapter);
         }
 
         // Set up INDI connection
-        connectionManager = Application.getConnectionManager();
+        connectionManager = IPARCOSApp.getConnectionManager();
         connectionManager.addListener(this);
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(Menu menu, @NonNull MenuInflater inflater) {
         MenuItem item = menu.add(R.string.menu_search);
         item.setIcon(R.drawable.search);
         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
@@ -153,9 +154,7 @@ public class SearchFragment extends ListFragment
      */
     @Override
     public boolean onQueryTextChange(String newText) {
-        if ((catalog != null) && (catalog.isReady())) {
-            setSelection(catalog.searchIndex(newText));
-        }
+        if (catalog != null) setSelection(catalog.searchIndex(newText));
         return false;
     }
 
@@ -171,7 +170,7 @@ public class SearchFragment extends ListFragment
     }
 
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
+    public void onListItemClick(ListView l, @NonNull View v, int position, long id) {
         final Context context = l.getContext();
         final Coordinates coord = catalogEntries.get(position).getCoordinates();
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -266,7 +265,7 @@ public class SearchFragment extends ListFragment
     }
 
     @Override
-    public void newProperty(INDIDevice device, INDIProperty property) {
+    public void newProperty(INDIDevice device, INDIProperty<?> property) {
         // Look for properties
         if (property.getName().equals("ON_COORD_SET")) {
             telescopeOnCoordSetSlew = (INDISwitchElement) property.getElement("TRACK");
@@ -301,7 +300,7 @@ public class SearchFragment extends ListFragment
     }
 
     @Override
-    public void removeProperty(INDIDevice device, INDIProperty property) {
+    public void removeProperty(INDIDevice device, INDIProperty<?> property) {
         if (property.getName().equals("ON_COORD_SET")) {
             telescopeCoordP = null;
             telescopeCoordRA = null;
@@ -321,7 +320,7 @@ public class SearchFragment extends ListFragment
     }
 
     @Override
-    public void propertyChanged(INDIProperty property) {
+    public void propertyChanged(INDIProperty<?> property) {
 
     }
 

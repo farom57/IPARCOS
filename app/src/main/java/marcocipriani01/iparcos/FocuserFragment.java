@@ -14,23 +14,24 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import org.indilib.i4j.Constants;
+import org.indilib.i4j.client.INDIDevice;
+import org.indilib.i4j.client.INDIDeviceListener;
+import org.indilib.i4j.client.INDINumberElement;
+import org.indilib.i4j.client.INDINumberProperty;
+import org.indilib.i4j.client.INDIProperty;
+import org.indilib.i4j.client.INDIPropertyListener;
+import org.indilib.i4j.client.INDIServerConnection;
+import org.indilib.i4j.client.INDIServerConnectionListener;
+import org.indilib.i4j.client.INDISwitchElement;
+import org.indilib.i4j.client.INDISwitchProperty;
+import org.indilib.i4j.client.INDIValueException;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import marcocipriani01.iparcos.prop.PropUpdater;
-import laazotea.indi.Constants;
-import laazotea.indi.client.INDIDevice;
-import laazotea.indi.client.INDIDeviceListener;
-import laazotea.indi.client.INDINumberElement;
-import laazotea.indi.client.INDINumberProperty;
-import laazotea.indi.client.INDIProperty;
-import laazotea.indi.client.INDIPropertyListener;
-import laazotea.indi.client.INDIServerConnection;
-import laazotea.indi.client.INDIServerConnectionListener;
-import laazotea.indi.client.INDISwitchElement;
-import laazotea.indi.client.INDISwitchProperty;
-import laazotea.indi.client.INDIValueException;
 
 /**
  * This fragment shows directional buttons to move a focuser. It also provides
@@ -73,8 +74,8 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
             if (list != null) {
                 for (INDIDevice device : list) {
                     device.addINDIDeviceListener(this);
-                    List<INDIProperty> properties = device.getPropertiesAsList();
-                    for (INDIProperty property : properties) {
+                    List<INDIProperty<?>> properties = device.getPropertiesAsList();
+                    for (INDIProperty<?> property : properties) {
                         newProperty(device, property);
                     }
                 }
@@ -119,27 +120,23 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
         speedText.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
-
             }
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 try {
-                    speed = Integer.valueOf(s.toString());
-
+                    speed = Integer.parseInt(s.toString());
                 } catch (NumberFormatException ignored) {
-
                 }
             }
         });
 
         // Set up INDI connection
-        connectionManager = Application.getConnectionManager();
+        connectionManager = IPARCOSApp.getConnectionManager();
         connectionManager.addListener(this);
 
         return rootView;
@@ -154,7 +151,7 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
         updateSpeedText();
         updateAbsPosText();
         // Move to the connection tab
-        Application.goToConnectionTab();
+        IPARCOSApp.goToConnectionTab();
     }
 
     @Override
@@ -175,7 +172,7 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
     }
 
     @Override
-    public void newProperty(INDIDevice device, INDIProperty property) {
+    public void newProperty(INDIDevice device, INDIProperty<?> property) {
         // Look for certain properties
         switch (property.getName()) {
             case "ABS_FOCUS_POSITION": {
@@ -220,7 +217,7 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
     }
 
     @Override
-    public void removeProperty(INDIDevice device, INDIProperty property) {
+    public void removeProperty(INDIDevice device, INDIProperty<?> property) {
         switch (property.getName()) {
             case "REL_FOCUS_POSITION": {
                 relPosElem = null;
@@ -258,7 +255,7 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
     }
 
     @Override
-    public void propertyChanged(final INDIProperty property) {
+    public void propertyChanged(final INDIProperty<?> property) {
         Log.d("FocusFragment",
                 "Changed property (" + property.getName() + "), new value" + property.getValuesAsString());
         switch (property.getName()) {
@@ -269,11 +266,7 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
 
             case "FOCUS_ABORT_MOTION": {
                 if (abortButton != null) {
-                    abortButton.post(new Runnable() {
-                        public void run() {
-                            abortButton.setPressed(outwardDirElem.getValue() == Constants.SwitchStatus.ON);
-                        }
-                    });
+                    abortButton.post(() -> abortButton.setPressed(outwardDirElem.getValue() == Constants.SwitchStatus.ON));
                 }
                 break;
             }
@@ -297,63 +290,28 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
      */
     public void updateBtnState() {
         if (inButton != null) {
-            inButton.post(new Runnable() {
-                public void run() {
-                    inButton.setEnabled(inwardDirElem != null);
-                }
-            });
+            inButton.post(() -> inButton.setEnabled(inwardDirElem != null));
         }
         if (outButton != null) {
-            outButton.post(new Runnable() {
-                public void run() {
-                    outButton.setEnabled(outwardDirElem != null);
-                }
-            });
+            outButton.post(() -> outButton.setEnabled(outwardDirElem != null));
         }
         if (speedUpButton != null) {
-            speedUpButton.post(new Runnable() {
-                public void run() {
-                    speedUpButton.setEnabled(relPosElem != null);
-                }
-            });
+            speedUpButton.post(() -> speedUpButton.setEnabled(relPosElem != null));
         }
         if (speedDownButton != null) {
-            speedDownButton.post(new Runnable() {
-                public void run() {
-                    speedDownButton.setEnabled(relPosElem != null);
-                }
-            });
+            speedDownButton.post(() -> speedDownButton.setEnabled(relPosElem != null));
         }
         if (speedText != null) {
-            speedText.post(new Runnable() {
-                @Override
-                public void run() {
-                    speedText.setFocusableInTouchMode(relPosElem != null);
-                }
-            });
+            speedText.post(() -> speedText.setFocusableInTouchMode(relPosElem != null));
         }
         if (abortButton != null) {
-            abortButton.post(new Runnable() {
-                public void run() {
-                    abortButton.setEnabled(abortElem != null);
-                }
-            });
+            abortButton.post(() -> abortButton.setEnabled(abortElem != null));
         }
         if (setAbsPosButton != null) {
-            setAbsPosButton.post(new Runnable() {
-                @Override
-                public void run() {
-                    setAbsPosButton.setEnabled(absPosElem != null);
-                }
-            });
+            setAbsPosButton.post(() -> setAbsPosButton.setEnabled(absPosElem != null));
         }
         if (absPosText != null) {
-            absPosText.post(new Runnable() {
-                @Override
-                public void run() {
-                    absPosText.setFocusableInTouchMode(absPosElem != null);
-                }
-            });
+            absPosText.post(() -> absPosText.setFocusableInTouchMode(absPosElem != null));
         }
     }
 
@@ -362,16 +320,13 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
      */
     public void updateSpeedText() {
         if (speedText != null) {
-            speedText.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (relPosElem != null) {
-                        speed = (int) (double) relPosElem.getValue();
-                        speedText.setText(String.valueOf(speed));
+            speedText.post(() -> {
+                if (relPosElem != null) {
+                    speed = (int) (double) relPosElem.getValue();
+                    speedText.setText(String.valueOf(speed));
 
-                    } else {
-                        speedText.setText(R.string.default_speed);
-                    }
+                } else {
+                    speedText.setText(R.string.default_speed);
                 }
             });
         }
@@ -379,15 +334,12 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
 
     public void updateAbsPosText() {
         if (absPosText != null) {
-            absPosText.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (absPosElem != null) {
-                        absPosText.setText(String.valueOf((int) (double) absPosElem.getValue()));
+            absPosText.post(() -> {
+                if (absPosElem != null) {
+                    absPosText.setText(String.valueOf((int) (double) absPosElem.getValue()));
 
-                    } else {
-                        absPosText.setText(R.string.default_speed);
-                    }
+                } else {
+                    absPosText.setText(R.string.default_speed);
                 }
             });
         }
@@ -401,91 +353,76 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.focuser_abort: {
-                try {
-                    if (abortElem != null) {
-                        abortElem.setDesiredValue(Constants.SwitchStatus.ON);
-                        new PropUpdater().execute(abortProp);
-                    }
-
-                } catch (INDIValueException e) {
-                    Log.e("FocusFragment", e.getLocalizedMessage());
+        int id = v.getId();
+        if (id == R.id.focuser_abort) {
+            try {
+                if (abortElem != null) {
+                    abortElem.setDesiredValue(Constants.SwitchStatus.ON);
+                    new PropUpdater().execute(abortProp);
                 }
-                break;
+
+            } catch (INDIValueException e) {
+                Log.e("FocusFragment", e.getLocalizedMessage());
             }
+        } else if (id == R.id.abs_pos_button) {
+            try {
+                if (absPosElem != null && absPosText != null) {
+                    try {
+                        absPosElem.setDesiredValue(Double.parseDouble(absPosText.getText().toString()));
+                        new PropUpdater().execute(absPosProp);
 
-            case R.id.abs_pos_button: {
-                try {
-                    if (absPosElem != null && absPosText != null) {
-                        try {
-                            absPosElem.setDesiredValue(Double.parseDouble(absPosText.getText().toString()));
-                            new PropUpdater().execute(absPosProp);
-
-                        } catch (NumberFormatException e) {
-                            Toast.makeText(getActivity(), "Invalid absolute position!", Toast.LENGTH_SHORT).show();
-                            updateAbsPosText();
-                        }
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(getActivity(), "Invalid absolute position!", Toast.LENGTH_SHORT).show();
+                        updateAbsPosText();
                     }
-
-                } catch (INDIValueException e) {
-                    Log.e("FocusFragment", e.getLocalizedMessage());
                 }
-                break;
+
+            } catch (INDIValueException e) {
+                Log.e("FocusFragment", e.getLocalizedMessage());
             }
         }
     }
 
     @Override
     public void onIncrement(View view, int number) {
-        switch (view.getId()) {
-            case R.id.focuser_faster: {
-                speed = number;
-                speedText.setText(String.valueOf(speed));
-                break;
-            }
+        int id = view.getId();
+        if (id == R.id.focuser_faster) {
+            speed = number;
+            speedText.setText(String.valueOf(speed));
+        } else if (id == R.id.focus_out) {
+            if (outwardDirElem != null && inwardDirElem != null && relPosElem != null) {
+                try {
+                    outwardDirElem.setDesiredValue(Constants.SwitchStatus.ON);
+                    inwardDirElem.setDesiredValue(Constants.SwitchStatus.OFF);
+                    new PropUpdater().execute(directionProp);
+                    relPosElem.setDesiredValue((double) speed);
+                    new PropUpdater().execute(relPosProp);
 
-            case R.id.focus_out: {
-                if (outwardDirElem != null && inwardDirElem != null && relPosElem != null) {
-                    try {
-                        outwardDirElem.setDesiredValue(Constants.SwitchStatus.ON);
-                        inwardDirElem.setDesiredValue(Constants.SwitchStatus.OFF);
-                        new PropUpdater().execute(directionProp);
-                        relPosElem.setDesiredValue((double) speed);
-                        new PropUpdater().execute(relPosProp);
-
-                    } catch (INDIValueException e) {
-                        Log.e("FocusFragment", e.getLocalizedMessage());
-                    }
+                } catch (INDIValueException e) {
+                    Log.e("FocusFragment", e.getLocalizedMessage());
                 }
-                break;
             }
         }
     }
 
     @Override
     public void onDecrement(View view, int number) {
-        switch (view.getId()) {
-            case R.id.focuser_slower: {
-                speed = number;
-                speedText.setText(String.valueOf(speed));
-                break;
-            }
+        int id = view.getId();
+        if (id == R.id.focuser_slower) {
+            speed = number;
+            speedText.setText(String.valueOf(speed));
+        } else if (id == R.id.focus_in) {
+            if (inwardDirElem != null && outwardDirElem != null && relPosElem != null) {
+                try {
+                    inwardDirElem.setDesiredValue(Constants.SwitchStatus.ON);
+                    outwardDirElem.setDesiredValue(Constants.SwitchStatus.OFF);
+                    new PropUpdater().execute(directionProp);
+                    relPosElem.setDesiredValue((double) speed);
+                    new PropUpdater().execute(relPosProp);
 
-            case R.id.focus_in: {
-                if (inwardDirElem != null && outwardDirElem != null && relPosElem != null) {
-                    try {
-                        inwardDirElem.setDesiredValue(Constants.SwitchStatus.ON);
-                        outwardDirElem.setDesiredValue(Constants.SwitchStatus.OFF);
-                        new PropUpdater().execute(directionProp);
-                        relPosElem.setDesiredValue((double) speed);
-                        new PropUpdater().execute(relPosProp);
-
-                    } catch (INDIValueException e) {
-                        Log.e("FocusFragment", e.getLocalizedMessage());
-                    }
+                } catch (INDIValueException e) {
+                    Log.e("FocusFragment", e.getLocalizedMessage());
                 }
-                break;
             }
         }
     }

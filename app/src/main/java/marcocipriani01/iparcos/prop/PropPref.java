@@ -11,23 +11,25 @@ import android.view.View;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceViewHolder;
 
-import marcocipriani01.iparcos.Application;
+import org.indilib.i4j.client.INDIBLOBProperty;
+import org.indilib.i4j.client.INDIElement;
+import org.indilib.i4j.client.INDILightProperty;
+import org.indilib.i4j.client.INDINumberProperty;
+import org.indilib.i4j.client.INDIProperty;
+import org.indilib.i4j.client.INDIPropertyListener;
+import org.indilib.i4j.client.INDISwitchProperty;
+import org.indilib.i4j.client.INDITextProperty;
+
+import marcocipriani01.iparcos.IPARCOSApp;
 import marcocipriani01.iparcos.R;
-import laazotea.indi.client.INDIBLOBProperty;
-import laazotea.indi.client.INDILightProperty;
-import laazotea.indi.client.INDINumberProperty;
-import laazotea.indi.client.INDIProperty;
-import laazotea.indi.client.INDIPropertyListener;
-import laazotea.indi.client.INDISwitchProperty;
-import laazotea.indi.client.INDITextProperty;
 
 @SuppressWarnings({"WeakerAccess"})
-public abstract class PropPref extends Preference implements INDIPropertyListener {
+public abstract class PropPref<Element extends INDIElement> extends Preference implements INDIPropertyListener {
 
-    protected INDIProperty prop;
+    protected INDIProperty<Element> prop;
     protected View title = null;
 
-    protected PropPref(Context context, INDIProperty prop) {
+    protected PropPref(Context context, INDIProperty<Element> prop) {
         super(context);
         this.prop = prop;
 
@@ -37,25 +39,19 @@ public abstract class PropPref extends Preference implements INDIPropertyListene
         setSummary(createSummary());
     }
 
-    public static PropPref create(Context context, INDIProperty prop) {
+    public static PropPref<?> create(Context context, INDIProperty<?> prop) {
         if (prop instanceof INDISwitchProperty) {
-            return new SwitchPropPref(context, prop);
-
+            return new SwitchPropPref(context, (INDISwitchProperty) prop);
         } else if (prop instanceof INDILightProperty) {
-            return new LightPropPref(context, prop);
-
+            return new LightPropPref(context, (INDILightProperty) prop);
         } else if (prop instanceof INDITextProperty) {
-            return new TextPropPref(context, prop);
-
+            return new TextPropPref(context, (INDITextProperty) prop);
         } else if (prop instanceof INDINumberProperty) {
-            return new NumberPropPref(context, prop);
-
+            return new NumberPropPref(context, (INDINumberProperty) prop);
         } else if (prop instanceof INDIBLOBProperty) {
-            return new BLOBPropPref(context, prop);
-
-        } else {
-            return new LightPropPref(context, prop);
+            return new BLOBPropPref(context, (INDIBLOBProperty) prop);
         }
+        return null;
     }
 
     @Override
@@ -75,17 +71,17 @@ public abstract class PropPref extends Preference implements INDIPropertyListene
         int color;
         switch (prop.getState()) {
             case ALERT: {
-                color = Application.getContext().getResources().getColor(R.color.light_red);
+                color = IPARCOSApp.getContext().getResources().getColor(R.color.light_red);
                 break;
             }
 
             case BUSY: {
-                color = Application.getContext().getResources().getColor(R.color.light_yellow);
+                color = IPARCOSApp.getContext().getResources().getColor(R.color.light_yellow);
                 break;
             }
 
             case OK: {
-                color = Application.getContext().getResources().getColor(R.color.light_green);
+                color = IPARCOSApp.getContext().getResources().getColor(R.color.light_green);
                 break;
             }
 
@@ -106,7 +102,7 @@ public abstract class PropPref extends Preference implements INDIPropertyListene
     protected abstract Spannable createSummary();
 
     @Override
-    public void propertyChanged(INDIProperty property) {
+    public void propertyChanged(INDIProperty<?> property) {
         if (property != prop) {
             Log.w("PropPref", "wrong property");
             return;

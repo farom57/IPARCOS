@@ -19,10 +19,6 @@ public class Catalog {
      * Catalog objects.
      */
     private final ArrayList<CatalogEntry> entries;
-    /**
-     * {@code true} if the catalog is fully initialized.
-     */
-    private boolean ready = false;
 
     /**
      * Class constructor. Loads the catalog from the resources and initializes it.
@@ -35,26 +31,13 @@ public class Catalog {
         Log.i("CatalogManager", "Loading stars...");
         entries.addAll(StarEntry.createList(context));
         Collections.sort(entries);
-        ready = true;
-    }
-
-    /**
-     * @return {@code true} if the catalog is fully initialized.
-     */
-    public boolean isReady() {
-        return ready;
     }
 
     /**
      * @return an {@link ArrayList} containing all the entries of this catalog.
      */
     public ArrayList<CatalogEntry> getEntries() {
-        if (isReady()) {
-            return entries;
-
-        } else {
-            return null;
-        }
+        return entries;
     }
 
     /**

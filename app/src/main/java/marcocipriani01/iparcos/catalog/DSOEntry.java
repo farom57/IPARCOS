@@ -160,15 +160,13 @@ public class DSOEntry extends CatalogEntry {
             case "?":
                 return R.string.entry_uncertain;
 
-            case "":
-                return R.string.entry_blank;
-
             case "-":
                 return R.string.entry_minus;
 
             case "PD":
                 return R.string.entry_PD;
 
+            case "":
             default:
                 return R.string.entry_blank;
         }
@@ -217,15 +215,13 @@ public class DSOEntry extends CatalogEntry {
             case "?":
                 return R.string.entry_short_uncertain;
 
-            case "":
-                return R.string.entry_short_blank;
-
             case "-":
                 return R.string.entry_short_minus;
 
             case "PD":
                 return R.string.entry_short_PD;
 
+            case "":
             default:
                 return R.string.entry_short_blank;
         }

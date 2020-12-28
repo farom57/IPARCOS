@@ -15,13 +15,13 @@ import com.commonsware.cwac.pager.SimplePageDescriptor;
 import com.commonsware.cwac.pager.v4.ArrayPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 
+import org.indilib.i4j.client.INDIDevice;
+import org.indilib.i4j.client.INDIServerConnection;
+import org.indilib.i4j.client.INDIServerConnectionListener;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import laazotea.indi.client.INDIDevice;
-import laazotea.indi.client.INDIServerConnection;
-import laazotea.indi.client.INDIServerConnectionListener;
 
 public class GenericFragment extends Fragment implements TabLayout.OnTabSelectedListener, INDIServerConnectionListener {
 
@@ -33,7 +33,7 @@ public class GenericFragment extends Fragment implements TabLayout.OnTabSelected
     private ConnectionManager connectionManager;
     // Views
     private ViewPager viewPager;
-    private ArrayPagerAdapter pagerAdapter;
+    private DevicesPagerAdapter pagerAdapter;
     private TabLayout tabLayout;
     /**
      * Used to create an unique tag for each tab.
@@ -44,14 +44,14 @@ public class GenericFragment extends Fragment implements TabLayout.OnTabSelected
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_control_panel, container, false);
 
-        connectionManager = Application.getConnectionManager();
+        connectionManager = IPARCOSApp.getConnectionManager();
         connectionManager.addListener(this);
 
         tabLayout = rootView.findViewById(R.id.tab_layout);
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         viewPager = rootView.findViewById(R.id.pager);
-        pagerAdapter = new DevicesPagerAdapter(getChildFragmentManager(), new ArrayList<PageDescriptor>());
+        pagerAdapter = new DevicesPagerAdapter(getChildFragmentManager(), new ArrayList<>());
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(this);
@@ -91,7 +91,7 @@ public class GenericFragment extends Fragment implements TabLayout.OnTabSelected
         for (int i = 0; i < pagerAdapter.getCount(); i++) {
             pagerAdapter.remove(i);
         }
-        pagerAdapter = new DevicesPagerAdapter(getChildFragmentManager(), new ArrayList<PageDescriptor>());
+        pagerAdapter = new DevicesPagerAdapter(getChildFragmentManager(), new ArrayList<>());
         viewPager.setAdapter(pagerAdapter);
     }
 
@@ -104,7 +104,7 @@ public class GenericFragment extends Fragment implements TabLayout.OnTabSelected
     @Override
     public void connectionLost(INDIServerConnection arg0) {
         // Move to the connection tab
-        Application.goToConnectionTab();
+        IPARCOSApp.goToConnectionTab();
     }
 
     @Override
@@ -120,7 +120,7 @@ public class GenericFragment extends Fragment implements TabLayout.OnTabSelected
     @Override
     public void removeDevice(INDIServerConnection arg0, INDIDevice arg1) {
         // Move to the connection tab
-        Application.goToConnectionTab();
+        IPARCOSApp.goToConnectionTab();
     }
 
     @Override

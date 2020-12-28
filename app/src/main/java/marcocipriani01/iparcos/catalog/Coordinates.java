@@ -1,5 +1,7 @@
 package marcocipriani01.iparcos.catalog;
 
+import androidx.annotation.NonNull;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -146,8 +148,9 @@ public class Coordinates {
      */
     public String getRaStr() {
         int deg = (int) Math.floor(Math.abs(ra) / 15);
-        int min = (int) Math.floor((Math.abs(ra) / 15 - deg) * 60);
-        int sec = (int) Math.round(((Math.abs(ra) / 15 - deg) * 60 - min) * 60);
+        double tmp = (Math.abs(ra) / 15 - deg) * 60;
+        int min = (int) Math.floor(tmp);
+        int sec = (int) Math.round((tmp - min) * 60);
         return String.format("%02d:%02d:%02d", deg, min, sec);
     }
 
@@ -160,12 +163,13 @@ public class Coordinates {
         int sec = (int) Math.round(((Math.abs(dec) - deg) * 60 - min) * 60);
         if (Math.signum(dec) >= 0) {
             return String.format("+%02d:%02d:%02d", deg, min, sec);
-
         } else {
             return String.format("-%02d:%02d:%02d", deg, min, sec);
         }
     }
 
+    @NonNull
+    @Override
     public String toString() {
         return "RA: " + getRaStr() + " Dec: " + getDeStr();
     }

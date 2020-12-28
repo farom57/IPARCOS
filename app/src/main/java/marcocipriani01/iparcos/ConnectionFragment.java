@@ -84,13 +84,10 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
         logsList.setAdapter(logAdapter);
 
         final FloatingActionButton clearLogsButton = rootView.findViewById(R.id.clearLogsButton);
-        clearLogsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                logs.clear();
-                logAdapter.notifyDataSetChanged();
-                clearLogsButton.animate().translationY(250);
-            }
+        clearLogsButton.setOnClickListener(v -> {
+            logs.clear();
+            logAdapter.notifyDataSetChanged();
+            clearLogsButton.animate().translationY(250);
         });
 
         fabPosY = clearLogsButton.getScrollY();
@@ -137,46 +134,43 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
         });
         loadServers();
 
-        connectionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Retrieve Hostname and port number
-                String host = String.valueOf(((Spinner) rootView.findViewById(R.id.spinnerHost)).getSelectedItem());
-                String portStr = ((EditText) rootView.findViewById(R.id.editTextPort)).getText().toString();
-                int port;
-                try {
-                    port = Integer.parseInt(portStr);
+        connectionButton.setOnClickListener(v -> {
+            // Retrieve Hostname and port number
+            String host = String.valueOf(serversSpinner.getSelectedItem());
+            String portStr = ((EditText) rootView.findViewById(R.id.editTextPort)).getText().toString();
+            int port;
+            try {
+                port = Integer.parseInt(portStr);
 
-                } catch (NumberFormatException e) {
-                    port = 7624;
+            } catch (NumberFormatException e) {
+                port = 7624;
+            }
+
+            // Connect or disconnect
+            if (connectionButton.getText().equals(getResources().getString(R.string.connect))) {
+                if (host.equals(getResources().getString(R.string.host_add))) {
+                    ServersActivity.addServer(context, ConnectionFragment.this);
+
+                } else if (host.equals(getResources().getString(R.string.host_manage))) {
+                    startActivityForResult(new Intent(context, ServersActivity.class), 1);
+
+                } else {
+                    IPARCOSApp.getConnectionManager().connect(host, port);
                 }
 
-                // Connect or disconnect
-                if (connectionButton.getText().equals(getResources().getString(R.string.connect))) {
-                    if (host.equals(getResources().getString(R.string.host_add))) {
-                        ServersActivity.addServer(context, ConnectionFragment.this);
+            } else if (connectionButton.getText().equals(getResources().getString(R.string.disconnect))) {
+                IPARCOSApp.getConnectionManager().disconnect();
+            }
 
-                    } else if (host.equals(getResources().getString(R.string.host_manage))) {
-                        startActivityForResult(new Intent(context, ServersActivity.class), 1);
-
-                    } else {
-                        Application.getConnectionManager().connect(host, port);
-                    }
-
-                } else if (connectionButton.getText().equals(getResources().getString(R.string.disconnect))) {
-                    Application.getConnectionManager().disconnect();
+            Activity activity = getActivity();
+            if (activity != null) {
+                View view = activity.getCurrentFocus();
+                if (view == null) {
+                    view = new View(activity);
                 }
-
-                Activity activity = getActivity();
-                if (activity != null) {
-                    View view = activity.getCurrentFocus();
-                    if (view == null) {
-                        view = new View(activity);
-                    }
-                    InputMethodManager manager = ((InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE));
-                    if (manager != null) {
-                        manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    }
+                InputMethodManager manager = ((InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE));
+                if (manager != null) {
+                    manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
             }
         });
@@ -184,36 +178,27 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
         if (spinnerItem != -1) {
             serversSpinner.setSelection(spinnerItem);
             connectionButton.setText(buttonText);
-
         } else {
             spinnerItem = 0;
             buttonText = getResources().getString(R.string.connect);
         }
 
-        Application.setUiUpdater(new Application.UIUpdater() {
+        IPARCOSApp.setUiUpdater(new IPARCOSApp.UIUpdater() {
             @Override
             public void appendLog(final String msg, final String timestamp) {
-                logsList.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        logs.add(new LogItem(msg, timestamp));
-                        logAdapter.notifyDataSetChanged();
-                        if (logs.size() == 1) {
-                            clearLogsButton.animate().cancel();
-                            clearLogsButton.animate().translationY(fabPosY);
-                        }
+                logsList.post(() -> {
+                    logs.add(new LogItem(msg, timestamp));
+                    logAdapter.notifyDataSetChanged();
+                    if (logs.size() == 1) {
+                        clearLogsButton.animate().cancel();
+                        clearLogsButton.animate().translationY(fabPosY);
                     }
                 });
             }
 
             @Override
             public void setConnectionState(final String state) {
-                connectionButton.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        connectionButton.setText(state);
-                    }
-                });
+                connectionButton.post(() -> connectionButton.setText(state));
             }
         });
 
@@ -297,7 +282,7 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
      *
      * @author marcocipriani01
      */
-    private class LogAdapter extends ArrayAdapter<LogItem> {
+    private static class LogAdapter extends ArrayAdapter<LogItem> {
 
         LayoutInflater inflater;
 

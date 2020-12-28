@@ -1,14 +1,15 @@
 package marcocipriani01.iparcos;
 
+import org.indilib.i4j.client.INDIDevice;
+import org.indilib.i4j.client.INDIDeviceListener;
+import org.indilib.i4j.client.INDIProperty;
+import org.indilib.i4j.client.INDIServerConnection;
+import org.indilib.i4j.client.INDIServerConnectionListener;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
-import laazotea.indi.client.INDIDevice;
-import laazotea.indi.client.INDIDeviceListener;
-import laazotea.indi.client.INDIProperty;
-import laazotea.indi.client.INDIServerConnection;
-import laazotea.indi.client.INDIServerConnectionListener;
 
 /**
  * Manages an {@link INDIServerConnection} object, listens to INDI messages and notifies listeners.
@@ -55,34 +56,32 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
      */
     public void connect(String host, int port) {
         if (!isConnected()) {
-            Application.setState(Application.getContext().getResources().getString(R.string.connecting));
-            Application.log(Application.getContext().getResources().getString(R.string.try_to_connect) + host + ":" + port);
+            IPARCOSApp.setState(IPARCOSApp.getContext().getResources().getString(R.string.connecting));
+            IPARCOSApp.log(IPARCOSApp.getContext().getResources().getString(R.string.try_to_connect) + host + ":" + port);
             connection = new INDIServerConnection(host, port);
             // Listen to all
             connection.addINDIServerConnectionListener(this);
             for (INDIServerConnectionListener l : listeners) {
                 connection.addINDIServerConnectionListener(l);
             }
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        connection.connect();
-                        // Ask for all the devices
-                        connection.askForDevices();
-                        Application.log(Application.getContext().getResources().getString(R.string.connected));
-                        Application.setState(Application.getContext().getResources().getString(R.string.disconnect));
+            new Thread(() -> {
+                try {
+                    connection.connect();
+                    // Ask for all the devices
+                    connection.askForDevices();
+                    IPARCOSApp.log(IPARCOSApp.getContext().getResources().getString(R.string.connected));
+                    IPARCOSApp.setState(IPARCOSApp.getContext().getResources().getString(R.string.disconnect));
 
-                    } catch (IOException e) {
-                        Application.log(Application.getContext().getResources().getString(R.string.connection_pb));
-                        Application.log(e.getLocalizedMessage());
-                        Application.setState(Application.getContext().getResources().getString(R.string.connect));
-                    }
-
+                } catch (IOException e) {
+                    IPARCOSApp.log(IPARCOSApp.getContext().getResources().getString(R.string.connection_pb));
+                    IPARCOSApp.log(e.getLocalizedMessage());
+                    IPARCOSApp.setState(IPARCOSApp.getContext().getResources().getString(R.string.connect));
                 }
+
             }).start();
 
         } else {
-            Application.log("Already connected!");
+            IPARCOSApp.log("Already connected!");
         }
     }
 
@@ -94,33 +93,33 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
             connection.disconnect();
 
         } else {
-            Application.log("Not connected!");
+            IPARCOSApp.log("Not connected!");
         }
     }
 
     @Override
     public void newDevice(INDIServerConnection connection, INDIDevice device) {
         device.addINDIDeviceListener(this);
-        Application.log("New device: " + device.getName());
+        IPARCOSApp.log("New device: " + device.getName());
     }
 
     @Override
     public void removeDevice(INDIServerConnection connection, INDIDevice device) {
         device.removeINDIDeviceListener(this);
-        Application.log("Device removed: " + device.getName());
+        IPARCOSApp.log("Device removed: " + device.getName());
     }
 
     @Override
     public void connectionLost(INDIServerConnection connection) {
-        Application.log(Application.getContext().getResources().getString(R.string.connection_lost));
-        Application.setState(Application.getContext().getResources().getString(R.string.connect));
+        IPARCOSApp.log(IPARCOSApp.getContext().getResources().getString(R.string.connection_lost));
+        IPARCOSApp.setState(IPARCOSApp.getContext().getResources().getString(R.string.connect));
         // Move to the connection tab
-        Application.goToConnectionTab();
+        IPARCOSApp.goToConnectionTab();
     }
 
     @Override
     public void newMessage(INDIServerConnection connection, Date timestamp, String message) {
-        Application.log(message);
+        IPARCOSApp.log(message);
     }
 
     /**
@@ -160,6 +159,6 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
 
     @Override
     public void messageChanged(INDIDevice device) {
-        Application.log(device.getName() + ": " + device.getLastMessage());
+        IPARCOSApp.log(device.getName() + ": " + device.getLastMessage());
     }
 }

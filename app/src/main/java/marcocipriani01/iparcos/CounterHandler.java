@@ -9,18 +9,17 @@ import android.view.View;
  * @author marcocipriani01
  * @see <a href="https://stackoverflow.com/a/41466381">Continuously increase integer value as the button is pressed</a>
  */
-@SuppressWarnings({"unused", "WeakerAccess"})
 public class CounterHandler {
 
     private final Handler handler = new Handler();
     private final View incrementalView;
     private final View decrementalView;
-    private int minValue;
-    private int maxValue;
-    private int currentValue;
     private final int steps;
     private final long delay;
     private final boolean isCycle;
+    private int minValue;
+    private int maxValue;
+    private int currentValue;
     private boolean autoIncrement = false;
     private boolean autoDecrement = false;
     private CounterListener listener;
@@ -51,8 +50,7 @@ public class CounterHandler {
         if ((minValue != -1) && (maxValue != -1)) {
             if (maxValue <= minValue) {
                 throw new IllegalArgumentException("Max value < min value!");
-            }
-            if (minValue >= maxValue) {
+            } else if (minValue >= maxValue) {
                 throw new IllegalArgumentException("Min value > max value!");
             }
         }
@@ -69,19 +67,11 @@ public class CounterHandler {
         this.decrementalView = decrementalView;
         this.listener = listener;
 
-        this.decrementalView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                decrement();
-            }
-        });
-        this.decrementalView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                autoDecrement = true;
-                handler.postDelayed(counterRunnable, CounterHandler.this.delay);
-                return false;
-            }
+        this.decrementalView.setOnClickListener(v -> decrement());
+        this.decrementalView.setOnLongClickListener(v -> {
+            autoDecrement = true;
+            handler.postDelayed(counterRunnable, CounterHandler.this.delay);
+            return false;
         });
         this.decrementalView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -93,28 +83,17 @@ public class CounterHandler {
             }
         });
 
-        this.incrementalView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                increment();
-            }
+        this.incrementalView.setOnClickListener(v -> increment());
+        this.incrementalView.setOnLongClickListener(v -> {
+            autoIncrement = true;
+            handler.postDelayed(counterRunnable, CounterHandler.this.delay);
+            return false;
         });
-        this.incrementalView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                autoIncrement = true;
-                handler.postDelayed(counterRunnable, CounterHandler.this.delay);
-                return false;
+        this.incrementalView.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP && autoIncrement) {
+                autoIncrement = false;
             }
-        });
-        this.incrementalView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP && autoIncrement) {
-                    autoIncrement = false;
-                }
-                return false;
-            }
+            return false;
         });
 
         if (this.listener != null && setNow) {
