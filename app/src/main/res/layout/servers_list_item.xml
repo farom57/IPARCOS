@@ -22,5 +22,6 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/listview_drag" />
+        android:src="@drawable/listview_drag"
+        android:contentDescription="@string/slide_to_reorganize" />
 </RelativeLayout>

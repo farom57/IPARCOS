@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class GenericFragment extends Fragment implements TabLayout.OnTabSelectedListener, INDIServerConnectionListener {
+public class ControlPanelFragment extends Fragment implements TabLayout.OnTabSelectedListener, INDIServerConnectionListener {
 
     /**
      * Manages the connection with the INDI server.

@@ -42,7 +42,7 @@ import marcocipriani01.iparcos.prop.PropUpdater;
  *
  * @author Romain Fafet
  */
-public class MotionFragment extends Fragment implements INDIServerConnectionListener, INDIPropertyListener,
+public class MountControlFragment extends Fragment implements INDIServerConnectionListener, INDIPropertyListener,
         INDIDeviceListener, OnTouchListener, OnClickListener {
 
     // Properties and elements associated to the buttons

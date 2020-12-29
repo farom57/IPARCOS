@@ -15,13 +15,13 @@ import java.util.ArrayList;
 /**
  * @author marcocipriani01
  */
-public abstract class ItemAdapter extends DragItemAdapter<Pair<Long, String>, ItemAdapter.ViewHolder> {
+public abstract class ServersItemAdapter extends DragItemAdapter<Pair<Long, String>, ServersItemAdapter.ViewHolder> {
 
     private final int layoutId;
     private final int grabHandleId;
     private final boolean dragOnLongPress;
 
-    public ItemAdapter(ArrayList<Pair<Long, String>> list, int layoutId, int grabHandleId, boolean dragOnLongPress) {
+    public ServersItemAdapter(ArrayList<Pair<Long, String>> list, int layoutId, int grabHandleId, boolean dragOnLongPress) {
         this.layoutId = layoutId;
         this.grabHandleId = grabHandleId;
         this.dragOnLongPress = dragOnLongPress;
@@ -62,12 +62,12 @@ public abstract class ItemAdapter extends DragItemAdapter<Pair<Long, String>, It
 
         @Override
         public void onItemClicked(View view) {
-            ItemAdapter.this.onItemClicked(text);
+            ServersItemAdapter.this.onItemClicked(text);
         }
 
         @Override
         public boolean onItemLongClicked(View view) {
-            ItemAdapter.this.onItemLongClicked(text);
+            ServersItemAdapter.this.onItemLongClicked(text);
             return true;
         }
     }

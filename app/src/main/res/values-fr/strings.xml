@@ -10,7 +10,7 @@
     <string name="host_prompt_text">Adresse IP de l\'hôte :</string>
     <string name="connecting">Connexion…</string>
     <string name="menu_motion">Contrôle du mouvement</string>
-    <string name="menu_generic">Autres</string>
+    <string name="menu_control_panel">Autres</string>
     <string name="menu_search">Search</string>
     <string name="default_speed">Non disponble</string>
     <string name="send_request">Envoyer</string>

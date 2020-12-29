@@ -78,5 +78,6 @@
         android:layout_marginBottom="16dp"
         android:layout_marginRight="16dp"
         app:srcCompat="@drawable/clear"
-        android:layout_marginEnd="16dp" />
+        android:layout_marginEnd="16dp"
+        android:contentDescription="@string/clear_logs" />
 </RelativeLayout>

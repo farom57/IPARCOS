@@ -18,7 +18,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Pair;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.woxthebox.draglistview.DragItemAdapter;
 import com.woxthebox.draglistview.DragListView;
 
 import java.util.ArrayList;
@@ -116,7 +115,7 @@ public class ServersActivity extends AppCompatActivity implements ServersReloadL
 
     private void save() {
         // Save the new list
-        List<Pair<Long, String>> list = ((ItemAdapter) serversListView.getAdapter()).getItemList();
+        List<Pair<Long, String>> list = ((ServersItemAdapter) serversListView.getAdapter()).getItemList();
         Set<String> set = new HashSet<>();
         for (int i = 0; i < list.size(); i++) {
             String s = list.get(i).second;
@@ -137,7 +136,7 @@ public class ServersActivity extends AppCompatActivity implements ServersReloadL
             }
             sortPairs(serversList);
         }
-        serversListView.setAdapter(new ItemAdapter(serversList, R.layout.list_item, R.id.listview_drag, false) {
+        serversListView.setAdapter(new ServersItemAdapter(serversList, R.layout.servers_list_item, R.id.listview_drag, false) {
             @Override
             public void onItemClicked(TextView view) {
 

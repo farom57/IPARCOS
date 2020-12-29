@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "marcocipriani01.iparcos"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode 5
         versionName "2.0.0"

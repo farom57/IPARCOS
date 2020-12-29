@@ -29,7 +29,7 @@ It features a generic control panel, a mount joystick-like screen, a focuser con
 ## Usage
 
 1. Prerequisite
-  - Minimum Android version: 4.1
+  - Minimum Android version: 5.0
   - An INDI server must be running on the remote computer.
   - You must have network access to the server. 
     - To achieve this, the Android device and the remote computer can be placed on your home network.

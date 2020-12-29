@@ -37,7 +37,7 @@ import static marcocipriani01.iparcos.ServersActivity.PREFERENCES_TAG;
  * @author Romain Fafet
  * @author marcocipriani01
  */
-public class ConnectionFragment extends Fragment implements ServersReloadListener {
+public class ConnectionFragment extends Fragment implements ServersReloadListener, IPARCOSApp.UIUpdater {
 
     /**
      * All the logs.
@@ -60,6 +60,9 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
      * The original position of the floating action button.
      */
     private int fabPosY;
+    private FloatingActionButton clearLogsButton;
+    private ListView logsList;
+    private LogAdapter logAdapter;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -79,11 +82,11 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_connection, container, false);
 
-        final ListView logsList = rootView.findViewById(R.id.logsList);
-        final LogAdapter logAdapter = new LogAdapter(context, logs);
+        logsList = rootView.findViewById(R.id.logsList);
+        logAdapter = new LogAdapter(context, logs);
         logsList.setAdapter(logAdapter);
 
-        final FloatingActionButton clearLogsButton = rootView.findViewById(R.id.clearLogsButton);
+        clearLogsButton = rootView.findViewById(R.id.clearLogsButton);
         clearLogsButton.setOnClickListener(v -> {
             logs.clear();
             logAdapter.notifyDataSetChanged();
@@ -93,7 +96,6 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
         fabPosY = clearLogsButton.getScrollY();
 
         logsList.setOnScrollListener(new AbsListView.OnScrollListener() {
-
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
 
@@ -141,27 +143,21 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
             int port;
             try {
                 port = Integer.parseInt(portStr);
-
             } catch (NumberFormatException e) {
                 port = 7624;
             }
-
             // Connect or disconnect
             if (connectionButton.getText().equals(getResources().getString(R.string.connect))) {
                 if (host.equals(getResources().getString(R.string.host_add))) {
                     ServersActivity.addServer(context, ConnectionFragment.this);
-
                 } else if (host.equals(getResources().getString(R.string.host_manage))) {
                     startActivityForResult(new Intent(context, ServersActivity.class), 1);
-
                 } else {
                     IPARCOSApp.getConnectionManager().connect(host, port);
                 }
-
             } else if (connectionButton.getText().equals(getResources().getString(R.string.disconnect))) {
                 IPARCOSApp.getConnectionManager().disconnect();
             }
-
             Activity activity = getActivity();
             if (activity != null) {
                 View view = activity.getCurrentFocus();
@@ -183,26 +179,25 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
             buttonText = getResources().getString(R.string.connect);
         }
 
-        IPARCOSApp.setUiUpdater(new IPARCOSApp.UIUpdater() {
-            @Override
-            public void appendLog(final String msg, final String timestamp) {
-                logsList.post(() -> {
-                    logs.add(new LogItem(msg, timestamp));
-                    logAdapter.notifyDataSetChanged();
-                    if (logs.size() == 1) {
-                        clearLogsButton.animate().cancel();
-                        clearLogsButton.animate().translationY(fabPosY);
-                    }
-                });
-            }
+        IPARCOSApp.setUiUpdater(this);
+        return rootView;
+    }
 
-            @Override
-            public void setConnectionState(final String state) {
-                connectionButton.post(() -> connectionButton.setText(state));
+    @Override
+    public void appendLog(final String msg, final String timestamp) {
+        logsList.post(() -> {
+            logs.add(new LogItem(msg, timestamp));
+            logAdapter.notifyDataSetChanged();
+            if (logs.size() == 1) {
+                clearLogsButton.animate().cancel();
+                clearLogsButton.animate().translationY(fabPosY);
             }
         });
+    }
 
-        return rootView;
+    @Override
+    public void setConnectionState(final String state) {
+        connectionButton.post(() -> connectionButton.setText(state));
     }
 
     @Override
@@ -287,7 +282,7 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
         private final LayoutInflater inflater;
 
         private LogAdapter(Context context, List<LogItem> objects) {
-            super(context, android.R.layout.simple_list_item_2, objects);
+            super(context, R.layout.logs_item, objects);
             inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
@@ -296,10 +291,10 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
         public View getView(int position, View convertView, @NonNull ViewGroup parent) {
             ViewHolder holder;
             if (convertView == null) {
-                convertView = inflater.inflate(android.R.layout.simple_list_item_2, null);
+                convertView = inflater.inflate(R.layout.logs_item, parent, false);
                 holder = new ViewHolder();
-                holder.log = convertView.findViewById(android.R.id.text1);
-                holder.timestamp = convertView.findViewById(android.R.id.text2);
+                holder.log = convertView.findViewById(R.id.logs_item1);
+                holder.timestamp = convertView.findViewById(R.id.logs_item2);
                 convertView.setTag(holder);
 
             } else {

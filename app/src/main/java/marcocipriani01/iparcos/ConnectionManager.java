@@ -73,7 +73,7 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
                     IPARCOSApp.setState(IPARCOSApp.getContext().getResources().getString(R.string.disconnect));
 
                 } catch (IOException e) {
-                    IPARCOSApp.log(IPARCOSApp.getContext().getResources().getString(R.string.connection_pb));
+                    //IPARCOSApp.log(IPARCOSApp.getContext().getResources().getString(R.string.connection_pb));
                     IPARCOSApp.log(e.getLocalizedMessage());
                     IPARCOSApp.setState(IPARCOSApp.getContext().getResources().getString(R.string.connect));
                 }

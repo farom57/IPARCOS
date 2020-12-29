@@ -16,8 +16,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        app:srcCompat="@drawable/add" />
+        app:srcCompat="@drawable/add"
+        android:contentDescription="@string/add_server" />
 
     <com.woxthebox.draglistview.DragListView
         android:layout_width="match_parent"

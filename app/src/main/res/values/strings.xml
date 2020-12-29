@@ -10,10 +10,10 @@
     <string name="host_manage">Manage servers</string>
     <string name="host_prompt_text">Host IP address:</string>
     <string name="connecting">Connecting…</string>
-    <string name="menu_motion">Motion control</string>
-    <string name="menu_connection">Connection</string>
-    <string name="menu_generic">Control panel</string>
-    <string name="menu_search">Search</string>
+    <string name="menu_motion">Mount</string>
+    <string name="menu_connection">Connect</string>
+    <string name="menu_control_panel">Devices</string>
+    <string name="menu_search">Goto</string>
     <string name="default_speed">Unavailable</string>
     <string name="send_request">Send</string>
     <string name="cancel_request">Cancel</string>
@@ -97,4 +97,7 @@
     <string name="absolute_position">Absolute position:</string>
     <string name="set">Set</string>
     <string name="no_indi_elements">Empty property</string>
+    <string name="slide_to_reorganize">Slide to reorganize</string>
+    <string name="clear_logs">Clear logs</string>
+    <string name="add_server">Add server</string>
 </resources>
