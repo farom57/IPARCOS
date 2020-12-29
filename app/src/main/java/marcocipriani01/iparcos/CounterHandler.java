@@ -73,14 +73,11 @@ public class CounterHandler {
             handler.postDelayed(counterRunnable, CounterHandler.this.delay);
             return false;
         });
-        this.decrementalView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP && autoDecrement) {
-                    autoDecrement = false;
-                }
-                return false;
+        this.decrementalView.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP && autoDecrement) {
+                autoDecrement = false;
             }
+            return false;
         });
 
         this.incrementalView.setOnClickListener(v -> increment());

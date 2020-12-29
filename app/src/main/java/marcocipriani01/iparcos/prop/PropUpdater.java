@@ -1,7 +1,5 @@
 package marcocipriani01.iparcos.prop;
 
-import android.os.AsyncTask;
-
 import org.indilib.i4j.client.INDIProperty;
 import org.indilib.i4j.client.INDIValueException;
 
@@ -11,21 +9,17 @@ import marcocipriani01.iparcos.IPARCOSApp;
 import marcocipriani01.iparcos.R;
 
 /**
- * Async task to send updates to the server
+ * Thread to send updates to the server
  */
-public class PropUpdater extends AsyncTask<INDIProperty, Void, Void> {
+public class PropUpdater extends Thread {
 
-    @Override
-    protected Void doInBackground(INDIProperty... param) {
-        try {
-            if (param.length != 1) {
-                return null;
+    public PropUpdater(INDIProperty<?> prop) {
+        super(() -> {
+            try {
+                prop.sendChangesToDriver();
+            } catch (INDIValueException | IOException e) {
+                IPARCOSApp.log(IPARCOSApp.getContext().getResources().getString(R.string.error) + e.getLocalizedMessage());
             }
-            param[0].sendChangesToDriver();
-
-        } catch (INDIValueException | IOException e) {
-            IPARCOSApp.log(IPARCOSApp.getContext().getResources().getString(R.string.error) + e.getLocalizedMessage());
-        }
-        return null;
+        }, "INDI propriety updater");
     }
 }

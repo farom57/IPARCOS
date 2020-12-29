@@ -27,7 +27,7 @@ public class Catalog {
      */
     public Catalog(Context context) {
         Log.i("CatalogManager", "Loading DSO...");
-        entries = new ArrayList<CatalogEntry>(DSOEntry.createList(context));
+        entries = new ArrayList<>(DSOEntry.createList(context));
         Log.i("CatalogManager", "Loading stars...");
         entries.addAll(StarEntry.createList(context));
         Collections.sort(entries);

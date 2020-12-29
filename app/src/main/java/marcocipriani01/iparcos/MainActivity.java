@@ -41,40 +41,33 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.content_frame, new ConnectionFragment()).commit();
 
         final BottomNavigationView navigation = findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Pages newPage = Pages.fromId(item.getItemId());
-                if ((newPage != null) && (newPage != currentPage)) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        if (newPage == Pages.GENERIC) {
-                            toolbar.setElevation(0);
-
-                        } else {
-                            toolbar.setElevation(4);
-                        }
-                    }
-                    getSupportFragmentManager().beginTransaction().setCustomAnimations(R.animator.fade_in, R.animator.fade_out,
-                            R.animator.fade_in, R.animator.fade_out).replace(R.id.content_frame, Pages.values()[newPage.index].instance).commit();
-                    currentPage = newPage;
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        IPARCOSApp.setGoToConnectionTab(new Runnable() {
-            @Override
-            public void run() {
-                currentPage = Pages.CONNECTION;
+        navigation.setOnNavigationItemSelectedListener(item -> {
+            Pages newPage = Pages.fromId(item.getItemId());
+            if ((newPage != null) && (newPage != currentPage)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    toolbar.setElevation(4);
+                    if (newPage == Pages.GENERIC) {
+                        toolbar.setElevation(0);
+
+                    } else {
+                        toolbar.setElevation(4);
+                    }
                 }
                 getSupportFragmentManager().beginTransaction().setCustomAnimations(R.animator.fade_in, R.animator.fade_out,
-                        R.animator.fade_in, R.animator.fade_out).replace(R.id.content_frame, Pages.CONNECTION.instance).commit();
-                navigation.setSelectedItemId(currentPage.itemId);
+                        R.animator.fade_in, R.animator.fade_out).replace(R.id.content_frame, Pages.values()[newPage.index].instance).commit();
+                currentPage = newPage;
+                return true;
             }
+            return false;
+        });
+
+        IPARCOSApp.setGoToConnectionTab(() -> {
+            currentPage = Pages.CONNECTION;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                toolbar.setElevation(4);
+            }
+            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.animator.fade_in, R.animator.fade_out,
+                    R.animator.fade_in, R.animator.fade_out).replace(R.id.content_frame, Pages.CONNECTION.instance).commit();
+            navigation.setSelectedItemId(currentPage.itemId);
         });
     }
 

@@ -358,7 +358,7 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
             try {
                 if (abortElem != null) {
                     abortElem.setDesiredValue(Constants.SwitchStatus.ON);
-                    new PropUpdater().execute(abortProp);
+                    new PropUpdater(abortProp).start();
                 }
 
             } catch (INDIValueException e) {
@@ -369,7 +369,7 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
                 if (absPosElem != null && absPosText != null) {
                     try {
                         absPosElem.setDesiredValue(Double.parseDouble(absPosText.getText().toString()));
-                        new PropUpdater().execute(absPosProp);
+                        new PropUpdater(absPosProp).start();
 
                     } catch (NumberFormatException e) {
                         Toast.makeText(getActivity(), "Invalid absolute position!", Toast.LENGTH_SHORT).show();
@@ -394,9 +394,9 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
                 try {
                     outwardDirElem.setDesiredValue(Constants.SwitchStatus.ON);
                     inwardDirElem.setDesiredValue(Constants.SwitchStatus.OFF);
-                    new PropUpdater().execute(directionProp);
+                    new PropUpdater(directionProp).start();
                     relPosElem.setDesiredValue((double) speed);
-                    new PropUpdater().execute(relPosProp);
+                    new PropUpdater(relPosProp).start();
 
                 } catch (INDIValueException e) {
                     Log.e("FocusFragment", e.getLocalizedMessage());
@@ -416,9 +416,9 @@ public class FocuserFragment extends Fragment implements INDIServerConnectionLis
                 try {
                     inwardDirElem.setDesiredValue(Constants.SwitchStatus.ON);
                     outwardDirElem.setDesiredValue(Constants.SwitchStatus.OFF);
-                    new PropUpdater().execute(directionProp);
+                    new PropUpdater(directionProp).start();
                     relPosElem.setDesiredValue((double) speed);
-                    new PropUpdater().execute(relPosProp);
+                    new PropUpdater(relPosProp).start();
 
                 } catch (INDIValueException e) {
                     Log.e("FocusFragment", e.getLocalizedMessage());

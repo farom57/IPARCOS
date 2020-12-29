@@ -422,7 +422,7 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
             try {
                 telescopeMotionEE.setDesiredValue(status);
                 telescopeMotionWE.setDesiredValue(offStatus);
-                new PropUpdater().execute(telescopeMotionWEP);
+                new PropUpdater(telescopeMotionWEP).start();
 
             } catch (INDIValueException e) {
                 Log.e("MotionFragment", e.getLocalizedMessage());
@@ -432,7 +432,7 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
             try {
                 telescopeMotionWE.setDesiredValue(status);
                 telescopeMotionEE.setDesiredValue(offStatus);
-                new PropUpdater().execute(telescopeMotionWEP);
+                new PropUpdater(telescopeMotionWEP).start();
 
             } catch (INDIValueException e) {
                 Log.e("MotionFragment", e.getLocalizedMessage());
@@ -442,7 +442,7 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
             try {
                 telescopeMotionNE.setDesiredValue(status);
                 telescopeMotionSE.setDesiredValue(offStatus);
-                new PropUpdater().execute(telescopeMotionNSP);
+                new PropUpdater(telescopeMotionNSP).start();
 
             } catch (INDIValueException e) {
                 Log.e("MotionFragment", e.getLocalizedMessage());
@@ -452,7 +452,7 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
             try {
                 telescopeMotionSE.setDesiredValue(status);
                 telescopeMotionNE.setDesiredValue(offStatus);
-                new PropUpdater().execute(telescopeMotionNSP);
+                new PropUpdater(telescopeMotionNSP).start();
 
             } catch (INDIValueException e) {
                 Log.e("MotionFragment", e.getLocalizedMessage());
@@ -462,10 +462,10 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
             try {
                 telescopeMotionEE.setDesiredValue(status);
                 telescopeMotionWE.setDesiredValue(offStatus);
-                new PropUpdater().execute(telescopeMotionWEP);
+                new PropUpdater(telescopeMotionWEP).start();
                 telescopeMotionNE.setDesiredValue(status);
                 telescopeMotionSE.setDesiredValue(offStatus);
-                new PropUpdater().execute(telescopeMotionNSP);
+                new PropUpdater(telescopeMotionNSP).start();
 
             } catch (INDIValueException e) {
                 Log.e("MotionFragment", e.getLocalizedMessage());
@@ -475,10 +475,10 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
             try {
                 telescopeMotionWE.setDesiredValue(status);
                 telescopeMotionEE.setDesiredValue(offStatus);
-                new PropUpdater().execute(telescopeMotionWEP);
+                new PropUpdater(telescopeMotionWEP).start();
                 telescopeMotionNE.setDesiredValue(status);
                 telescopeMotionSE.setDesiredValue(offStatus);
-                new PropUpdater().execute(telescopeMotionNSP);
+                new PropUpdater(telescopeMotionNSP).start();
 
             } catch (INDIValueException e) {
                 Log.e("MotionFragment", e.getLocalizedMessage());
@@ -488,10 +488,10 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
             try {
                 telescopeMotionEE.setDesiredValue(status);
                 telescopeMotionWE.setDesiredValue(offStatus);
-                new PropUpdater().execute(telescopeMotionWEP);
+                new PropUpdater(telescopeMotionWEP).start();
                 telescopeMotionSE.setDesiredValue(status);
                 telescopeMotionNE.setDesiredValue(offStatus);
-                new PropUpdater().execute(telescopeMotionNSP);
+                new PropUpdater(telescopeMotionNSP).start();
 
             } catch (INDIValueException e) {
                 Log.e("MotionFragment", e.getLocalizedMessage());
@@ -501,10 +501,10 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
             try {
                 telescopeMotionWE.setDesiredValue(status);
                 telescopeMotionEE.setDesiredValue(offStatus);
-                new PropUpdater().execute(telescopeMotionWEP);
+                new PropUpdater(telescopeMotionWEP).start();
                 telescopeMotionSE.setDesiredValue(status);
                 telescopeMotionNE.setDesiredValue(offStatus);
-                new PropUpdater().execute(telescopeMotionNSP);
+                new PropUpdater(telescopeMotionNSP).start();
 
             } catch (INDIValueException e) {
                 Log.e("MotionFragment", e.getLocalizedMessage());
@@ -526,16 +526,16 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
                 if (telescopeMotionWEP != null) {
                     telescopeMotionWE.setDesiredValue(Constants.SwitchStatus.OFF);
                     telescopeMotionEE.setDesiredValue(Constants.SwitchStatus.OFF);
-                    new PropUpdater().execute(telescopeMotionWEP);
+                    new PropUpdater(telescopeMotionWEP).start();
                 }
                 if (telescopeMotionNSP != null) {
                     telescopeMotionSE.setDesiredValue(Constants.SwitchStatus.OFF);
                     telescopeMotionNE.setDesiredValue(Constants.SwitchStatus.OFF);
-                    new PropUpdater().execute(telescopeMotionNSP);
+                    new PropUpdater(telescopeMotionNSP).start();
                 }
                 if (telescopeMotionAbort != null) {
                     telescopeMotionAbortE.setDesiredValue(Constants.SwitchStatus.ON);
-                    new PropUpdater().execute(telescopeMotionAbort);
+                    new PropUpdater(telescopeMotionAbort).start();
                 }
 
             } catch (INDIValueException e) {
@@ -548,7 +548,7 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
                     motionRate.setDesiredValue(
                             Math.min(telescopeMotionRate.getElement("MOTION_RATE").getMax(),
                                     motionRate.getValue() * 2));
-                    new PropUpdater().execute(telescopeMotionRate);
+                    new PropUpdater(telescopeMotionRate).start();
 
                 } catch (INDIValueException e) {
                     Log.e("MotionFragment", e.getLocalizedMessage());
@@ -563,7 +563,7 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
                         i++;
                     }
                     elements.get(i + 1).setDesiredValue(Constants.SwitchStatus.ON);
-                    new PropUpdater().execute(telescopeMotionRateEQMod);
+                    new PropUpdater(telescopeMotionRateEQMod).start();
 
                 } catch (INDIValueException e) {
                     Log.e("MotionFragment", e.getLocalizedMessage());
@@ -580,7 +580,7 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
                     if (i > 0) {
                         elements.get(i - 1).setDesiredValue(Constants.SwitchStatus.ON);
                     }
-                    new PropUpdater().execute(telescopeMotionRateLX200);
+                    new PropUpdater(telescopeMotionRateLX200).start();
 
                 } catch (INDIValueException e) {
                     Log.e("MotionFragment", e.getLocalizedMessage());
@@ -592,7 +592,7 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
                     INDINumberElement motionRate = telescopeMotionRate.getElement("MOTION_RATE");
                     motionRate.setDesiredValue(Math.max(telescopeMotionRate.getElement("MOTION_RATE").getMin(),
                             motionRate.getValue() * 0.5));
-                    new PropUpdater().execute(telescopeMotionRate);
+                    new PropUpdater(telescopeMotionRate).start();
 
                 } catch (INDIValueException e) {
                     Log.e("MotionFragment", e.getLocalizedMessage());
@@ -609,7 +609,7 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
                     if (i > 0) {
                         elements.get(i - 1).setDesiredValue(Constants.SwitchStatus.ON);
                     }
-                    new PropUpdater().execute(telescopeMotionRateEQMod);
+                    new PropUpdater(telescopeMotionRateEQMod).start();
 
                 } catch (INDIValueException e) {
                     Log.e("MotionFragment", e.getLocalizedMessage());
@@ -624,7 +624,7 @@ public class MotionFragment extends Fragment implements INDIServerConnectionList
                         i++;
                     }
                     elements.get(i + 1).setDesiredValue(Constants.SwitchStatus.ON);
-                    new PropUpdater().execute(telescopeMotionRateLX200);
+                    new PropUpdater(telescopeMotionRateLX200).start();
 
                 } catch (INDIValueException e) {
                     Log.e("MotionFragment", e.getLocalizedMessage());

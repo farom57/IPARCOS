@@ -284,9 +284,9 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
      */
     private static class LogAdapter extends ArrayAdapter<LogItem> {
 
-        LayoutInflater inflater;
+        private final LayoutInflater inflater;
 
-        LogAdapter(Context context, List<LogItem> objects) {
+        private LogAdapter(Context context, List<LogItem> objects) {
             super(context, android.R.layout.simple_list_item_2, objects);
             inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }

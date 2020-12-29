@@ -2,7 +2,6 @@ package marcocipriani01.iparcos;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -177,48 +176,39 @@ public class SearchFragment extends ListFragment
         builder.setMessage(catalogEntries.get(position).createDescription(context)).setTitle(catalogEntries.get(position).getName());
         // Only display buttons if the telescope is ready
         if (telescopeCoordP != null && telescopeOnCoordSetP != null) {
-            builder.setPositiveButton(R.string.GOTO, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    try {
-                        telescopeOnCoordSetSlew.setDesiredValue(Constants.SwitchStatus.ON);
-                        telescopeOnCoordSetSync.setDesiredValue(Constants.SwitchStatus.OFF);
-                        new PropUpdater().execute(telescopeOnCoordSetP);
-                        telescopeCoordRA.setDesiredValue(coord.getRaStr());
-                        telescopeCoordDE.setDesiredValue(coord.getDeStr());
-                        new PropUpdater().execute(telescopeCoordP);
-                        Toast.makeText(context, context.getString(R.string.slew_ok), Toast.LENGTH_LONG).show();
+            builder.setPositiveButton(R.string.GOTO, (dialog, which) -> {
+                try {
+                    telescopeOnCoordSetSlew.setDesiredValue(Constants.SwitchStatus.ON);
+                    telescopeOnCoordSetSync.setDesiredValue(Constants.SwitchStatus.OFF);
+                    new PropUpdater(telescopeOnCoordSetP).start();
+                    telescopeCoordRA.setDesiredValue(coord.getRaStr());
+                    telescopeCoordDE.setDesiredValue(coord.getDeStr());
+                    new PropUpdater(telescopeCoordP).start();
+                    Toast.makeText(context, context.getString(R.string.slew_ok), Toast.LENGTH_LONG).show();
 
-                    } catch (INDIValueException e) {
-                        Toast.makeText(context, context.getString(R.string.sync_slew_error), Toast.LENGTH_LONG).show();
-                    }
+                } catch (INDIValueException e) {
+                    Toast.makeText(context, context.getString(R.string.sync_slew_error), Toast.LENGTH_LONG).show();
                 }
             });
-            builder.setNeutralButton(R.string.sync, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    try {
-                        telescopeOnCoordSetSync.setDesiredValue(Constants.SwitchStatus.ON);
-                        telescopeOnCoordSetSlew.setDesiredValue(Constants.SwitchStatus.OFF);
-                        new PropUpdater().execute(telescopeOnCoordSetP);
-                        telescopeCoordRA.setDesiredValue(coord.getRaStr());
-                        telescopeCoordDE.setDesiredValue(coord.getDeStr());
-                        new PropUpdater().execute(telescopeCoordP);
-                        Toast toast = Toast.makeText(context, context.getString(R.string.sync_ok), Toast.LENGTH_LONG);
-                        toast.show();
+            builder.setNeutralButton(R.string.sync, (dialog, which) -> {
+                try {
+                    telescopeOnCoordSetSync.setDesiredValue(Constants.SwitchStatus.ON);
+                    telescopeOnCoordSetSlew.setDesiredValue(Constants.SwitchStatus.OFF);
+                    new PropUpdater(telescopeOnCoordSetP).start();
+                    telescopeCoordRA.setDesiredValue(coord.getRaStr());
+                    telescopeCoordDE.setDesiredValue(coord.getDeStr());
+                    new PropUpdater(telescopeCoordP).start();
+                    Toast toast = Toast.makeText(context, context.getString(R.string.sync_ok), Toast.LENGTH_LONG);
+                    toast.show();
 
-                    } catch (INDIValueException e) {
-                        Toast toast = Toast.makeText(context, context.getString(R.string.sync_slew_error), Toast.LENGTH_LONG);
-                        toast.show();
-                    }
+                } catch (INDIValueException e) {
+                    Toast toast = Toast.makeText(context, context.getString(R.string.sync_slew_error), Toast.LENGTH_LONG);
+                    toast.show();
                 }
             });
         }
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        builder.setNegativeButton(R.string.cancel, (dialog, which) -> {
 
-            }
         });
         builder.create().show();
     }

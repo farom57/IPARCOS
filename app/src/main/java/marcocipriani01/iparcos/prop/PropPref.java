@@ -25,7 +25,7 @@ import marcocipriani01.iparcos.R;
 
 public abstract class PropPref<Element extends INDIElement> extends Preference implements INDIPropertyListener {
 
-    protected INDIProperty<Element> prop;
+    protected final INDIProperty<Element> prop;
     protected View title = null;
 
     protected PropPref(Context context, INDIProperty<Element> prop) {
@@ -117,9 +117,9 @@ public abstract class PropPref<Element extends INDIElement> extends Preference i
     }
 
     /**
-     * Send updates to the server (async task)
+     * Send updates to the server.
      */
     protected void sendChanges() {
-        new PropUpdater().execute(prop);
+        new PropUpdater(prop).start();
     }
 }

@@ -3,7 +3,6 @@ package marcocipriani01.iparcos.prop;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.Spannable;

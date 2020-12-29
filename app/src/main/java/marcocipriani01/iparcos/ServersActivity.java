@@ -114,10 +114,9 @@ public class ServersActivity extends AppCompatActivity implements ServersReloadL
         save();
     }
 
-    @SuppressWarnings("unchecked")
     private void save() {
         // Save the new list
-        List<Pair<Long, String>> list = serversListView.getAdapter().getItemList();
+        List<Pair<Long, String>> list = ((ItemAdapter) serversListView.getAdapter()).getItemList();
         Set<String> set = new HashSet<>();
         for (int i = 0; i < list.size(); i++) {
             String s = list.get(i).second;
@@ -145,18 +144,17 @@ public class ServersActivity extends AppCompatActivity implements ServersReloadL
             }
 
             @Override
-            @SuppressWarnings("unchecked")
             public void onItemLongClicked(final TextView view) {
                 new AlertDialog.Builder(ServersActivity.this)
                         .setTitle(R.string.sure)
                         .setMessage(R.string.remove_server)
                         .setCancelable(false)
                         .setPositiveButton(getString(R.string.ok), (dialog, id) -> {
-                            DragItemAdapter adapter = serversListView.getAdapter();
-                            List<Pair<Long, String>> list = adapter.getItemList();
+                            List<Pair<Long, String>> list = getItemList();
                             for (int i = 0; i < list.size(); i++) {
                                 if (list.get(i).second == view.getText()) {
-                                    adapter.removeItem(i);
+                                    removeItem(i);
+                                    break;
                                 }
                             }
                         })
