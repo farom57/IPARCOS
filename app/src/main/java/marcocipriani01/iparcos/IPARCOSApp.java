@@ -3,6 +3,7 @@ package marcocipriani01.iparcos;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
+import android.content.res.Resources;
 import android.text.format.DateFormat;
 import android.util.Log;
 
@@ -29,6 +30,19 @@ public class IPARCOSApp extends Application {
      */
     private static ConnectionManager connectionManager;
     private static Runnable goToConnection;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        IPARCOSApp.context = getApplicationContext();
+        if (connectionManager == null) {
+            connectionManager = new ConnectionManager();
+        }
+    }
+
+    public static Resources getAppResources() {
+        return context.getResources();
+    }
 
     /**
      * @return the Connection Manager for this application.
@@ -89,15 +103,6 @@ public class IPARCOSApp extends Application {
     public static void goToConnectionTab() {
         if (goToConnection != null) {
             goToConnection.run();
-        }
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        IPARCOSApp.context = getApplicationContext();
-        if (connectionManager == null) {
-            connectionManager = new ConnectionManager();
         }
     }
 

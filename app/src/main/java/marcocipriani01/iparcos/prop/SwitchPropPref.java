@@ -3,6 +3,7 @@ package marcocipriani01.iparcos.prop;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -52,7 +53,7 @@ public class SwitchPropPref extends PropPref<INDISwitchElement> {
             Spannable summaryText = new SpannableString(stringBuilder.toString());
             StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
             for (int i = 0; i < elements.size(); i++) {
-                if (((INDISwitchElement) (elements.get(i))).getValue() == Constants.SwitchStatus.ON) {
+                if (elements.get(i).getValue() == Constants.SwitchStatus.ON) {
                     summaryText.setSpan(boldSpan, starts[i], ends[i], 0);
                 }
             }
@@ -65,10 +66,11 @@ public class SwitchPropPref extends PropPref<INDISwitchElement> {
 
     @Override
     protected void onClick() {
-        if (!getSummary().toString().equals(getContext().getString(R.string.no_indi_elements))) {
+        Context context = getContext();
+        if (!getSummary().toString().equals(context.getString(R.string.no_indi_elements))) {
             SwitchRequestFragment requestFragment = new SwitchRequestFragment();
             requestFragment.setArguments((INDISwitchProperty) prop, this);
-            requestFragment.show(((FragmentActivity) getContext()).getSupportFragmentManager(), "request");
+            requestFragment.show(((FragmentActivity) context).getSupportFragmentManager(), "request");
         }
     }
 
@@ -87,19 +89,30 @@ public class SwitchPropPref extends PropPref<INDISwitchElement> {
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final Context context = getActivity();
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
             final List<INDISwitchElement> elements = prop.getElementsAsList();
             String[] elementsString = new String[elements.size()];
             final boolean[] elementsChecked = new boolean[elements.size()];
+            int singleCheckedItem = 0;
             for (int i = 0; i < elements.size(); i++) {
-                INDISwitchElement switchElement = (INDISwitchElement) (elements.get(i));
+                INDISwitchElement switchElement = elements.get(i);
                 elementsString[i] = switchElement.getLabel();
-                elementsChecked[i] = switchElement.getValue() == Constants.SwitchStatus.ON;
+                boolean b = switchElement.getValue() == Constants.SwitchStatus.ON;
+                elementsChecked[i] = b;
+                if (b) singleCheckedItem = i;
             }
 
-            builder.setMultiChoiceItems(elementsString, elementsChecked,
-                    (dialog, which, isChecked) -> elementsChecked[which] = isChecked);
-
+            Constants.SwitchRules rule = prop.getRule();
+            if ((rule == Constants.SwitchRules.ANY_OF_MANY) || (rule == Constants.SwitchRules.AT_MOST_ONE)) {
+                builder.setMultiChoiceItems(elementsString, elementsChecked,
+                        (dialog, which, isChecked) -> elementsChecked[which] = isChecked);
+            } else if (rule == Constants.SwitchRules.ONE_OF_MANY) {
+                builder.setSingleChoiceItems(elementsString, singleCheckedItem,
+                        (dialog, which) -> {
+                            for (int i = 0; i < elementsChecked.length; i++) {
+                                elementsChecked[i] = (i == which);
+                            }
+                        });
+            }
             builder.setTitle(prop.getLabel());
 
             if (prop.getPermission() != Constants.PropertyPermissions.RO) {
@@ -108,12 +121,9 @@ public class SwitchPropPref extends PropPref<INDISwitchElement> {
                         for (int i = 0; i < elements.size(); i++) {
                             elements.get(i).setDesiredValue(elementsChecked[i] ? Constants.SwitchStatus.ON : Constants.SwitchStatus.OFF);
                         }
-
                     } catch (INDIValueException | IllegalArgumentException e) {
                         Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                        if (context != null) {
-                            IPARCOSApp.log(context.getResources().getString(R.string.error) + e.getLocalizedMessage());
-                        }
+                        IPARCOSApp.log(IPARCOSApp.getAppResources().getString(R.string.error) + e.getLocalizedMessage());
                     }
                     propPref.sendChanges();
                 });

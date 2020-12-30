@@ -13,7 +13,6 @@
         android:layout_gravity="center_horizontal"
         android:elevation="4dp"
         android:background="@color/colorPrimary"
-        android:minHeight="?android:attr/actionBarSize"
         app:tabMode="scrollable" />
 
     <androidx.viewpager.widget.ViewPager

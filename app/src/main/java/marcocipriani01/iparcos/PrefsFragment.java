@@ -51,11 +51,13 @@ public class PrefsFragment extends PreferenceFragmentCompat implements INDIDevic
                 List<INDIProperty<?>> props = device.getPropertiesOfGroup(group);
                 if (props.size() > 0) {
                     PreferenceCategory prefGroup = new PreferenceCategory(context);
+                    prefGroup.setIconSpaceReserved(false);
                     groups.put(group, prefGroup);
                     prefGroup.setTitle(group);
                     prefScreen.addPreference(prefGroup);
                     for (INDIProperty<?> prop : props) {
                         PropPref<?> pref = PropPref.create(context, prop);
+                        if (pref != null) pref.setIconSpaceReserved(false);
                         map.put(prop, pref);
                         prefGroup.addPreference(pref);
                     }

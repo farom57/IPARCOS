@@ -43,7 +43,7 @@ public class LightPropPref extends PropPref<INDILightElement> {
             Resources resources = IPARCOSApp.getContext().getResources();
             for (int i = 0; i < elements.size(); i++) {
                 int color;
-                switch (((INDILightElement) (elements.get(i))).getValue()) {
+                switch (elements.get(i).getValue()) {
                     case ALERT: {
                         color = resources.getColor(R.color.light_red);
                         break;

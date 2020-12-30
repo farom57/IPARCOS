@@ -142,7 +142,6 @@ public class ControlPanelFragment extends Fragment implements TabLayout.OnTabSel
      * @author marcocipriani01
      */
     public static class NoDevicesFragment extends Fragment {
-
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             return inflater.inflate(R.layout.no_devices_fragment, container, false);
@@ -166,7 +165,6 @@ public class ControlPanelFragment extends Fragment implements TabLayout.OnTabSel
                 PrefsFragment fragment = new PrefsFragment();
                 fragment.setDevice(((DevicePageDescriptor) desc).getDevice());
                 return fragment;
-
             } else {
                 return new NoDevicesFragment();
             }

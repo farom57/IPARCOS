@@ -60,9 +60,12 @@ public class TextPropPref extends PropPref<INDITextElement> {
 
     @Override
     protected void onClick() {
-        TextRequestFragment requestFragment = new TextRequestFragment();
-        requestFragment.setArguments((INDITextProperty) prop, this);
-        requestFragment.show(((FragmentActivity) getContext()).getSupportFragmentManager(), "request");
+        Context context = getContext();
+        if (!getSummary().toString().equals(context.getString(R.string.no_indi_elements))) {
+            TextRequestFragment requestFragment = new TextRequestFragment();
+            requestFragment.setArguments((INDITextProperty) prop, this);
+            requestFragment.show(((FragmentActivity) context).getSupportFragmentManager(), "request");
+        }
     }
 
     public static class TextRequestFragment extends DialogFragment {
@@ -80,25 +83,26 @@ public class TextPropPref extends PropPref<INDITextElement> {
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final Context context = getActivity();
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
             final List<INDITextElement> elements = prop.getElementsAsList();
             final ArrayList<EditText> editTextViews = new ArrayList<>(elements.size());
-
             LinearLayout layout = new LinearLayout(context);
             layout.setOrientation(LinearLayout.VERTICAL);
-            int padding = context.getResources().getDimensionPixelSize(R.dimen.padding_medium);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            int padding = IPARCOSApp.getAppResources().getDimensionPixelSize(R.dimen.padding_medium);
+            layoutParams.setMargins(padding, 0, padding, 0);
 
-            for (int i = 0; i < elements.size(); i++) {
+            for (INDITextElement element : elements) {
                 TextView textView = new TextView(context);
-                textView.setText(elements.get(i).getLabel());
+                textView.setText(element.getLabel());
                 textView.setPadding(padding, padding, padding, 0);
-                layout.addView(textView);
-                editTextViews.add(new EditText(context));
-                EditText editText = editTextViews.get(i);
-                editText.setText(elements.get(i).getValueAsString());
+                layout.addView(textView, layoutParams);
+                EditText editText = new EditText(context);
+                editText.setText(element.getValueAsString());
                 editText.setPadding(padding, padding, padding, padding);
                 editText.setEnabled(prop.getPermission() != Constants.PropertyPermissions.RO);
-                layout.addView(editText);
+                editTextViews.add(editText);
+                layout.addView(editText, layoutParams);
             }
 
             ScrollView scrollView = new ScrollView(context);
@@ -112,10 +116,9 @@ public class TextPropPref extends PropPref<INDITextElement> {
                         for (int i = 0; i < elements.size(); i++) {
                             elements.get(i).setDesiredValue(editTextViews.get(i).getText().toString());
                         }
-
                     } catch (INDIValueException | IllegalArgumentException e) {
                         Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                        IPARCOSApp.log(context.getResources().getString(R.string.error) + e.getLocalizedMessage());
+                        IPARCOSApp.log(IPARCOSApp.getAppResources().getString(R.string.error) + e.getLocalizedMessage());
                     }
                     propPref.sendChanges();
                 });

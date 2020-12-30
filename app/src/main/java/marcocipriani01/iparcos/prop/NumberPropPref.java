@@ -4,12 +4,15 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.TextWatcher;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,10 +65,11 @@ public class NumberPropPref extends PropPref<INDINumberElement> {
 
     @Override
     protected void onClick() {
-        if (!getSummary().toString().equals(getContext().getString(R.string.no_indi_elements))) {
+        Context context = getContext();
+        if (!getSummary().toString().equals(context.getString(R.string.no_indi_elements))) {
             NumberRequestFragment requestFragment = new NumberRequestFragment();
             requestFragment.setArguments((INDINumberProperty) prop, this);
-            requestFragment.show(((FragmentActivity) getContext()).getSupportFragmentManager(), "request");
+            requestFragment.show(((FragmentActivity) context).getSupportFragmentManager(), "request");
         }
     }
 
@@ -84,27 +88,82 @@ public class NumberPropPref extends PropPref<INDINumberElement> {
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final Context context = getActivity();
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
             final List<INDINumberElement> elements = prop.getElementsAsList();
             final ArrayList<EditText> editTextViews = new ArrayList<>(elements.size());
-
             LinearLayout layout = new LinearLayout(context);
             layout.setOrientation(LinearLayout.VERTICAL);
-            int padding = context.getResources().getDimensionPixelSize(R.dimen.padding_medium);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            int padding = IPARCOSApp.getAppResources().getDimensionPixelSize(R.dimen.padding_medium);
+            layoutParams.setMargins(padding, 0, padding, 0);
 
-            for (int i = 0; i < elements.size(); i++) {
+            for (INDINumberElement element : elements) {
                 TextView textView = new TextView(context);
-                textView.setText(elements.get(i).getLabel());
+                textView.setText(element.getLabel());
                 textView.setPadding(padding, padding, padding, 0);
-                layout.addView(textView);
-                editTextViews.add(new EditText(context));
-                EditText editText = editTextViews.get(i);
-                editText.setText(elements.get(i).getValueAsString());
+                layout.addView(textView, layoutParams);
+                EditText editText = new EditText(context);
+                editText.setText(element.getValueAsString());
                 editText.setPadding(padding, padding, padding, padding);
                 editText.setEnabled(prop.getPermission() != Constants.PropertyPermissions.RO);
                 editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                layout.addView(editText);
+                editTextViews.add(editText);
+                layout.addView(editText, layoutParams);
+                final double step = element.getStep();
+                final double min = element.getMin();
+                final double max = element.getMax();
+                final int interval = (int) ((max - min) / step);
+                if (interval <= 1000) {
+                    SeekBar seekBar = new SeekBar(context);
+                    seekBar.setPadding(padding *2 , padding, padding * 2, padding);
+                    seekBar.setMax(interval);
+                    seekBar.setProgress((int) ((element.getValue() - min) / step));
+                    final SeekBar.OnSeekBarChangeListener changeListener = new SeekBar.OnSeekBarChangeListener() {
+                        @Override
+                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                            editText.setText(String.valueOf((int) (min + (progress * step))));
+                        }
+
+                        @Override
+                        public void onStartTrackingTouch(SeekBar seekBar) {
+
+                        }
+
+                        @Override
+                        public void onStopTrackingTouch(SeekBar seekBar) {
+
+                        }
+                    };
+                    seekBar.setOnSeekBarChangeListener(changeListener);
+                    editText.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            try {
+                                double value = Double.parseDouble(s.toString());
+                                if ((value >= min) && (value <= max)) {
+                                    seekBar.setOnSeekBarChangeListener(null);
+                                    seekBar.setProgress((int) ((value - min) / step));
+                                    seekBar.setOnSeekBarChangeListener(changeListener);
+                                }
+                            } catch (NumberFormatException ignored) {
+
+                            }
+                        }
+                    });
+                    layout.addView(seekBar, layoutParams);
+                }
             }
+
             ScrollView scrollView = new ScrollView(context);
             scrollView.addView(layout);
             builder.setView(scrollView);
@@ -120,10 +179,9 @@ public class NumberPropPref extends PropPref<INDINumberElement> {
                                 element.setDesiredValue(s);
                             }
                         }
-
                     } catch (INDIValueException | IllegalArgumentException e) {
                         Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                        IPARCOSApp.log(context.getResources().getString(R.string.error) + e.getLocalizedMessage());
+                        IPARCOSApp.log(IPARCOSApp.getAppResources().getString(R.string.error) + e.getLocalizedMessage());
                     }
                     propPref.sendChanges();
                 });
