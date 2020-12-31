@@ -58,7 +58,6 @@ public class NumberPropPref extends PropPref<INDINumberElement> {
             }
             stringBuilder.append(elements.get(i).getValueAsString());
             return new SpannableString(stringBuilder.toString());
-
         } else {
             return new SpannableString(getContext().getString(R.string.no_indi_elements));
         }

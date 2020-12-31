@@ -57,9 +57,11 @@ public class PrefsFragment extends PreferenceFragmentCompat implements INDIDevic
                     prefScreen.addPreference(prefGroup);
                     for (INDIProperty<?> prop : props) {
                         PropPref<?> pref = PropPref.create(context, prop);
-                        if (pref != null) pref.setIconSpaceReserved(false);
-                        map.put(prop, pref);
-                        prefGroup.addPreference(pref);
+                        if (pref != null) {
+                            pref.setIconSpaceReserved(false);
+                            map.put(prop, pref);
+                            prefGroup.addPreference(pref);
+                        }
                     }
                 }
             }
@@ -91,13 +93,17 @@ public class PrefsFragment extends PreferenceFragmentCompat implements INDIDevic
             PreferenceCategory prefGroup = groups.get(group);
             if (prefGroup == null) {
                 prefGroup = new PreferenceCategory(context);
+                prefGroup.setIconSpaceReserved(false);
                 groups.put(group, prefGroup);
                 prefGroup.setTitle(group);
                 prefScreen.addPreference(prefGroup);
             }
             PropPref<?> pref = PropPref.create(context, property);
-            map.put(property, pref);
-            prefGroup.addPreference(pref);
+            if (pref != null) {
+                pref.setIconSpaceReserved(false);
+                map.put(property, pref);
+                prefGroup.addPreference(pref);
+            }
         });
     }
 

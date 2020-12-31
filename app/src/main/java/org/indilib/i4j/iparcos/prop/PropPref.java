@@ -31,9 +31,7 @@ public abstract class PropPref<Element extends INDIElement> extends Preference i
     protected PropPref(Context context, INDIProperty<Element> prop) {
         super(context);
         this.prop = prop;
-
         prop.addINDIPropertyListener(this);
-
         setTitle(createTitle());
         setSummary(createSummary());
     }
@@ -73,17 +71,14 @@ public abstract class PropPref<Element extends INDIElement> extends Preference i
                 color = IPARCOSApp.getContext().getResources().getColor(R.color.light_red);
                 break;
             }
-
             case BUSY: {
                 color = IPARCOSApp.getContext().getResources().getColor(R.color.light_yellow);
                 break;
             }
-
             case OK: {
                 color = IPARCOSApp.getContext().getResources().getColor(R.color.light_green);
                 break;
             }
-
             default: {
                 color = Color.WHITE;
                 break;
