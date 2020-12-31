@@ -4,7 +4,7 @@
     <string name="indi_host">Select the INDI Host:</string>
     <string name="connect">Connect</string>
     <string name="disconnect">Disconnect</string>
-    <string name="log">Log</string>
+    <string name="log">Logs:</string>
     <string name="host_prompt">Host address</string>
     <string name="host_add">Add server</string>
     <string name="host_manage">Manage servers</string>
@@ -77,13 +77,14 @@
     <string name="menu_about">About this app</string>
     <string name="app_description">IPARCOS (Indi Protocol Android Remote COntrol Software) is an INDI client for Android.
         \nIt features a control panel and others specialized tools to easily control your devices.\n\n
-        The project main site is https://github.com/farom57/IPARCOS
+        The source code is available at github.com/INDIForJava/IPARCOS
         \n\nDeveloped by\n
-        • Romain Fafet (farom57)\n
-        • Zerjillo\n
-        • marcocipriani01
+        • <b>Marco Cipriani</b> (marcocipriani01)\n
+        • <b>Romain Fafet</b> (farom57)
         \n\nOpen Source libraries:\n
-        • INDI for Java - http://www.indilib.org/develop/indiforjava.html
+        • INDIForJava, LGPL v3 license: github.com/INDIForJava/INDIForJava\n
+        • DragListView, Apache 2.0 license: github.com/woxblom/DragListView\n
+        • CWAC-Pager, Apache 2.0 license: github.com/commonsguy/cwac-pager
     </string>
     <string name="error_no_devices">No devices found!</string>
     <string name="error">Error:</string>
@@ -101,5 +102,4 @@
     <string name="clear_logs">Clear logs</string>
     <string name="add_server">Add server</string>
     <string name="ip_address">IP address</string>
-    <string name="service_disc_failed">Service discovery failed!</string>
 </resources>

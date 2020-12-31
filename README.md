@@ -7,10 +7,10 @@ It features an INDI control panel, a mount and focuser controller and a database
 
 ## Features
 
-* Mount and focuser controller with directional pads and speed buttons
+* Mount and focuser controller with directional pads and speed controls
 * Database full of objects to which you can point the telescope directly from the app
-* Generic control panel compatible with every device (BLOB properties not yet supported)
-* Languages: English, French, Italian
+* INDI control panel compatible with every device (BLOB properties not yet supported)
+* Languages: English, Italian and French (partial translation)
 
 ### Screenshots
 
@@ -33,21 +33,21 @@ It features an INDI control panel, a mount and focuser controller and a database
   - An INDI server must be running on the remote computer.
   - You must have network access to the server. 
     - To achieve this, the Android device and the remote computer can be placed on your home network.
-    - Alternatively, you can create a wireless network with your Android device and connect the remote computer to this network (the PC address is likely to be 192.168.43.71)
-2. Connection
-  - Choose the server address in the list or touch "Add server" to add a new server in the list
+    - Alternatively, you can create a wireless network with your Android device and connect the remote computer to this network.
+2. Connection:
+  - Choose the server address in the list or press on "Add server" to add a new server in the list
   - Optionally, you can change the port number if you do not use the default value for the INDI protocol (7624)
   - Click on "Connect"
-3. Use the generic control panel
-  - Click on the gear icon in the action bar to display the generic control panel
+3. Use the INDI control panel
+  - Click on the gear icon in the navigation bar to display the control panel
   - Use the tabs to switch between the devices
   - The properties of the device are displayed in a list. Click on a property to edit it or show the details.
 4. Control the telescope motion
-  - Click on the icon with four arrows in the action bar to display the telescope motion control panel
-  - The buttons will be enabled (red) or disabled (grey) depending on the devices features.
-    - The arrows are enabled if one device provides the TELESCOPE_ABORT_MOTION, TELESCOPE_MOTION_NS and/or TELESCOPE_MOTION_WE properties
-    - The + and - buttons are enabled if one device provides the standard property to control the speed (TELESCOPE_MOTION_RATE) or the LX200 style property (Slew Rate) or the EQMod style property (SLEWMODE)
-    - If the device is not connected, the properties may not appear and the buttons will be disabled
+  - Press the joystick to display the telescope motion control panel
+  - The buttons will be enabled or disabled depending on the devices features.
+  - If the device is not connected, the properties may not appear and the buttons will be disabled
+5. Focuser control
+  - Supports speed control, focus in/out and absolute position
 
 ### Developed by
 
@@ -57,3 +57,5 @@ It features an INDI control panel, a mount and focuser controller and a database
 ### Used Libraries
 
 - [INDIForJava](https://github.com/INDIForJava/INDIForJava), LGPL v3 license
+- [DragListView](https://github.com/woxblom/DragListView), Apache 2.0 license
+- [CWAC-Pager](https://github.com/commonsguy/cwac-pager), Apache 2.0 license

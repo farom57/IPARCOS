@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="marcocipriani01.iparcos.AboutActivity">
+    tools:context="org.indilib.i4j.iparcos.AboutActivity">
 
     <ImageView
         android:id="@+id/logoView"
@@ -20,17 +20,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/logoView"
-        android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:layout_toEndOf="@id/logoView"
-        android:layout_toRightOf="@id/logoView"
         android:text="@string/app_name"
         android:textAppearance="@android:style/TextAppearance.Large" />
 
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@id/logoView"
         android:layout_marginTop="16dp">
@@ -39,6 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autoLink="web"
+            android:id="@+id/about_text_view"
             android:linksClickable="true"
             android:layout_gravity="center_vertical|end"
             android:text="@string/app_description" />

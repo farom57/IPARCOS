@@ -4,7 +4,7 @@
     <string name="indi_host">Seleziona un server INDI:</string>
     <string name="connect">Connessione</string>
     <string name="disconnect">Disconnetti</string>
-    <string name="log">Log</string>
+    <string name="log">Log:</string>
     <string name="host_prompt">Indirizzo server</string>
     <string name="host_add">Aggiungi server</string>
     <string name="host_prompt_text">Indirizzo IP del server:</string>
@@ -75,13 +75,14 @@
     <string name="menu_about">Informazioni</string>
     <string name="app_description">IPARCOS (Indi Protocol Android Remote COntrol Software) è un client INDI per Android.
         \nContiene un pannello di controllo e altri strumenti specifici per controllare i tuoi dispositivi.\n\n
-        La pagina principale del progetto è https://github.com/farom57/IPARCOS
-        \n\nSviluppato da\n
-        • Romain Fafet (farom57)\n
-        • Zerjillo\n
-        • marcocipriani01
-        \n\nLibrerie Open Source:\n
-        • INDI for Java - http://www.indilib.org/develop/indiforjava.html
+        Il codice sorgente è disponibile alla pagina github.com/INDIForJava/IPARCOS
+        \n\Sviluppato da\n
+        • Marco Cipriani (marcocipriani01)\n
+        • Romain Fafet (farom57)
+        \n\nLibrerie utilizzate:\n
+        • INDIForJava, LGPL v3 license - github.com/INDIForJava/INDIForJava\n
+        • DragListView, Apache 2.0 license - github.com/woxblom/DragListView\n
+        • CWAC-Pager, Apache 2.0 license - github.com/commonsguy/cwac-pager
     </string>
     <string name="error_no_devices">Nessun dispositivo trovato!</string>
     <string name="error">Errore:</string>
@@ -94,4 +95,8 @@
     <string name="absolute_position">Posizione assoluta:</string>
     <string name="set">Imposta</string>
     <string name="no_indi_elements">Proprietà senza elementi.</string>
+    <string name="slide_to_reorganize">Trascina per riorganizzare</string>
+    <string name="clear_logs">Cancella log</string>
+    <string name="add_server">Aggiungi server</string>
+    <string name="ip_address">Indirizzo IP</string>
 </resources>
