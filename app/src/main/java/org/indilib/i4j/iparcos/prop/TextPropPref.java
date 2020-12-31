@@ -42,17 +42,17 @@ public class TextPropPref extends PropPref<INDITextElement> {
     @Override
     protected Spannable createSummary() {
         List<INDITextElement> elements = prop.getElementsAsList();
-        if (elements.size() > 0) {
+        int count = elements.size();
+        if (count > 0) {
             StringBuilder stringBuilder = new StringBuilder();
             int i;
             stringBuilder.append(elements.get(0).getLabel()).append(": ");
-            for (i = 0; i < elements.size() - 1; i++) {
+            for (i = 0; i < count - 1; i++) {
                 stringBuilder.append(elements.get(i).getValueAsString()).append(", ")
                         .append(elements.get(i + 1).getLabel()).append(": ");
             }
             stringBuilder.append(elements.get(i).getValueAsString());
             return new SpannableString(stringBuilder.toString());
-
         } else {
             return new SpannableString(getContext().getString(R.string.no_indi_elements));
         }

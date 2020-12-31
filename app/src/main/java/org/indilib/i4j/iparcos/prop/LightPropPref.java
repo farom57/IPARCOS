@@ -29,36 +29,34 @@ public class LightPropPref extends PropPref<INDILightElement> {
     @Override
     protected Spannable createSummary() {
         List<INDILightElement> elements = prop.getElementsAsList();
-        if (elements.size() > 0) {
+        int count = elements.size();
+        if (count > 0) {
             StringBuilder stringBuilder = new StringBuilder();
-            int[] starts = new int[elements.size()];
-            int[] ends = new int[elements.size()];
+            int[] starts = new int[count];
+            int[] ends = new int[count];
             starts[0] = 0;
-            for (int i = 0; i < elements.size(); i++) {
+            for (int i = 0; i < count; i++) {
                 starts[i] = stringBuilder.length();
                 stringBuilder.append(elements.get(i).getLabel()).append(" ");
                 ends[i] = stringBuilder.length();
             }
             Spannable summaryText = new SpannableString(stringBuilder.toString());
             Resources resources = IPARCOSApp.getContext().getResources();
-            for (int i = 0; i < elements.size(); i++) {
+            for (int i = 0; i < count; i++) {
                 int color;
                 switch (elements.get(i).getValue()) {
                     case ALERT: {
                         color = resources.getColor(R.color.light_red);
                         break;
                     }
-
                     case BUSY: {
                         color = resources.getColor(R.color.light_yellow);
                         break;
                     }
-
                     case OK: {
                         color = resources.getColor(R.color.light_green);
                         break;
                     }
-
                     default:
                     case IDLE: {
                         color = Color.WHITE;
@@ -68,7 +66,6 @@ public class LightPropPref extends PropPref<INDILightElement> {
                 summaryText.setSpan(new ForegroundColorSpan(color), starts[i], ends[i], 0);
             }
             return summaryText;
-
         } else {
             return new SpannableString(getContext().getString(R.string.no_indi_elements));
         }

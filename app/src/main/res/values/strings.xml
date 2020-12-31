@@ -102,4 +102,6 @@
     <string name="clear_logs">Clear logs</string>
     <string name="add_server">Add server</string>
     <string name="ip_address">IP address</string>
+    <string name="empty_host">Empty host.</string>
+    <string name="not_valid_ip">Attention: the entered text doesn\'t seem to be a valid IP address.</string>
 </resources>

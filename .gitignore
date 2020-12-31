@@ -1,7 +1,12 @@
 .gradle
-/local.properties
-/.idea/workspace.xml
-/.idea/libraries
+local.properties
+.idea/workspace.xml
+.idea/libraries
 .DS_Store
-/build
-/app/build
+build
+app/build
+app/release/*
+app/release/output-metadata.json
+app/release/app-release.apk
+app/release/output-metadata.json
+app/release/app-release.apk

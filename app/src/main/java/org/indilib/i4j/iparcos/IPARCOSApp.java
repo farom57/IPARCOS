@@ -91,7 +91,7 @@ public class IPARCOSApp extends Application {
     /**
      * @param state the new state of the Connection button.
      */
-    public static void setState(String state) {
+    public static void setState(ConnectionState state) {
         if (uiUpdater != null) {
             uiUpdater.setConnectionState(state);
         }
@@ -104,6 +104,10 @@ public class IPARCOSApp extends Application {
         if (goToConnection != null) {
             goToConnection.run();
         }
+    }
+
+    public enum ConnectionState {
+        DISCONNECTED, CONNECTED, CONNECTING
     }
 
     /**
@@ -121,6 +125,6 @@ public class IPARCOSApp extends Application {
         /**
          * @param state a new state for the Connection button.
          */
-        void setConnectionState(final String state);
+        void setConnectionState(ConnectionState state);
     }
 }

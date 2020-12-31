@@ -59,24 +59,22 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
     public void connect(String host, int port) {
         final Resources resources = IPARCOSApp.getAppResources();
         if (!isConnected()) {
-            IPARCOSApp.setState(resources.getString(R.string.connecting));
+            IPARCOSApp.setState(IPARCOSApp.ConnectionState.CONNECTING);
             IPARCOSApp.log(resources.getString(R.string.try_to_connect) + host + ":" + port);
-            connection = new INDIServerConnection(host, port);
-            // Listen to all
-            connection.addINDIServerConnectionListener(this);
-            for (INDIServerConnectionListener l : listeners) {
-                connection.addINDIServerConnectionListener(l);
-            }
             new Thread(() -> {
                 try {
+                    connection = new INDIServerConnection(host, port);
+                    connection.addINDIServerConnectionListener(this);
+                    for (INDIServerConnectionListener l : listeners) {
+                        connection.addINDIServerConnectionListener(l);
+                    }
                     connection.connect();
-                    // Ask for all the devices
                     connection.askForDevices();
                     IPARCOSApp.log(resources.getString(R.string.connected));
-                    IPARCOSApp.setState(resources.getString(R.string.disconnect));
+                    IPARCOSApp.setState(IPARCOSApp.ConnectionState.CONNECTED);
                 } catch (IOException e) {
                     IPARCOSApp.log(e.getLocalizedMessage());
-                    IPARCOSApp.setState(resources.getString(R.string.connect));
+                    IPARCOSApp.setState(IPARCOSApp.ConnectionState.DISCONNECTED);
                 }
             }).start();
         } else {
@@ -89,8 +87,7 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
      */
     public void disconnect() {
         if (isConnected()) {
-            connection.disconnect();
-
+            new Thread(() -> connection.disconnect()).start();
         } else {
             IPARCOSApp.log("Not connected!");
         }
@@ -112,8 +109,7 @@ public class ConnectionManager implements INDIServerConnectionListener, INDIDevi
     public void connectionLost(INDIServerConnection connection) {
         Resources resources = IPARCOSApp.getAppResources();
         IPARCOSApp.log(resources.getString(R.string.connection_lost));
-        IPARCOSApp.setState(resources.getString(R.string.connect));
-        // Move to the connection tab
+        IPARCOSApp.setState(IPARCOSApp.ConnectionState.DISCONNECTED);
         IPARCOSApp.goToConnectionTab();
     }
 

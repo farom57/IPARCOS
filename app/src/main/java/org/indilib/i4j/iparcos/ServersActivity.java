@@ -1,5 +1,6 @@
 package org.indilib.i4j.iparcos;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -49,12 +50,15 @@ public class ServersActivity extends AppCompatActivity implements ServersReloadL
         int padding = IPARCOSApp.getAppResources().getDimensionPixelSize(R.dimen.padding_medium);
         layoutParams.setMargins(padding, 0, padding, 0);
         layout.addView(input, layoutParams);
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
 
         Dialog dialog = new AlertDialog.Builder(context)
                 .setTitle(R.string.host_prompt_text).setView(layout).setCancelable(false)
                 .setPositiveButton(context.getString(R.string.ok), (dialog12, id) -> {
+                    inputMethodManager.hideSoftInputFromWindow(input.getWindowToken(), 0);
                     String server = input.getText().toString();
                     if (!server.equals("")) {
+                        if (!isIp(server)) Toast.makeText(context, context.getString(R.string.not_valid_ip), Toast.LENGTH_SHORT).show();
                         // Retrieve the list
                         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
                         Set<String> set = preferences.getStringSet(PREFERENCES_TAG, null);
@@ -74,13 +78,18 @@ public class ServersActivity extends AppCompatActivity implements ServersReloadL
                         preferences.edit().putStringSet(PREFERENCES_TAG, newSet).apply();
                         // Update
                         onServersReload.loadServers();
+                    } else {
+                        Toast.makeText(context, context.getString(R.string.empty_host), Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton(context.getString(R.string.cancel), (dialog1, id) -> dialog1.cancel()).create();
         dialog.show();
         input.requestFocus();
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+    }
+
+    public static boolean isIp(final String ip) {
+        return ip.matches("^((0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)\\.){3}(0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)$");
     }
 
     public static void sortPairs(List<Pair<Long, String>> list) {

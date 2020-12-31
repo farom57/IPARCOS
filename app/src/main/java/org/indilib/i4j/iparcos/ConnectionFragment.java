@@ -3,6 +3,7 @@ package org.indilib.i4j.iparcos;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -43,17 +44,12 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
      * All the logs.
      */
     private final static ArrayList<LogItem> logs = new ArrayList<>();
-    /**
-     * The last text of the button (to restore the Fragment's state)
-     */
-    private static String buttonText = null;
+    private static IPARCOSApp.ConnectionState state = IPARCOSApp.ConnectionState.DISCONNECTED;
     /**
      * The last position of the spinner (to restore the Fragment's state)
      */
-    private static int spinnerItem = -1;
+    private static int selectedSpinnerItem = 0;
     private Context context;
-    // Views
-    private View rootView;
     private Button connectionButton;
     private Spinner serversSpinner;
     /**
@@ -63,6 +59,7 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
     private FloatingActionButton clearLogsButton;
     private ListView logsList;
     private LogAdapter logAdapter;
+    private static final String PORT_PREF = "INDI_PORT";
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -78,7 +75,8 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_connection, container, false);
+        // Views
+        View rootView = inflater.inflate(R.layout.fragment_connection, container, false);
 
         logsList = rootView.findViewById(R.id.logsList);
         logAdapter = new LogAdapter(context, logs);
@@ -134,50 +132,44 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
         });
         loadServers();
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        EditText portEditText = (EditText) rootView.findViewById(R.id.port_edittext);
+        portEditText.setText(String.valueOf(preferences.getInt(PORT_PREF, 7624)));
+
         connectionButton.setOnClickListener(v -> {
             // Retrieve Hostname and port number
             String host = String.valueOf(serversSpinner.getSelectedItem());
-            String portStr = ((EditText) rootView.findViewById(R.id.editTextPort)).getText().toString();
+            String portStr = portEditText.getText().toString();
             int port;
-            try {
-                port = Integer.parseInt(portStr);
-            } catch (NumberFormatException e) {
+            if (portStr.equals("")) {
                 port = 7624;
+            } else {
+                try {
+                    port = Integer.parseInt(portStr);
+                    preferences.edit().putInt(PORT_PREF, port).apply();
+                } catch (NumberFormatException e) {
+                    port = 7624;
+                }
             }
             // Connect or disconnect
-            if (connectionButton.getText().equals(getResources().getString(R.string.connect))) {
+            ConnectionManager connectionManager = IPARCOSApp.getConnectionManager();
+            if (state == IPARCOSApp.ConnectionState.DISCONNECTED) {
                 if (host.equals(getResources().getString(R.string.host_add))) {
                     serversSpinner.post(() -> serversSpinner.setSelection(0));
                     ServersActivity.addServer(context, ConnectionFragment.this);
                 } else if (host.equals(getResources().getString(R.string.host_manage))) {
                     startActivityForResult(new Intent(context, ServersActivity.class), 1);
                 } else {
-                    IPARCOSApp.getConnectionManager().connect(host, port);
+                    connectionManager.connect(host, port);
                 }
-            } else if (connectionButton.getText().equals(getResources().getString(R.string.disconnect))) {
-                IPARCOSApp.getConnectionManager().disconnect();
+            } else if (state == IPARCOSApp.ConnectionState.CONNECTED) {
+                connectionManager.disconnect();
             }
-            Activity activity = getActivity();
-            if (activity != null) {
-                View view = activity.getCurrentFocus();
-                if (view == null) {
-                    view = new View(activity);
-                }
-                InputMethodManager manager = ((InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE));
-                if (manager != null) {
-                    manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
-            }
+            ((InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE))
+                    .hideSoftInputFromWindow(portEditText.getWindowToken(), 0);
         });
-
-        if (spinnerItem != -1) {
-            serversSpinner.setSelection(spinnerItem);
-            connectionButton.setText(buttonText);
-        } else {
-            spinnerItem = 0;
-            buttonText = getResources().getString(R.string.connect);
-        }
-
+        serversSpinner.setSelection(selectedSpinnerItem);
+        resetConnButton();
         IPARCOSApp.setUiUpdater(this);
         return rootView;
     }
@@ -195,15 +187,41 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
     }
 
     @Override
-    public void setConnectionState(final String state) {
-        connectionButton.post(() -> connectionButton.setText(state));
+    public void setConnectionState(IPARCOSApp.ConnectionState state) {
+        ConnectionFragment.state = state;
+        resetConnButton();
+    }
+
+    private void resetConnButton() {
+        switch (state) {
+            case CONNECTED: {
+                connectionButton.post(() -> {
+                    connectionButton.setText(getString(R.string.disconnect));
+                    connectionButton.setEnabled(true);
+                });
+                break;
+            }
+            case DISCONNECTED: {
+                connectionButton.post(() -> {
+                    connectionButton.setText(getString(R.string.connect));
+                    connectionButton.setEnabled(true);
+                });
+                break;
+            }
+            case CONNECTING: {
+                connectionButton.post(() -> {
+                    connectionButton.setText(getString(R.string.connecting));
+                    connectionButton.setEnabled(false);
+                });
+                break;
+            }
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        buttonText = connectionButton.getText().toString();
-        spinnerItem = serversSpinner.getSelectedItemPosition();
+        selectedSpinnerItem = serversSpinner.getSelectedItemPosition();
     }
 
     @Override

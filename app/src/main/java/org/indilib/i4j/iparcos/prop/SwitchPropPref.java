@@ -39,25 +39,29 @@ public class SwitchPropPref extends PropPref<INDISwitchElement> {
     @Override
     protected Spannable createSummary() {
         List<INDISwitchElement> elements = prop.getElementsAsList();
-        if (elements.size() > 0) {
+        int count = elements.size();
+        if (count > 0) {
             StringBuilder stringBuilder = new StringBuilder();
-            int[] starts = new int[elements.size()];
-            int[] ends = new int[elements.size()];
+            int[] starts = new int[count];
+            int[] ends = new int[count];
             starts[0] = 0;
-            for (int i = 0; i < elements.size(); i++) {
+            int i;
+            for (i = 0; i < count - 1; i++) {
                 starts[i] = stringBuilder.length();
-                stringBuilder.append(elements.get(i).getLabel()).append(" ");
+                stringBuilder.append(elements.get(i).getLabel()).append(", ");
                 ends[i] = stringBuilder.length();
             }
+            starts[i] = stringBuilder.length();
+            stringBuilder.append(elements.get(i).getLabel());
+            ends[i] = stringBuilder.length();
             Spannable summaryText = new SpannableString(stringBuilder.toString());
             StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
-            for (int i = 0; i < elements.size(); i++) {
+            for (i = 0; i < count; i++) {
                 if (elements.get(i).getValue() == Constants.SwitchStatus.ON) {
                     summaryText.setSpan(boldSpan, starts[i], ends[i], 0);
                 }
             }
             return summaryText;
-
         } else {
             return new SpannableString(getContext().getString(R.string.no_indi_elements));
         }
