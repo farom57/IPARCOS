@@ -3,6 +3,8 @@ package marcocipriani01.iparcos;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.nsd.NsdManager;
+import android.net.nsd.NsdServiceInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -25,6 +27,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -73,9 +76,7 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            loadServers();
-        }
+        if (requestCode == 1) loadServers();
     }
 
     @Override
@@ -122,8 +123,8 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 String selected = parent.getItemAtPosition(pos).toString();
                 if (selected.equals(getResources().getString(R.string.host_add))) {
+                    serversSpinner.post(() -> serversSpinner.setSelection(0));
                     ServersActivity.addServer(context, ConnectionFragment.this);
-
                 } else if (selected.equals(getResources().getString(R.string.host_manage))) {
                     startActivityForResult(new Intent(context, ServersActivity.class), 1);
                 }
@@ -149,6 +150,7 @@ public class ConnectionFragment extends Fragment implements ServersReloadListene
             // Connect or disconnect
             if (connectionButton.getText().equals(getResources().getString(R.string.connect))) {
                 if (host.equals(getResources().getString(R.string.host_add))) {
+                    serversSpinner.post(() -> serversSpinner.setSelection(0));
                     ServersActivity.addServer(context, ConnectionFragment.this);
                 } else if (host.equals(getResources().getString(R.string.host_manage))) {
                     startActivityForResult(new Intent(context, ServersActivity.class), 1);

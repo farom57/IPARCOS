@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -41,13 +42,18 @@ public class ServersActivity extends AppCompatActivity implements ServersReloadL
      */
     static void addServer(final Context context, final ServersReloadListener onServersReload) {
         final EditText input = new EditText(context);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-        input.setLayoutParams(lp);
+        input.setText("192.168.");
+        input.setHint(context.getString(R.string.ip_address));
+        LinearLayout layout = new LinearLayout(context);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        int padding = IPARCOSApp.getAppResources().getDimensionPixelSize(R.dimen.padding_medium);
+        layoutParams.setMargins(padding, 0, padding, 0);
+        layout.addView(input, layoutParams);
 
         Dialog dialog = new AlertDialog.Builder(context)
-                .setTitle(R.string.host_prompt_text).setView(input).setCancelable(false)
+                .setTitle(R.string.host_prompt_text).setView(layout).setCancelable(false)
                 .setPositiveButton(context.getString(R.string.ok), (dialog12, id) -> {
                     String server = input.getText().toString();
                     if (!server.equals("")) {
@@ -61,7 +67,6 @@ public class ServersActivity extends AppCompatActivity implements ServersReloadL
                             for (String s : serversList) {
                                 max = Math.max(max, Integer.parseInt(s.substring(0, s.indexOf('#'))));
                             }
-
                         } else {
                             serversList = new ArrayList<>();
                         }
@@ -74,11 +79,10 @@ public class ServersActivity extends AppCompatActivity implements ServersReloadL
                     }
                 })
                 .setNegativeButton(context.getString(R.string.cancel), (dialog1, id) -> dialog1.cancel()).create();
-        Window window = dialog.getWindow();
-        if (window != null) {
-            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        }
         dialog.show();
+        input.requestFocus();
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
     public static void sortPairs(List<Pair<Long, String>> list) {

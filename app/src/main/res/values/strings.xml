@@ -100,4 +100,6 @@
     <string name="slide_to_reorganize">Slide to reorganize</string>
     <string name="clear_logs">Clear logs</string>
     <string name="add_server">Add server</string>
+    <string name="ip_address">IP address</string>
+    <string name="service_disc_failed">Service discovery failed!</string>
 </resources>
