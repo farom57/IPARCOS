@@ -3,7 +3,7 @@
 # IPARCOS
 
 IPARCOS (Indi Protocol Android Remote COntrol Software) is an INDI client for Android.
-It features a generic control panel, a mount joystick-like screen, a focuser controller and a database of objects to point the telescope.
+It features an INDI control panel, a mount and focuser controller and a database of objects to point the telescope.
 
 ## Features
 
@@ -21,10 +21,10 @@ It features a generic control panel, a mount joystick-like screen, a focuser con
 ## Installing IPARCOS
 
 - ~~From Google Play:~~
-  - Not yet available
+  - Coming soon!
 - From the .apk file:
   - Allow apps from unknown sources in the Android settings (Settings → Security → Unknown sources)
-  - ~~Download and install the latest release from the GitHub project page~~ Coming soon!
+  - Download and install the latest release from the GitHub project page
 
 ## Usage
 
@@ -56,4 +56,4 @@ It features a generic control panel, a mount joystick-like screen, a focuser con
 
 ### Used Libraries
 
-- [INDIForJava](http://www.indilib.org/develop/indiforjava.html) by Zerjillo, LGPL v3 license
+- [INDIForJava](https://github.com/INDIForJava/INDIForJava), LGPL v3 license

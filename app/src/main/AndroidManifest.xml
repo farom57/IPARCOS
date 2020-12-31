@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="marcocipriani01.iparcos">
+    package="org.indilib.i4j.iparcos">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
-        android:name="marcocipriani01.iparcos.IPARCOSApp"
+        android:name="org.indilib.i4j.iparcos.IPARCOSApp"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:allowBackup="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme">
         <activity
-            android:name="marcocipriani01.iparcos.MainActivity"
+            android:name="org.indilib.i4j.iparcos.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleInstance"
             android:screenOrientation="userPortrait"
@@ -26,25 +26,25 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="marcocipriani01.iparcos.AboutActivity"
+            android:name="org.indilib.i4j.iparcos.AboutActivity"
             android:label="@string/menu_about"
             android:screenOrientation="fullUser"
             android:theme="@style/SimpleActivityTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="marcocipriani01.iparcos.MainActivity" />
+                android:value="org.indilib.i4j.iparcos.MainActivity" />
         </activity>
         <activity
-            android:name="marcocipriani01.iparcos.ServersActivity"
+            android:name="org.indilib.i4j.iparcos.ServersActivity"
             android:label="@string/host_manage"
             android:screenOrientation="fullUser"
             android:theme="@style/SimpleActivityTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="marcocipriani01.iparcos.MainActivity" />
+                android:value="org.indilib.i4j.iparcos.MainActivity" />
         </activity>
         <activity
-            android:name="marcocipriani01.iparcos.SearchActivity"
+            android:name="org.indilib.i4j.iparcos.SearchActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
             <intent-filter>

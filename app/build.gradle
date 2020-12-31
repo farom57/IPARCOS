@@ -5,7 +5,7 @@ android {
     buildToolsVersion = '30.0.2'
 
     defaultConfig {
-        applicationId "marcocipriani01.iparcos"
+        applicationId "org.indilib.i4j.iparcos"
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 5
