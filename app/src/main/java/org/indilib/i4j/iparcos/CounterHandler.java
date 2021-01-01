@@ -1,7 +1,5 @@
 package org.indilib.i4j.iparcos;
 
-import android.os.Handler;
-import android.view.MotionEvent;
 import android.view.View;
 
 /**
@@ -9,50 +7,21 @@ import android.view.View;
  * @author marcocipriani01
  * @see <a href="https://stackoverflow.com/a/41466381">Continuously increase integer value as the button is pressed</a>
  */
-public class CounterHandler {
+public class CounterHandler extends LongPressHandler {
 
-    private final Handler handler = new Handler();
-    private final View incrementalView;
-    private final View decrementalView;
     private final int steps;
-    private final long delay;
     private final boolean isCycle;
+    private final CounterListener listener;
     private int minValue;
     private int maxValue;
     private int currentValue;
-    private boolean autoIncrement = false;
-    private boolean autoDecrement = false;
-    private CounterListener listener;
 
-    private final Runnable counterRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (autoIncrement) {
-                increment();
-                handler.postDelayed(this, delay);
-
-            } else if (autoDecrement) {
-                decrement();
-                handler.postDelayed(this, delay);
-            }
-        }
-    };
-
-    public CounterHandler(View incrementalView, View decrementalView, int minValue,
+    public CounterHandler(View incrementView, View decrementView, int minValue,
                           int maxValue, int initialValue, int steps,
                           long delay, boolean isCycle, CounterListener listener) {
-        this(incrementalView, decrementalView, minValue, maxValue, initialValue, steps, delay, isCycle, listener, true);
-    }
-
-    public CounterHandler(View incrementalView, View decrementalView, int minValue,
-                          int maxValue, int initialValue, int steps,
-                          long delay, boolean isCycle, CounterListener listener, boolean setNow) {
-        if ((minValue != -1) && (maxValue != -1)) {
-            if (maxValue <= minValue) {
-                throw new IllegalArgumentException("Max value < min value!");
-            } else if (minValue >= maxValue) {
-                throw new IllegalArgumentException("Min value > max value!");
-            }
+        super(incrementView, decrementView, delay);
+        if ((minValue != -1) && (maxValue != -1) && (minValue >= maxValue)) {
+            throw new IllegalArgumentException("Counter bound error!");
         }
         this.minValue = minValue;
         this.maxValue = maxValue;
@@ -61,53 +30,8 @@ public class CounterHandler {
         }
         this.currentValue = initialValue;
         this.steps = steps;
-        this.delay = delay;
         this.isCycle = isCycle;
-        this.incrementalView = incrementalView;
-        this.decrementalView = decrementalView;
         this.listener = listener;
-
-        this.decrementalView.setOnClickListener(v -> decrement());
-        this.decrementalView.setOnLongClickListener(v -> {
-            autoDecrement = true;
-            handler.postDelayed(counterRunnable, CounterHandler.this.delay);
-            return false;
-        });
-        this.decrementalView.setOnTouchListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_UP && autoDecrement) {
-                autoDecrement = false;
-            }
-            return false;
-        });
-
-        this.incrementalView.setOnClickListener(v -> increment());
-        this.incrementalView.setOnLongClickListener(v -> {
-            autoIncrement = true;
-            handler.postDelayed(counterRunnable, CounterHandler.this.delay);
-            return false;
-        });
-        this.incrementalView.setOnTouchListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_UP && autoIncrement) {
-                autoIncrement = false;
-            }
-            return false;
-        });
-
-        if (this.listener != null && setNow) {
-            this.listener.onIncrement(this.incrementalView, this.currentValue);
-            this.listener.onDecrement(this.decrementalView, this.currentValue);
-        }
-    }
-
-    public void stop() {
-        listener = null;
-        autoDecrement = autoIncrement = false;
-        incrementalView.setOnClickListener(null);
-        incrementalView.setOnLongClickListener(null);
-        incrementalView.setOnTouchListener(null);
-        decrementalView.setOnClickListener(null);
-        decrementalView.setOnLongClickListener(null);
-        decrementalView.setOnTouchListener(null);
     }
 
     public int getValue() {
@@ -117,10 +41,8 @@ public class CounterHandler {
     public void setValue(int newValue) {
         if ((maxValue != -1) && (newValue > maxValue)) {
             currentValue = maxValue;
-
         } else if ((minValue != -1) && (newValue < minValue)) {
             currentValue = minValue;
-
         } else {
             currentValue = newValue;
         }
@@ -131,31 +53,24 @@ public class CounterHandler {
             throw new IllegalArgumentException("Max value < min value!");
         }
         this.maxValue = maxValue;
-        if (currentValue > this.maxValue) {
-            currentValue = this.maxValue;
-        }
+        if (currentValue > this.maxValue) currentValue = this.maxValue;
     }
 
     public void setMinValue(int minValue) {
-        if (minValue >= maxValue) {
-            throw new IllegalArgumentException("Min value > max value!");
-        }
+        if (minValue >= maxValue) throw new IllegalArgumentException("Min value > max value!");
         this.minValue = minValue;
-        if (currentValue < this.minValue) {
-            currentValue = this.minValue;
-        }
+        if (currentValue < this.minValue) currentValue = this.minValue;
     }
 
-    private void increment() {
+    @Override
+    protected void increment() {
         int number = this.currentValue;
         if (maxValue != -1) {
             if (number + steps <= maxValue) {
                 number += steps;
-
             } else if (isCycle) {
                 number = minValue == -1 ? 0 : minValue;
             }
-
         } else {
             number += steps;
         }
@@ -165,16 +80,15 @@ public class CounterHandler {
         }
     }
 
-    private void decrement() {
+    @Override
+    protected void decrement() {
         int number = this.currentValue;
         if (minValue != -1) {
             if (number - steps >= minValue) {
                 number -= steps;
-
             } else if (isCycle) {
                 number = maxValue == -1 ? 0 : maxValue;
             }
-
         } else {
             number -= steps;
         }
@@ -185,7 +99,6 @@ public class CounterHandler {
     }
 
     public interface CounterListener {
-
         void onIncrement(View view, int number);
 
         void onDecrement(View view, int number);

@@ -155,7 +155,7 @@ public class ControlPanelFragment extends Fragment implements TabLayout.OnTabSel
      */
     private class DevicesPagerAdapter extends ArrayPagerAdapter<Fragment> {
 
-        DevicesPagerAdapter(FragmentManager fragmentManager, List<PageDescriptor> descriptors) {
+        private DevicesPagerAdapter(FragmentManager fragmentManager, List<PageDescriptor> descriptors) {
             super(fragmentManager, descriptors);
         }
 
@@ -180,13 +180,13 @@ public class ControlPanelFragment extends Fragment implements TabLayout.OnTabSel
 
         private final INDIDevice device;
 
-        DevicePageDescriptor(INDIDevice device) {
+        private DevicePageDescriptor(INDIDevice device) {
             super(device.getName() + c, device.getName());
             c++;
             this.device = device;
         }
 
-        INDIDevice getDevice() {
+        private INDIDevice getDevice() {
             return device;
         }
     }

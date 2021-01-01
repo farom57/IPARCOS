@@ -14,7 +14,7 @@
     <string name="menu_connection">Connect</string>
     <string name="menu_control_panel">Devices</string>
     <string name="menu_search">Goto</string>
-    <string name="default_speed">Unavailable</string>
+    <string name="unavailable">Unavailable</string>
     <string name="send_request">Send</string>
     <string name="cancel_request">Cancel</string>
     <string name="back_request">Back</string>
@@ -104,4 +104,7 @@
     <string name="ip_address">IP address</string>
     <string name="empty_host">Empty host.</string>
     <string name="not_valid_ip">Attention: the entered text doesn\'t seem to be a valid IP address.</string>
+    <string name="position">Position</string>
+    <string name="mount_control">Mount control</string>
+    <string name="focuser_control">Focuser control</string>
 </resources>

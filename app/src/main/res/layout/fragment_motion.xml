@@ -1,129 +1,132 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin">
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:ignore="ButtonStyle, HardcodedText">
 
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:gravity="center"
+        android:id="@+id/mount_name"
+        android:paddingBottom="4dp"
+        android:text="@string/mount_control"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
-        <Button
-            android:id="@+id/buttonNW"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:enabled="false"
-            android:text="NW" />
-
-        <Button
-            android:id="@+id/buttonN"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:enabled="false"
-            android:text="N" />
-
-        <Button
-            android:id="@+id/buttonNE"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:enabled="false"
-            android:text="NE" />
-    </LinearLayout>
-
-    <LinearLayout
+    <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_weight="99">
 
-        <Button
-            android:id="@+id/buttonW"
-            android:layout_width="wrap_content"
+        <TableRow
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:enabled="false"
-            android:text="W" />
+            android:layout_weight="1">
 
-        <Button
-            android:id="@+id/buttonStop"
-            android:layout_width="wrap_content"
+            <Button
+                android:id="@+id/buttonNW"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="NW"
+                android:textSize="22sp" />
+
+            <Button
+                android:id="@+id/buttonN"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="N"
+                android:textSize="22sp" />
+
+            <Button
+                android:id="@+id/buttonNE"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="NE"
+                android:textSize="22sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:enabled="false"
-            android:text="@string/stop_motion" />
+            android:layout_weight="1">
 
-        <Button
-            android:id="@+id/buttonE"
-            android:layout_width="wrap_content"
+            <Button
+                android:id="@+id/buttonW"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="W"
+                android:textSize="22sp" />
+
+            <Button
+                android:id="@+id/buttonStop"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/stop_motion"
+                android:textSize="22sp" />
+
+            <Button
+                android:id="@+id/buttonE"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="E"
+                android:textSize="22sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:enabled="false"
-            android:text="E" />
-    </LinearLayout>
+            android:layout_weight="1">
 
-    <LinearLayout
+            <Button
+                android:id="@+id/buttonSW"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="SW"
+                android:textSize="22sp" />
+
+            <Button
+                android:id="@+id/buttonS"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="S"
+                android:textSize="22sp" />
+
+            <Button
+                android:id="@+id/buttonSE"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="SE"
+                android:textSize="22sp" />
+        </TableRow>
+    </TableLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_weight="1"
+        android:text="Slew rate:" />
+
+    <Spinner
+        android:id="@+id/mount_slew_rate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
-
-        <Button
-            android:id="@+id/buttonSW"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:enabled="false"
-            android:text="SW" />
-
-        <Button
-            android:id="@+id/buttonS"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:enabled="false"
-            android:text="S" />
-
-        <Button
-            android:id="@+id/buttonSE"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:enabled="false"
-            android:text="SE" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center">
-
-        <Button
-            android:id="@+id/buttonSpeedDown"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:text="-" />
-
-        <TextView
-            android:id="@+id/speedText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:enabled="false"
-            android:gravity="center"
-            android:text="TextView" />
-
-        <Button
-            android:id="@+id/buttonSpeedUp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:text="+" />
-    </LinearLayout>
+        android:layout_marginBottom="8dp"
+        android:layout_weight="1" />
 </LinearLayout>

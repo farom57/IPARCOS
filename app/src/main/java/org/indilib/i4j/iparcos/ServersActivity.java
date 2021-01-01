@@ -27,6 +27,13 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * @author marcocipriani01
+ */
+interface ServersReloadListener {
+    void loadServers();
+}
+
+/**
  * Activity to manage the list of servers.
  *
  * @author marcocipriani01

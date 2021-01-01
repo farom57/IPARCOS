@@ -17,7 +17,8 @@ public class PropUpdater extends Thread {
         super(() -> {
             try {
                 prop.sendChangesToDriver();
-            } catch (INDIValueException | IOException e) {
+            } catch (Exception e) {
+                e.printStackTrace();
                 IPARCOSApp.log(IPARCOSApp.getContext().getResources().getString(R.string.error) + e.getLocalizedMessage());
             }
         }, "INDI propriety updater");

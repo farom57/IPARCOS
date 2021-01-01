@@ -109,9 +109,7 @@ public class NumberPropPref extends PropPref<INDINumberElement> {
                 editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                 editTextViews.add(editText);
                 layout.addView(editText, layoutParams);
-                final double step = element.getStep();
-                final double min = element.getMin();
-                final double max = element.getMax();
+                final double step = element.getStep(), min = element.getMin(), max = element.getMax();
                 final int interval = (int) ((max - min) / step);
                 if (interval <= 1000) {
                     SeekBar seekBar = new SeekBar(context);

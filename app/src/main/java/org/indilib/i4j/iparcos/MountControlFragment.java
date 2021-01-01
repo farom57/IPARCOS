@@ -1,6 +1,7 @@
 package org.indilib.i4j.iparcos;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,7 +10,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,8 +23,6 @@ import androidx.fragment.app.Fragment;
 import org.indilib.i4j.Constants;
 import org.indilib.i4j.client.INDIDevice;
 import org.indilib.i4j.client.INDIDeviceListener;
-import org.indilib.i4j.client.INDINumberElement;
-import org.indilib.i4j.client.INDINumberProperty;
 import org.indilib.i4j.client.INDIProperty;
 import org.indilib.i4j.client.INDIPropertyListener;
 import org.indilib.i4j.client.INDIServerConnection;
@@ -27,12 +30,12 @@ import org.indilib.i4j.client.INDIServerConnectionListener;
 import org.indilib.i4j.client.INDISwitchElement;
 import org.indilib.i4j.client.INDISwitchProperty;
 import org.indilib.i4j.client.INDIValueException;
+import org.indilib.i4j.iparcos.prop.PropUpdater;
+import org.indilib.i4j.properties.INDIStandardElement;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-
-import org.indilib.i4j.iparcos.prop.PropUpdater;
 
 /**
  * This fragment shows directional buttons to move a telescope. It also provides
@@ -45,6 +48,8 @@ import org.indilib.i4j.iparcos.prop.PropUpdater;
 public class MountControlFragment extends Fragment implements INDIServerConnectionListener, INDIPropertyListener,
         INDIDeviceListener, OnTouchListener, OnClickListener {
 
+    private final SpinnerInteractionListener spinnerListener = new SpinnerInteractionListener();
+    private ConnectionManager connectionManager;
     // Properties and elements associated to the buttons
     private INDISwitchProperty telescopeMotionNSP = null;
     private INDISwitchElement telescopeMotionNE = null;
@@ -54,12 +59,7 @@ public class MountControlFragment extends Fragment implements INDIServerConnecti
     private INDISwitchElement telescopeMotionEE = null;
     private INDISwitchProperty telescopeMotionAbort = null;
     private INDISwitchElement telescopeMotionAbortE = null;
-    private INDINumberProperty telescopeMotionRate = null;
-    private INDISwitchProperty telescopeMotionRateLX200 = null;
-    private INDISwitchProperty telescopeMotionRateEQMod = null;
-
-    private ConnectionManager connectionManager;
-
+    private INDISwitchProperty telescopeSlewRate = null;
     // Views
     private Button btnMoveN = null;
     private Button btnMoveS = null;
@@ -70,9 +70,8 @@ public class MountControlFragment extends Fragment implements INDIServerConnecti
     private Button btnMoveSE = null;
     private Button btnMoveSW = null;
     private Button btnStop = null;
-    private Button btnSpeedUp = null;
-    private Button btnSpeedDown = null;
-    private TextView speedText = null;
+    private Spinner slewRateSpinner = null;
+    private TextView mountName = null;
 
     @Override
     public void onStart() {
@@ -88,27 +87,12 @@ public class MountControlFragment extends Fragment implements INDIServerConnecti
                     }
                 }
             }
-
         } else {
             clearVars();
         }
         // Update UI
-        updateBtnState();
-        updateSpeedText();
-    }
-
-    private void clearVars() {
-        telescopeMotionNSP = null;
-        telescopeMotionNE = null;
-        telescopeMotionSE = null;
-        telescopeMotionWEP = null;
-        telescopeMotionWE = null;
-        telescopeMotionEE = null;
-        telescopeMotionAbort = null;
-        telescopeMotionAbortE = null;
-        telescopeMotionRate = null;
-        telescopeMotionRateEQMod = null;
-        telescopeMotionRateLX200 = null;
+        enableUi();
+        initSlewRate();
     }
 
     @Override
@@ -124,9 +108,8 @@ public class MountControlFragment extends Fragment implements INDIServerConnecti
         btnMoveW = rootView.findViewById(R.id.buttonW);
         btnMoveNW = rootView.findViewById(R.id.buttonNW);
         btnStop = rootView.findViewById(R.id.buttonStop);
-        btnSpeedUp = rootView.findViewById(R.id.buttonSpeedUp);
-        btnSpeedDown = rootView.findViewById(R.id.buttonSpeedDown);
-        speedText = rootView.findViewById(R.id.speedText);
+        slewRateSpinner = rootView.findViewById(R.id.mount_slew_rate);
+        mountName = rootView.findViewById(R.id.mount_name);
         btnMoveN.setOnTouchListener(this);
         btnMoveNE.setOnTouchListener(this);
         btnMoveE.setOnTouchListener(this);
@@ -136,37 +119,97 @@ public class MountControlFragment extends Fragment implements INDIServerConnecti
         btnMoveW.setOnTouchListener(this);
         btnMoveNW.setOnTouchListener(this);
         btnStop.setOnClickListener(this);
-        btnSpeedUp.setOnClickListener(this);
-        btnSpeedDown.setOnClickListener(this);
-
+        slewRateSpinner.setOnTouchListener(spinnerListener);
         // Set up INDI connection
         connectionManager = IPARCOSApp.getConnectionManager();
         connectionManager.addListener(this);
-
         return rootView;
     }
 
-    // ------ Listener functions from INDI ------
+    private void clearVars() {
+        telescopeMotionNSP = null;
+        telescopeMotionNE = null;
+        telescopeMotionSE = null;
+        telescopeMotionWEP = null;
+        telescopeMotionWE = null;
+        telescopeMotionEE = null;
+        telescopeMotionAbort = null;
+        telescopeMotionAbortE = null;
+        telescopeSlewRate = null;
+    }
+
+    private void initSlewRate() {
+        if (slewRateSpinner != null) {
+            slewRateSpinner.post(() -> {
+                Context context = getContext();
+                if (context != null) {
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item);
+                    arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    int selectedItem = 0;
+                    if (telescopeSlewRate == null) {
+                        arrayAdapter.add(getString(R.string.unavailable));
+                    } else {
+                        int count = 0;
+                        for (INDISwitchElement element : telescopeSlewRate.getElementsAsList()) {
+                            String label = element.getLabel();
+                            if (label.contains("x")) {
+                                arrayAdapter.add(label);
+                                if (element.getValue() == Constants.SwitchStatus.ON)
+                                    selectedItem = count;
+                                count++;
+                            }
+                        }
+                        if (count == 0) arrayAdapter.add(getString(R.string.unavailable));
+                    }
+                    slewRateSpinner.setAdapter(arrayAdapter);
+                    slewRateSpinner.setOnItemSelectedListener(null);
+                    slewRateSpinner.setSelection(selectedItem);
+                    slewRateSpinner.setOnItemSelectedListener(spinnerListener);
+                }
+            });
+        }
+    }
+
+    /**
+     * Enables the buttons if the corresponding property was found
+     */
+    public void enableUi() {
+        if (btnMoveE != null) btnMoveE.post(() -> btnMoveE.setEnabled(telescopeMotionWEP != null));
+        if (btnMoveW != null) btnMoveW.post(() -> btnMoveW.setEnabled(telescopeMotionWEP != null));
+        if (btnMoveN != null) btnMoveN.post(() -> btnMoveN.setEnabled(telescopeMotionNSP != null));
+        if (btnMoveS != null) btnMoveS.post(() -> btnMoveS.setEnabled(telescopeMotionNSP != null));
+        if (btnMoveNE != null)
+            btnMoveNE.post(() -> btnMoveNE.setEnabled((telescopeMotionWEP != null) && (telescopeMotionNSP != null)));
+        if (btnMoveNW != null)
+            btnMoveNW.post(() -> btnMoveNW.setEnabled((telescopeMotionWEP != null) && (telescopeMotionNSP != null)));
+        if (btnMoveSE != null)
+            btnMoveSE.post(() -> btnMoveSE.setEnabled((telescopeMotionWEP != null) && (telescopeMotionNSP != null)));
+        if (btnMoveSW != null)
+            btnMoveSW.post(() -> btnMoveSW.setEnabled((telescopeMotionWEP != null) && (telescopeMotionNSP != null)));
+        if (btnStop != null)
+            btnStop.post(() -> btnStop.setEnabled((telescopeMotionWEP != null) || (telescopeMotionNSP != null)
+                    || (telescopeMotionAbort != null)));
+        if (slewRateSpinner != null)
+            slewRateSpinner.post(() -> slewRateSpinner.setEnabled(telescopeSlewRate != null));
+    }
 
     @Override
     public void connectionLost(INDIServerConnection arg0) {
         clearVars();
-        updateBtnState();
-        updateSpeedText();
+        enableUi();
+        initSlewRate();
         // Move to the connection tab
         IPARCOSApp.goToConnectionTab();
     }
 
     @Override
     public void newDevice(INDIServerConnection connection, INDIDevice device) {
-        // We just simply listen to this Device
         Log.i("MotionFragment", "New device: " + device.getName());
         device.addINDIDeviceListener(this);
     }
 
     @Override
     public void removeDevice(INDIServerConnection connection, INDIDevice device) {
-        // We just remove ourselves as a listener of the removed device
         Log.i("MotionFragment", "Device removed: " + device.getName());
         device.removeINDIDeviceListener(this);
     }
@@ -178,112 +221,75 @@ public class MountControlFragment extends Fragment implements INDIServerConnecti
 
     @Override
     public void newProperty(INDIDevice device, INDIProperty<?> property) {
-        // Look for certain properties
+        Log.d("MotionFragment", "New Property (" + property.getName() + ") added to device " + device.getName()
+                + ", elements: " + Arrays.toString(property.getElementNames()));
         switch (property.getName()) {
             case "TELESCOPE_MOTION_NS": {
-                if (((telescopeMotionNE = (INDISwitchElement) property.getElement("MOTION_NORTH")) != null)
-                        && ((telescopeMotionSE = (INDISwitchElement) property.getElement("MOTION_SOUTH")) != null)) {
+                if (((telescopeMotionNE = (INDISwitchElement) property.getElement(INDIStandardElement.MOTION_NORTH)) != null)
+                        && ((telescopeMotionSE = (INDISwitchElement) property.getElement(INDIStandardElement.MOTION_SOUTH)) != null)) {
                     telescopeMotionNSP = (INDISwitchProperty) property;
-
-                } else {
-                    return;
+                    mountName.setText(device.getName());
                 }
                 break;
             }
-
             case "TELESCOPE_MOTION_WE": {
-                if (((telescopeMotionEE = (INDISwitchElement) property.getElement("MOTION_EAST")) != null)
-                        && ((telescopeMotionWE = (INDISwitchElement) property.getElement("MOTION_WEST")) != null)) {
+                if (((telescopeMotionEE = (INDISwitchElement) property.getElement(INDIStandardElement.MOTION_EAST)) != null)
+                        && ((telescopeMotionWE = (INDISwitchElement) property.getElement(INDIStandardElement.MOTION_WEST)) != null)) {
                     telescopeMotionWEP = (INDISwitchProperty) property;
-
-                } else {
-                    return;
                 }
                 break;
             }
-
             case "TELESCOPE_ABORT_MOTION": {
-                if ((telescopeMotionAbortE = (INDISwitchElement) property.getElement("ABORT_MOTION")) != null) {
+                if ((telescopeMotionAbortE = (INDISwitchElement) property.getElement(INDIStandardElement.ABORT_MOTION)) != null) {
                     telescopeMotionAbort = (INDISwitchProperty) property;
-
-                } else {
-                    return;
                 }
                 break;
             }
-
-            case "TELESCOPE_MOTION_RATE": {
-                telescopeMotionRate = (INDINumberProperty) property;
-                updateSpeedText();
+            case "TELESCOPE_SLEW_RATE": {
+                telescopeSlewRate = (INDISwitchProperty) property;
+                initSlewRate();
                 break;
             }
-
-            case "Slew Rate": {
-                telescopeMotionRateLX200 = (INDISwitchProperty) property;
-                updateSpeedText();
-                break;
-            }
-
-            case "SLEWMODE": {
-                telescopeMotionRateEQMod = (INDISwitchProperty) property;
-                updateSpeedText();
-                break;
-            }
-
             default: {
                 return;
             }
         }
         property.addINDIPropertyListener(this);
-        updateBtnState();
-        Log.d("MotionFragment", "New Property (" + property.getName() + ") added to device " + device.getName());
+        enableUi();
     }
 
     @Override
     public void removeProperty(INDIDevice device, INDIProperty<?> property) {
+        Log.d("MotionFragment", "Removed property (" + property.getName() + ") to device " + device.getName());
         switch (property.getName()) {
             case "TELESCOPE_MOTION_NS": {
                 telescopeMotionNSP = null;
                 telescopeMotionNE = null;
                 telescopeMotionSE = null;
+                mountName.setText(R.string.mount_control);
                 break;
             }
-
             case "TELESCOPE_MOTION_WE": {
                 telescopeMotionWEP = null;
                 telescopeMotionWE = null;
                 telescopeMotionEE = null;
                 break;
             }
-
             case "TELESCOPE_ABORT_MOTION": {
                 telescopeMotionAbort = null;
                 telescopeMotionAbortE = null;
                 break;
             }
-
-            case "TELESCOPE_MOTION_RATE": {
-                telescopeMotionRate = null;
+            case "TELESCOPE_SLEW_RATE": {
+                telescopeSlewRate = null;
+                initSlewRate();
                 break;
             }
-
-            case "Slew Rate": {
-                telescopeMotionRateLX200 = null;
-                break;
-            }
-
-            case "SLEWMODE": {
-                telescopeMotionRateEQMod = null;
-                break;
-            }
-
             default: {
                 return;
             }
         }
-        updateBtnState();
-        updateSpeedText();
-        Log.d("MotionFragment", "Removed property (" + property.getName() + ") to device " + device.getName());
+        enableUi();
     }
 
     @Override
@@ -298,7 +304,6 @@ public class MountControlFragment extends Fragment implements INDIServerConnecti
                 }
                 break;
             }
-
             case "TELESCOPE_MOTION_WE": {
                 if (btnMoveE != null) {
                     btnMoveE.post(() -> btnMoveE.setPressed(telescopeMotionEE.getValue() == Constants.SwitchStatus.ON));
@@ -308,11 +313,26 @@ public class MountControlFragment extends Fragment implements INDIServerConnecti
                 }
                 break;
             }
-
-            case "TELESCOPE_MOTION_RATE":
-            case "Slew Rate":
-            case "SLEWMODE": {
-                updateSpeedText();
+            case "TELESCOPE_SLEW_RATE": {
+                if (slewRateSpinner != null) {
+                    slewRateSpinner.post(() -> {
+                        String selected = null;
+                        for (INDISwitchElement element : telescopeSlewRate) {
+                            if (element.getValue() == Constants.SwitchStatus.ON)
+                                selected = element.getLabel();
+                        }
+                        if (selected != null) {
+                            SpinnerAdapter adapter = slewRateSpinner.getAdapter();
+                            int i;
+                            for (i = 0; i < adapter.getCount(); i++) {
+                                if (((String) adapter.getItem(i)).equals(selected)) break;
+                            }
+                            slewRateSpinner.setOnItemSelectedListener(null);
+                            slewRateSpinner.setSelection(i);
+                            slewRateSpinner.setOnItemSelectedListener(spinnerListener);
+                        }
+                    });
+                }
                 break;
             }
         }
@@ -321,85 +341,6 @@ public class MountControlFragment extends Fragment implements INDIServerConnecti
     @Override
     public void messageChanged(INDIDevice device) {
 
-    }
-
-    // ------ UI functions ------
-
-    /**
-     * Enables the buttons if the corresponding property was found
-     */
-    public void updateBtnState() {
-        if (btnMoveE != null) {
-            btnMoveE.post(() -> btnMoveE.setEnabled(telescopeMotionWEP != null));
-        }
-        if (btnMoveW != null) {
-            btnMoveW.post(() -> btnMoveW.setEnabled(telescopeMotionWEP != null));
-        }
-        if (btnMoveN != null) {
-            btnMoveN.post(() -> btnMoveN.setEnabled(telescopeMotionNSP != null));
-        }
-        if (btnMoveS != null) {
-            btnMoveS.post(() -> btnMoveS.setEnabled(telescopeMotionNSP != null));
-        }
-        if (btnMoveNE != null) {
-            btnMoveNE.post(() -> btnMoveNE.setEnabled((telescopeMotionWEP != null) && (telescopeMotionNSP != null)));
-        }
-        if (btnMoveNW != null) {
-            btnMoveNW.post(() -> btnMoveNW.setEnabled((telescopeMotionWEP != null) && (telescopeMotionNSP != null)));
-        }
-        if (btnMoveSE != null) {
-            btnMoveSE.post(() -> btnMoveSE.setEnabled((telescopeMotionWEP != null) && (telescopeMotionNSP != null)));
-        }
-        if (btnMoveSW != null) {
-            btnMoveSW.post(() -> btnMoveSW.setEnabled((telescopeMotionWEP != null) && (telescopeMotionNSP != null)));
-        }
-        if (btnStop != null) {
-            btnStop.post(() -> btnStop.setEnabled((telescopeMotionWEP != null) || (telescopeMotionNSP != null)
-                    || (telescopeMotionAbort != null)));
-        }
-        if (btnSpeedUp != null) {
-            btnSpeedUp.post(() -> btnSpeedUp.setEnabled(telescopeMotionRate != null || telescopeMotionRateEQMod != null
-                    || telescopeMotionRateLX200 != null));
-        }
-        if (btnSpeedDown != null) {
-            btnSpeedDown.post(() -> btnSpeedDown.setEnabled(telescopeMotionRate != null || telescopeMotionRateEQMod != null
-                    || telescopeMotionRateLX200 != null));
-        }
-    }
-
-    /**
-     * Updates the speed text
-     */
-    public void updateSpeedText() {
-        if (speedText != null) {
-            speedText.post((Runnable) () -> {
-                if (telescopeMotionRate != null) {
-                    double speed = telescopeMotionRate.getElement("MOTION_RATE").getValue();
-                    speedText.setText(String.format(Locale.ENGLISH, "%3.1fx (%3.1f '/s)", speed / 0.25, speed));
-
-                } else if (telescopeMotionRateLX200 != null) {
-                    List<INDISwitchElement> elements = telescopeMotionRateLX200.getElementsAsList();
-                    int i = 0;
-                    while (((INDISwitchElement) elements.get(i)).getValue() == Constants.SwitchStatus.OFF
-                            && i < elements.size() - 1) {
-                        i++;
-                    }
-                    speedText.setText(elements.get(i).getLabel());
-
-                } else if (telescopeMotionRateEQMod != null) {
-                    List<INDISwitchElement> elements = telescopeMotionRateEQMod.getElementsAsList();
-                    int i = 0;
-                    while (((INDISwitchElement) elements.get(i)).getValue() == Constants.SwitchStatus.OFF
-                            && i < elements.size() - 1) {
-                        i++;
-                    }
-                    speedText.setText(elements.get(i).getLabel());
-
-                } else {
-                    speedText.setText(R.string.default_speed);
-                }
-            });
-        }
     }
 
     /**
@@ -423,7 +364,6 @@ public class MountControlFragment extends Fragment implements INDIServerConnecti
                 telescopeMotionEE.setDesiredValue(status);
                 telescopeMotionWE.setDesiredValue(offStatus);
                 new PropUpdater(telescopeMotionWEP).start();
-
             } catch (INDIValueException e) {
                 Log.e("MotionFragment", e.getLocalizedMessage());
             }
@@ -433,7 +373,6 @@ public class MountControlFragment extends Fragment implements INDIServerConnecti
                 telescopeMotionWE.setDesiredValue(status);
                 telescopeMotionEE.setDesiredValue(offStatus);
                 new PropUpdater(telescopeMotionWEP).start();
-
             } catch (INDIValueException e) {
                 Log.e("MotionFragment", e.getLocalizedMessage());
             }
@@ -492,7 +431,6 @@ public class MountControlFragment extends Fragment implements INDIServerConnecti
                 telescopeMotionSE.setDesiredValue(status);
                 telescopeMotionNE.setDesiredValue(offStatus);
                 new PropUpdater(telescopeMotionNSP).start();
-
             } catch (INDIValueException e) {
                 Log.e("MotionFragment", e.getLocalizedMessage());
             }
@@ -520,8 +458,7 @@ public class MountControlFragment extends Fragment implements INDIServerConnecti
      */
     @Override
     public void onClick(View v) {
-        int id = v.getId();
-        if (id == R.id.buttonStop) {
+        if (v.getId() == R.id.buttonStop) {
             try {
                 if (telescopeMotionWEP != null) {
                     telescopeMotionWE.setDesiredValue(Constants.SwitchStatus.OFF);
@@ -537,98 +474,8 @@ public class MountControlFragment extends Fragment implements INDIServerConnecti
                     telescopeMotionAbortE.setDesiredValue(Constants.SwitchStatus.ON);
                     new PropUpdater(telescopeMotionAbort).start();
                 }
-
             } catch (INDIValueException e) {
                 Log.e("MotionFragment", e.getLocalizedMessage());
-            }
-        } else if (id == R.id.buttonSpeedUp) {
-            if (telescopeMotionRate != null) {
-                try {
-                    INDINumberElement motionRate = telescopeMotionRate.getElement("MOTION_RATE");
-                    motionRate.setDesiredValue(
-                            Math.min(telescopeMotionRate.getElement("MOTION_RATE").getMax(),
-                                    motionRate.getValue() * 2));
-                    new PropUpdater(telescopeMotionRate).start();
-
-                } catch (INDIValueException e) {
-                    Log.e("MotionFragment", e.getLocalizedMessage());
-                }
-
-            } else if (telescopeMotionRateEQMod != null) {
-                try {
-                    List<INDISwitchElement> elements = telescopeMotionRateEQMod.getElementsAsList();
-                    int i = 0;
-                    while (((INDISwitchElement) elements.get(i)).getValue() == Constants.SwitchStatus.OFF
-                            && i < elements.size() - 2) {
-                        i++;
-                    }
-                    elements.get(i + 1).setDesiredValue(Constants.SwitchStatus.ON);
-                    new PropUpdater(telescopeMotionRateEQMod).start();
-
-                } catch (INDIValueException e) {
-                    Log.e("MotionFragment", e.getLocalizedMessage());
-                }
-
-            } else if (telescopeMotionRateLX200 != null) {
-                try {
-                    List<INDISwitchElement> elements = telescopeMotionRateLX200.getElementsAsList();
-                    int i = 0;
-                    while (((INDISwitchElement) elements.get(i)).getValue() == Constants.SwitchStatus.OFF
-                            && i < elements.size() - 1) {
-                        i++;
-                    }
-                    if (i > 0) {
-                        elements.get(i - 1).setDesiredValue(Constants.SwitchStatus.ON);
-                    }
-                    new PropUpdater(telescopeMotionRateLX200).start();
-
-                } catch (INDIValueException e) {
-                    Log.e("MotionFragment", e.getLocalizedMessage());
-                }
-            }
-        } else if (id == R.id.buttonSpeedDown) {
-            if (telescopeMotionRate != null) {
-                try {
-                    INDINumberElement motionRate = telescopeMotionRate.getElement("MOTION_RATE");
-                    motionRate.setDesiredValue(Math.max(telescopeMotionRate.getElement("MOTION_RATE").getMin(),
-                            motionRate.getValue() * 0.5));
-                    new PropUpdater(telescopeMotionRate).start();
-
-                } catch (INDIValueException e) {
-                    Log.e("MotionFragment", e.getLocalizedMessage());
-                }
-
-            } else if (telescopeMotionRateEQMod != null) {
-                try {
-                    List<INDISwitchElement> elements = telescopeMotionRateEQMod.getElementsAsList();
-                    int i = 0;
-                    while (((INDISwitchElement) elements.get(i)).getValue() == Constants.SwitchStatus.OFF
-                            && i < elements.size() - 1) {
-                        i++;
-                    }
-                    if (i > 0) {
-                        elements.get(i - 1).setDesiredValue(Constants.SwitchStatus.ON);
-                    }
-                    new PropUpdater(telescopeMotionRateEQMod).start();
-
-                } catch (INDIValueException e) {
-                    Log.e("MotionFragment", e.getLocalizedMessage());
-                }
-
-            } else if (telescopeMotionRateLX200 != null) {
-                try {
-                    List<INDISwitchElement> elements = telescopeMotionRateLX200.getElementsAsList();
-                    int i = 0;
-                    while (((INDISwitchElement) elements.get(i)).getValue() == Constants.SwitchStatus.OFF
-                            && i < elements.size() - 2) {
-                        i++;
-                    }
-                    elements.get(i + 1).setDesiredValue(Constants.SwitchStatus.ON);
-                    new PropUpdater(telescopeMotionRateLX200).start();
-
-                } catch (INDIValueException e) {
-                    Log.e("MotionFragment", e.getLocalizedMessage());
-                }
             }
         }
     }
@@ -637,5 +484,50 @@ public class MountControlFragment extends Fragment implements INDIServerConnecti
     public void onDestroy() {
         super.onDestroy();
         connectionManager.removeListener(this);
+    }
+
+    /**
+     * @author Andres Q.
+     * @author marcocipriani01
+     * @see <a href="https://stackoverflow.com/a/28466764">Spinner onItemSelected called multiple times after screen rotation</a>
+     */
+    private class SpinnerInteractionListener implements AdapterView.OnItemSelectedListener, View.OnTouchListener {
+
+        private boolean userSelect = false;
+
+        @SuppressLint("ClickableViewAccessibility")
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            userSelect = true;
+            return false;
+        }
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if (userSelect) {
+                try {
+                    String selected = ((String) slewRateSpinner.getAdapter().getItem(position));
+                    if ((selected != null) && (!selected.equals(getString(R.string.unavailable)))) {
+                        for (INDISwitchElement element : telescopeSlewRate.getElementsAsList()) {
+                            String label = element.getLabel();
+                            if (label.equals(selected)) {
+                                element.setDesiredValue(Constants.SwitchStatus.ON);
+                            } else {
+                                element.setDesiredValue(Constants.SwitchStatus.OFF);
+                            }
+                        }
+                        new PropUpdater(telescopeSlewRate).start();
+                    }
+                } catch (Exception e) {
+                    Log.d("MotionFragment", "Slew rate error!");
+                }
+                userSelect = false;
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
     }
 }

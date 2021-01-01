@@ -106,8 +106,6 @@ public abstract class PropPref<Element extends INDIElement> extends Preference i
                 PropPref.this.setSummary(createSummary());
                 PropPref.this.setTitle(createTitle());
             });
-        } else {
-            Log.w("PropPref", "null title, prop = " + prop.getLabel());
         }
     }
 

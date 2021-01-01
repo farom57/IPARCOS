@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -17,7 +18,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
  *
  * @author marcocipriani01
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     /**
      * Last open page.
@@ -32,42 +33,27 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         toolbar = findViewById(R.id.app_toolbar);
         setSupportActionBar(toolbar);
-
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.content_frame, new ConnectionFragment()).commit();
-
         final BottomNavigationView navigation = findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(item -> {
-            Pages newPage = Pages.fromId(item.getItemId());
-            if ((newPage != null) && (newPage != currentPage)) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    if (newPage == Pages.GENERIC) {
-                        toolbar.setElevation(0);
-
-                    } else {
-                        toolbar.setElevation(4);
-                    }
-                }
-                getSupportFragmentManager().beginTransaction().setCustomAnimations(R.animator.fade_in, R.animator.fade_out,
-                        R.animator.fade_in, R.animator.fade_out).replace(R.id.content_frame, Pages.values()[newPage.index].instance).commit();
-                currentPage = newPage;
-                return true;
-            }
-            return false;
-        });
-
-        IPARCOSApp.setGoToConnectionTab(() -> {
+        navigation.setOnNavigationItemSelectedListener(this);
+        IPARCOSApp.setGoToConnectionTab(() -> runOnUiThread(() -> {
             currentPage = Pages.CONNECTION;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                toolbar.setElevation(4);
+                toolbar.setElevation(8);
             }
-            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.animator.fade_in, R.animator.fade_out,
-                    R.animator.fade_in, R.animator.fade_out).replace(R.id.content_frame, Pages.CONNECTION.instance).commit();
+            navigation.setOnNavigationItemSelectedListener(null);
             navigation.setSelectedItemId(currentPage.itemId);
-        });
+            navigation.setOnNavigationItemSelectedListener(this);
+            try {
+                getSupportFragmentManager().beginTransaction().setCustomAnimations(R.animator.fade_in, R.animator.fade_out,
+                        R.animator.fade_in, R.animator.fade_out).replace(R.id.content_frame, Pages.CONNECTION.instance).commit();
+            } catch (IllegalStateException ignored) {
+
+            }
+        }));
     }
 
     @Override
@@ -80,6 +66,25 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_about) {
             startActivity(new Intent(this, AboutActivity.class));
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Pages newPage = Pages.fromId(item.getItemId());
+        if ((newPage != null) && (newPage != currentPage)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if (newPage == Pages.GENERIC) {
+                    toolbar.setElevation(0);
+                } else {
+                    toolbar.setElevation(8);
+                }
+            }
+            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.animator.fade_in, R.animator.fade_out,
+                    R.animator.fade_in, R.animator.fade_out).replace(R.id.content_frame, Pages.values()[newPage.index].instance).commit();
+            currentPage = newPage;
             return true;
         }
         return false;

@@ -20,9 +20,6 @@ import java.util.List;
 
 import org.indilib.i4j.iparcos.prop.PropPref;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class PrefsFragment extends PreferenceFragmentCompat implements INDIDeviceListener {
 
     private INDIDevice device = null;

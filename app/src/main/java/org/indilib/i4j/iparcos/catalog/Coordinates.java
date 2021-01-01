@@ -1,5 +1,7 @@
 package org.indilib.i4j.iparcos.catalog;
 
+import android.annotation.SuppressLint;
+
 import androidx.annotation.NonNull;
 
 import java.util.regex.Matcher;
@@ -50,10 +52,8 @@ public class Coordinates {
     private static double convertRa(String string) throws NumberFormatException {
         Pattern p = Pattern.compile("([0-9]{1,2})[h:\\s]([0-9]{1,2})([m:'\\s]([0-9]{1,2})([,.]([0-9]*))?[s\"]?)?[m:'\\s]?");
         Matcher m = p.matcher(string);
-
         double value = 0;
         if (m.matches()) {
-
             if (m.group(6) != null) {
                 for (int i = 0; i < m.group(6).length(); ++i) {
                     value += 15. / 3600. * (m.group(6).charAt(i) - '0') * Math.pow(0.1, i + 1);
@@ -69,15 +69,12 @@ public class Coordinates {
                     value += 15. / 60. * (m.group(2).charAt(i) - '0') * Math.pow(10, m.group(2).length() - i - 1);
                 }
             }
-
             if (m.group(1) != null) {
                 for (int i = 0; i < m.group(1).length(); ++i) {
                     value += 15. * (m.group(1).charAt(i) - '0') * Math.pow(10, m.group(1).length() - i - 1);
                 }
             }
-
             return value;
-
         } else {
             throw new NumberFormatException(string + " is not a valid sexagesimal string");
         }
@@ -92,10 +89,8 @@ public class Coordinates {
     private static double convertDec(String string) throws NumberFormatException {
         Pattern p = Pattern.compile("([+\\-]?)([0-9]{1,2})[°:\\s]([0-9]{1,2})([m:'\\s]([0-9]{1,2})([,.]([0-9]*))?[s\"]?)?[m:'\\s]?");
         Matcher m = p.matcher(string);
-
         double value = 0;
         if (m.matches()) {
-
             if (m.group(7) != null) {
                 for (int i = 0; i < m.group(7).length(); ++i) {
                     value += 1. / 3600. * (m.group(7).charAt(i) - '0') * Math.pow(0.1, i + 1);
@@ -121,9 +116,7 @@ public class Coordinates {
                     value = -value;
                 }
             }
-
             return value;
-
         } else {
             throw new NumberFormatException(string + " is not a valid sexagesimal string");
         }
@@ -146,6 +139,7 @@ public class Coordinates {
     /**
      * @return a string containing the right ascension (hh:mm:ss)
      */
+    @SuppressLint("DefaultLocale")
     public String getRaStr() {
         int deg = (int) Math.floor(Math.abs(ra) / 15);
         double tmp = (Math.abs(ra) / 15 - deg) * 60;
@@ -157,6 +151,7 @@ public class Coordinates {
     /**
      * @return a string containing the declination (hh:mm:ss)
      */
+    @SuppressLint("DefaultLocale")
     public String getDeStr() {
         int deg = (int) Math.floor(Math.abs(dec));
         int min = (int) Math.floor((Math.abs(dec) - deg) * 60);
